@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 set "PYTHONPATH=%CD%\.runtime_pkgs"
-echo Starting Ronisens Product QA MVP...
+echo Starting IOO.pro Product Database Test...
 echo.
 echo Browser URL:
 echo   http://127.0.0.1:8501

@@ -35,7 +35,7 @@ class QAEngineTest(unittest.TestCase):
         self.assertEqual(product["model"], REAL_MODEL)
 
     def test_get_product_by_missing_model_does_not_invent(self) -> None:
-        product = qa_engine.get_product_by_model("NOT-A-REAL-RONISENS-MODEL-999")
+        product = qa_engine.get_product_by_model("NOT-A-REAL-IOO-MODEL-999")
         self.assertIsNone(product)
 
     def test_compare_products(self) -> None:

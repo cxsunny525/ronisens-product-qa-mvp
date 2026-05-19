@@ -1,9 +1,7 @@
-# Ronisens Product QA MVP
+# IOO.pro Product Database Test
 
-Ronisens Product QA MVP is a Streamlit web application for asking questions
-against the current TMS Lite product database. It is designed for remote partner
-testing, early machine-vision lighting selection, and competitive product
-research.
+An IOO.pro internal test system for machine vision lighting product search,
+comparison, data quality review, and selection support.
 
 The app is grounded in local database records. It must not invent product
 models, voltages, wattages, dimensions, datasheet URLs, or source claims. When a

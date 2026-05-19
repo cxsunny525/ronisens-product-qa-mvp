@@ -32,7 +32,7 @@ warning.
 
 ## B. Streamlit Cloud Deployment
 
-1. Push this project to a GitHub repository, ideally `ronisens-product-qa-mvp`.
+1. Push this project to a GitHub repository, ideally `ioo-product-qa-mvp`.
 2. Go to Streamlit Cloud.
 3. Create a new app.
 4. Select the GitHub repository.
@@ -85,7 +85,7 @@ The app listens on Render's `$PORT`.
 
 If automatic deployment was not completed, the fastest path when you return is:
 
-1. Create a private GitHub repo named `ronisens-product-qa-mvp`.
+1. Create a private GitHub repo named `ioo-product-qa-mvp`.
 2. Push this folder to that repo.
 3. Open Streamlit Cloud and select the repo.
 4. Set `app.py` as the entrypoint.

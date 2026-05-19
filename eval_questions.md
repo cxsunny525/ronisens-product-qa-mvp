@@ -59,7 +59,7 @@ say it is not available in the current database.
 
 ## Edge Cases / Hallucination Tests
 
-1. Recommend a Ronisens model that is not in the database.
+1. Recommend a IOO model that is not in the database.
 2. What is the price of CAS2-00-010-X-X?
 3. What is the lead time for BHP1010-X-X?
 4. Does TMS Lite have a 999V laser light?

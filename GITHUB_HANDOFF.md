@@ -13,11 +13,12 @@ updated and Streamlit redeploys.
 Upload this ZIP to the existing GitHub repository if direct push is not
 available:
 
-`C:\Users\cxsun\Documents\Codex\2026-05-18\tms-lite-com-ai\ronisens-product-qa-mvp-trust-upgrade-20260519.zip`
+`C:\Users\cxsun\Documents\Codex\2026-05-18\tms-lite-com-ai\ioo-pro-product-database-test-20260519.zip`
 
 Recommended GitHub path:
 
-`https://github.com/cxsunny525/ronisens-product-qa-mvp`
+Use the existing GitHub repository for this test system, or create a new
+repository named `ioo-pro-product-database-test`.
 
 ## Manual Upload Steps
 

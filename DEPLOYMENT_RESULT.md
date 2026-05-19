@@ -40,7 +40,7 @@ OPENAI_API_KEY=optional
 
 ## Fastest Path To A Public Test URL
 
-1. Create a private GitHub repo named `ronisens-product-qa-mvp`.
+1. Create a private GitHub repo named `ioo-product-qa-mvp`.
 2. Push this folder using the steps in `GITHUB_HANDOFF.md`.
 3. Open Streamlit Cloud.
 4. Create a new app from the GitHub repo.

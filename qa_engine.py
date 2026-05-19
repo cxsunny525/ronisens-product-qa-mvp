@@ -961,7 +961,7 @@ def _response(
 
 def _apply_openai_polish(question: str, local_result: dict[str, Any]) -> dict[str, Any]:
     api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key or os.getenv("RONISENS_ENABLE_OPENAI_POLISH", "").lower() not in {"1", "true", "yes"}:
+    if not api_key or os.getenv("IOO_ENABLE_OPENAI_POLISH", "").lower() not in {"1", "true", "yes"}:
         return local_result
     try:
         from openai import OpenAI  # type: ignore
@@ -1693,7 +1693,7 @@ def answer_question(question: str, mode: str = "strict") -> dict[str, Any]:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Ask the Ronisens Product QA engine.")
+    parser = argparse.ArgumentParser(description="Ask the IOO.pro Product QA engine.")
     parser.add_argument("question", nargs="+")
     parser.add_argument("--mode", choices=["strict", "exploratory"], default="strict")
     args = parser.parse_args()

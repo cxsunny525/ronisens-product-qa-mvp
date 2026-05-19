@@ -12,8 +12,8 @@ import qa_engine
 import verifier
 
 
-APP_TITLE = "Ronisens Product QA MVP"
-APP_SUBTITLE = "TMS Lite product database assistant for machine vision lighting selection and competitive research."
+APP_TITLE = "IOO.pro Product Database Test"
+APP_SUBTITLE = "Machine vision lighting product database test for product search, comparison, and selection support."
 LOG_DIR = Path("logs")
 FEEDBACK_PATH = LOG_DIR / "feedback.csv"
 
@@ -147,10 +147,11 @@ def sidebar() -> None:
     st.sidebar.divider()
     st.sidebar.caption("Current MVP limitations")
     st.sidebar.markdown(
-        "- Current database only covers TMS Lite.\n"
-        "- Answers are based on scraped database records.\n"
+        "- Current database covers TMS Lite.\n"
+        "- Answers are based on scraped and normalized product records.\n"
         "- Selection recommendations are preliminary.\n"
-        "- Missing values are shown as not available."
+        "- Missing values are shown as not available.\n"
+        "- This is an IOO.pro internal test system."
     )
     st.sidebar.caption("QA modes")
     st.sidebar.markdown(
