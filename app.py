@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import os
 from datetime import datetime
 from pathlib import Path
@@ -8,8 +9,7 @@ from pathlib import Path
 import streamlit as st
 
 import qa_engine
-import strict_qa_adapter
-import zh_qa_adapter
+import verifier
 
 
 APP_TITLE = "Ronisens Product QA MVP"
@@ -54,13 +54,25 @@ def answer_summary(answer: str, limit: int = 240) -> str:
     return text[:limit]
 
 
-def save_feedback(question: str, result: dict, feedback: str) -> None:
+def save_feedback(question: str, result: dict, feedback: str, rating: str, suspected_issue_type: str) -> None:
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     exists = FEEDBACK_PATH.exists()
+    matched_models = ", ".join(row.get("model", "") for row in result.get("matched_products", []) if row.get("model"))
     with FEEDBACK_PATH.open("a", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(
             f,
-            fieldnames=["timestamp", "question", "answer_summary", "confidence", "mode", "feedback"],
+            fieldnames=[
+                "timestamp",
+                "question",
+                "mode",
+                "answer_summary",
+                "matched_models",
+                "confidence",
+                "user_feedback",
+                "user_rating",
+                "suspected_issue_type",
+                "resolved_status",
+            ],
         )
         if not exists:
             writer.writeheader()
@@ -68,10 +80,14 @@ def save_feedback(question: str, result: dict, feedback: str) -> None:
             {
                 "timestamp": datetime.now().isoformat(timespec="seconds"),
                 "question": question,
-                "answer_summary": answer_summary(result.get("answer", "")),
-                "confidence": result.get("confidence", ""),
                 "mode": result.get("mode", ""),
-                "feedback": feedback,
+                "answer_summary": answer_summary(result.get("answer", "")),
+                "matched_models": matched_models,
+                "confidence": result.get("confidence", ""),
+                "user_feedback": feedback,
+                "user_rating": rating,
+                "suspected_issue_type": suspected_issue_type,
+                "resolved_status": "open",
             }
         )
 
@@ -95,6 +111,11 @@ def display_dataframe(rows: list[dict], key: str) -> None:
         "datasheet_url",
         "score",
         "match_reasons",
+        "data_source_summary",
+        "voltage_source",
+        "power_source",
+        "category_source",
+        "datasheet_url_source",
     ]
     normalized = []
     for row in rows:
@@ -131,6 +152,11 @@ def sidebar() -> None:
         "- Selection recommendations are preliminary.\n"
         "- Missing values are shown as not available."
     )
+    st.sidebar.caption("QA modes")
+    st.sidebar.markdown(
+        "- **Strict mode**: exact database-backed matches only.\n"
+        "- **Exploratory mode**: similar matches allowed, confidence capped at medium."
+    )
 
 
 EXAMPLE_QUESTIONS = [
@@ -160,6 +186,15 @@ def main() -> None:
     if "question" not in st.session_state:
         st.session_state["question"] = EXAMPLE_QUESTIONS[0]
 
+    qa_mode = st.radio(
+        "Answer mode",
+        ["Strict mode", "Exploratory mode"],
+        index=0,
+        horizontal=True,
+        help="Strict mode only returns explicit database matches. Exploratory mode can show similar matches and will label them.",
+    )
+    engine_mode = "strict" if qa_mode == "Strict mode" else "exploratory"
+
     cols = st.columns(4)
     for i, example in enumerate(EXAMPLE_QUESTIONS):
         with cols[i % 4]:
@@ -171,7 +206,8 @@ def main() -> None:
 
     if ask and question.strip():
         with st.spinner("Searching the current product database..."):
-            result = strict_qa_adapter.answer_question(question.strip())
+            result = qa_engine.answer_question(question.strip(), mode=engine_mode)
+            result = verifier.verify_answer(result)
         st.session_state["last_question"] = question.strip()
         st.session_state["last_result"] = result
 
@@ -185,6 +221,11 @@ def main() -> None:
         c1, c2 = st.columns(2)
         c1.metric("Confidence", str(result.get("confidence", "not available")).upper())
         c2.metric("Mode", str(result.get("mode", "local")).upper())
+
+        warnings = result.get("warnings", [])
+        if warnings:
+            for warning in warnings[:3]:
+                st.warning(warning)
 
         st.subheader("Matched Products")
         display_dataframe(result.get("matched_products", []), "matched_products")
@@ -217,7 +258,55 @@ def main() -> None:
         else:
             st.success("No additional uncertainty was flagged by the engine.")
 
+        with st.expander("Debug / Evidence", expanded=False):
+            st.markdown("**Query interpretation**")
+            st.json(result.get("query_interpretation", {}))
+
+            st.markdown("**Match reason**")
+            match_reason = result.get("match_reason", [])
+            if match_reason:
+                st.dataframe(match_reason, use_container_width=True, hide_index=True)
+            else:
+                st.info("No match reason returned.")
+
+            st.markdown("**Evidence table**")
+            evidence = result.get("evidence", [])
+            if evidence:
+                st.dataframe(evidence, use_container_width=True, hide_index=True)
+            else:
+                st.info("No evidence rows returned.")
+
+            st.markdown("**Verification warnings**")
+            if result.get("warnings"):
+                for warning in result.get("warnings", []):
+                    st.warning(warning)
+            else:
+                st.success("Verifier did not flag unsupported claims.")
+
+            st.markdown("**Raw sources**")
+            st.code(json.dumps(result.get("sources", []), ensure_ascii=False, indent=2), language="json")
+
+            st.markdown("**Missing fields / uncertainty**")
+            st.code(json.dumps(result.get("missing_or_uncertain", []), ensure_ascii=False, indent=2), language="json")
+
+            similar_warnings = [
+                item for item in result.get("match_reason", [])
+                if item.get("similarity_reason") or not item.get("exact_match", True)
+            ]
+            st.markdown("**Similar matches warning**")
+            if similar_warnings:
+                st.warning("These are similar matches, not exact matches.")
+                st.dataframe(similar_warnings, use_container_width=True, hide_index=True)
+            else:
+                st.info("No similar-match warning for this answer.")
+
         st.subheader("Feedback")
+        rating = st.radio("Quick rating", ["👍 Helpful", "👎 Not helpful"], horizontal=True, key="feedback_rating")
+        suspected_issue_type = st.selectbox(
+            "Suspected issue type",
+            ["Other", "Wrong answer", "Missing product", "Bad source", "Bad recommendation"],
+            key="feedback_issue_type",
+        )
         feedback = st.text_area(
             "Was this answer useful? What is wrong or missing?",
             key="feedback_box",
@@ -225,7 +314,7 @@ def main() -> None:
         )
         if st.button("Save feedback"):
             if feedback.strip():
-                save_feedback(last_question, result, feedback.strip())
+                save_feedback(last_question, result, feedback.strip(), rating, suspected_issue_type)
                 st.success(f"Feedback saved to {FEEDBACK_PATH}")
             else:
                 st.info("Please write feedback before saving.")

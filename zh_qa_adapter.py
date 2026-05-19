@@ -45,12 +45,28 @@ LIGHT_TYPE_TERMS = {
 DATASHEET_TERMS = ["datasheet", "\u6570\u636e\u8868", "\u89c4\u683c\u4e66", "\u8d44\u6599", "\u76ee\u5f55", "pdf", "catalog", "catalogue"]
 QUERY_TERMS = ["\u6709\u54ea\u4e9b", "\u54ea\u4e9b", "\u6709\u54ea", "\u6709\u6ca1\u6709", "\u67e5\u8be2", "\u627e", "\u5217\u51fa", "\u4ea7\u54c1", "\u5149\u6e90", "\u578b\u53f7", "\u53c2\u6570"]
 APPLICATION_CUES = ["\u68c0\u6d4b", "\u9009\u578b", "\u9002\u5408", "\u5e94\u8be5", "\u63a8\u8350", "\u5e94\u7528", "\u770b\u4ec0\u4e48\u5149\u6e90"]
+EN_APPLICATION_CUES = ["inspection", "detect", "selection", "suitable", "recommend", "lighting type", "what light"]
+SCRATCH_TERMS = ["scratch", "\u5212\u75d5", "\u522e\u75d5", "\u64e6\u4f24"]
+GLASS_TERMS = ["glass", "\u73bb\u7483", "\u900f\u660e\u4ef6", "\u900f\u660e", "\u4e9a\u514b\u529b", "\u955c\u7247"]
+METAL_TERMS = ["metal", "\u91d1\u5c5e", "\u94dd", "\u94a2", "\u4e0d\u9508\u94a2", "\u94dc", "\u94c1"]
+NO_ANSWER_ZH = "\u76ee\u524d\u7cfb\u7edf\u5c1a\u672a\u6709\u8fd9\u4e2a\u7b54\u6848\u3002\u5f53\u524d MVP \u53ea\u4f1a\u5728\u80fd\u591f\u660e\u786e\u7406\u89e3\u95ee\u9898\uff0c\u5e76\u4e14\u5f53\u524d TMS Lite \u6570\u636e\u5e93\u6216\u5df2\u914d\u7f6e\u89c4\u5219\u4e2d\u6709\u76f4\u63a5\u4f9d\u636e\u65f6\u56de\u7b54\uff1b\u4e3a\u907f\u514d\u8bef\u5bfc\uff0c\u672c\u95ee\u9898\u6682\u4e0d\u505a\u63a8\u6d4b\u3002"
+NO_ANSWER_EN = "The system does not have this answer yet. This MVP only answers when the question is clearly understood and directly supported by the current TMS Lite database or configured rules; to avoid misleading guidance, it will not infer an answer."
 
 APPLICATION_INTENTS = {
+    "glass_scratch": {
+        "keywords": ["\u73bb\u7483", "\u900f\u660e\u4ef6", "\u5212\u75d5", "\u522e\u75d5"],
+        "logic": "\u73bb\u7483\u5212\u75d5\u4e0d\u5e94\u76f4\u63a5\u5957\u7528\u91d1\u5c5e\u5212\u75d5\u903b\u8f91\u3002\u901a\u5e38\u53ef\u5148\u8bc4\u4f30\u4f4e\u89d2\u5ea6/\u6697\u573a\u7167\u660e\uff0c\u8ba9\u8868\u9762\u5212\u4f24\u901a\u8fc7\u6563\u5c04\u53d8\u4eae\uff1b\u5982\u679c\u76ee\u6807\u662f\u8fb9\u7f18\u3001\u5d29\u8fb9\u6216\u8f6e\u5ed3\uff0c\u518d\u8bc4\u4f30\u80cc\u5149\u3002\u900f\u660e\u6750\u6599\u5bf9\u89d2\u5ea6\u3001\u80cc\u666f\u548c\u504f\u632f\u5f88\u654f\u611f\uff0c\u5fc5\u987b\u7528\u6837\u54c1\u9a8c\u8bc1\u3002",
+        "query": "low angle dark field glass scratch DLQ DLA backlight BHL BHH coaxial dome",
+    },
     "metal_scratch": {
-        "keywords": ["\u91d1\u5c5e", "\u5212\u75d5", "\u522e\u75d5", "\u6697\u573a", "\u4f4e\u89d2\u5ea6"],
+        "keywords": ["\u91d1\u5c5e", "\u94dd", "\u94a2", "\u4e0d\u9508\u94a2", "\u94dc", "\u94c1"],
         "logic": "\u91d1\u5c5e\u5212\u75d5\u68c0\u6d4b\u901a\u5e38\u5148\u8003\u8651\u4f4e\u89d2\u5ea6\u6216\u6697\u573a\u7167\u660e\uff0c\u56e0\u4e3a\u63a0\u5c04\u5149\u66f4\u5bb9\u6613\u628a\u8868\u9762\u5212\u75d5\u51f8\u663e\u51fa\u6765\uff1b\u5e73\u6574\u53cd\u5149\u8868\u9762\u4e5f\u53ef\u4ee5\u8bc4\u4f30\u540c\u8f74\u5149\u3002",
         "query": "low angle dark field metal scratch DLQ DLA coaxial",
+    },
+    "surface_scratch": {
+        "keywords": ["\u5212\u75d5", "\u522e\u75d5", "\u64e6\u4f24"],
+        "logic": "\u95ee\u9898\u91cc\u6ca1\u6709\u660e\u786e\u6750\u6599\uff0c\u56e0\u6b64\u53ea\u80fd\u7ed9\u901a\u7528\u8868\u9762\u5212\u75d5\u521d\u6b65\u5efa\u8bae\uff1a\u901a\u5e38\u5148\u8bc4\u4f30\u4f4e\u89d2\u5ea6/\u6697\u573a\uff0c\u8ba9\u5212\u75d5\u901a\u8fc7\u6563\u5c04\u6216\u9634\u5f71\u5448\u73b0\uff1b\u5982\u679c\u662f\u900f\u660e\u4ef6\u6216\u8fb9\u7f18\u7f3a\u9677\uff0c\u5e94\u53e6\u5916\u8bc4\u4f30\u80cc\u5149\u3002",
+        "query": "low angle dark field scratch DLQ DLA backlight coaxial",
     },
     "transparent_edge": {
         "keywords": ["\u900f\u660e", "\u74f6", "\u8fb9\u7f18"],
@@ -148,6 +164,21 @@ def _response(
     }
 
 
+def _no_answer(is_zh: bool = True) -> dict[str, Any]:
+    return _response(
+        NO_ANSWER_ZH if is_zh else NO_ANSWER_EN,
+        [],
+        [],
+        [],
+        [
+            "\u9700\u8981\u5148\u628a\u8be5\u573a\u666f\u52a0\u5165\u53d7\u652f\u6301\u7684\u9009\u578b\u89c4\u5219\uff0c\u6216\u5728\u6570\u636e\u5e93\u4e2d\u8865\u5145\u53ef\u6838\u5bf9\u7684\u8bc1\u636e\u3002"
+            if is_zh
+            else "Add this scenario to supported selection rules or add verifiable database evidence before answering.",
+        ],
+        "low",
+    )
+
+
 def _extract_models(question: str) -> list[str]:
     compact = re.sub(r"\s+", "", question.upper())
     found = []
@@ -163,14 +194,42 @@ def _extract_models(question: str) -> list[str]:
 def _select_application_intent(question: str) -> str | None:
     if not _contains_any(question, APPLICATION_CUES):
         return None
+    if _contains_any(question, SCRATCH_TERMS):
+        if _contains_any(question, METAL_TERMS):
+            return "metal_scratch"
+        return "unsupported_application"
+    if _contains_any(question, GLASS_TERMS):
+        return "unsupported_application"
     for intent, payload in APPLICATION_INTENTS.items():
         if _contains_any(question, payload["keywords"]):
             return intent
     return None
 
 
+def _select_english_application_intent(question: str) -> str | None:
+    if not _contains_any(question, EN_APPLICATION_CUES):
+        return None
+    if _contains_any(question, SCRATCH_TERMS):
+        if _contains_any(question, GLASS_TERMS):
+            return "unsupported_application"
+        if _contains_any(question, METAL_TERMS):
+            return "metal_scratch"
+        return "unsupported_application"
+    low = question.lower()
+    if "transparent" in low and ("edge" in low or "bottle" in low):
+        return "transparent_edge"
+    if "pcb" in low:
+        return "pcb"
+    if "backlight" in low:
+        return "backlight"
+    return "unsupported_application"
+
+
 def answer_question(question: str) -> dict[str, Any]:
     if not _has_chinese(question):
+        english_intent = _select_english_application_intent(question)
+        if english_intent == "unsupported_application":
+            return _no_answer(False)
         return ORIGINAL_ANSWER_QUESTION(question)
 
     models = _extract_models(question)
@@ -226,6 +285,8 @@ def answer_question(question: str) -> dict[str, Any]:
 
     selected_intent = _select_application_intent(question)
     if selected_intent:
+        if selected_intent == "unsupported_application":
+            return _no_answer(True)
         payload = APPLICATION_INTENTS[selected_intent]
         hits = qa_engine.search_products(payload["query"], limit=10)
         missing = ["\u9009\u578b\u5efa\u8bae\u53ea\u662f\u521d\u6b65\u5efa\u8bae\uff0c\u9700\u8981\u7ed3\u5408\u6837\u54c1\u3001\u51e0\u4f55\u7ed3\u6784\u3001\u5de5\u4f5c\u8ddd\u79bb\u3001\u76f8\u673a/\u955c\u5934\u548c\u5b9e\u9645\u56fe\u50cf\u9a8c\u8bc1\u3002"]
