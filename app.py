@@ -8,6 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 import qa_engine
+import zh_qa_adapter
 
 
 APP_TITLE = "Ronisens Product QA MVP"
@@ -134,11 +135,12 @@ def sidebar() -> None:
 EXAMPLE_QUESTIONS = [
     "What TMS Lite ring lights are in the database?",
     "Which products are 24V?",
-    "Find red lights with datasheets.",
+    "\u6761\u5f62\u7684\u5149\u6e90\u6709\u54ea\u4e9b\uff1f",
+    "\u54ea\u4e9b\u4ea7\u54c1\u6709\u89c4\u683c\u4e66\uff1f",
     "Compare CAS2-00-010-X-X, BHP1010-X-X, DLQ2-90-050-1-X.",
-    "Which products are missing datasheets?",
-    "What lighting type is suitable for metal scratch inspection?",
-    "What products may be useful for backlight inspection?",
+    "\u54ea\u4e9b\u4ea7\u54c1\u6ca1\u6709\u7535\u538b\u53c2\u6570\uff1f",
+    "\u68c0\u6d4b\u91d1\u5c5e\u5212\u75d5\u5e94\u8be5\u770b\u4ec0\u4e48\u5149\u6e90\uff1f",
+    "\u900f\u660e\u74f6\u8fb9\u7f18\u68c0\u6d4b\u9002\u5408\u4ec0\u4e48\u5149\u6e90\uff1f",
     "Which fields are missing most often?",
 ]
 
@@ -168,7 +170,7 @@ def main() -> None:
 
     if ask and question.strip():
         with st.spinner("Searching the current product database..."):
-            result = qa_engine.answer_question(question.strip())
+            result = zh_qa_adapter.answer_question(question.strip())
         st.session_state["last_question"] = question.strip()
         st.session_state["last_result"] = result
 
