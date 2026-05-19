@@ -1,58 +1,41 @@
 # GitHub Handoff
 
-This Codex environment does not currently have `git` or `gh` available on PATH.
-The GitHub connector can identify the logged-in user as `cxsunny525`, but the
-available connector toolset in this session does not expose repository creation,
-and no accessible repositories were listed. I therefore could not create,
-commit, or push a GitHub repository from here.
+## Current Status
 
-Recommended repo name:
+The trust and traceability upgrade is complete locally. The current workspace
+contains all updated code, reports, and generated eval/data-quality outputs.
 
-```text
-ronisens-product-qa-mvp
-```
+The Streamlit Cloud app will only show these changes after the GitHub repo is
+updated and Streamlit redeploys.
 
-Recommended visibility:
+## Prepared Upload ZIP
 
-```text
-Private
-```
+Upload this ZIP to the existing GitHub repository if direct push is not
+available:
 
-Manual push steps:
+`C:\Users\cxsun\Documents\Codex\2026-05-18\tms-lite-com-ai\ronisens-product-qa-mvp-trust-upgrade-20260519.zip`
 
-```bash
-git init
-git branch -M main
-git add .
-git commit -m "Build Ronisens Product QA MVP"
-git remote add origin https://github.com/YOUR_ORG_OR_USER/ronisens-product-qa-mvp.git
-git push -u origin main
-```
+Recommended GitHub path:
 
-Do not commit:
+`https://github.com/cxsunny525/ronisens-product-qa-mvp`
 
-- `.env`
-- `.streamlit/secrets.toml`
-- `logs/`
-- secrets, tokens, or passwords
+## Manual Upload Steps
 
-Files that should be committed for the MVP include:
+1. Open the GitHub repository.
+2. Click `Add file` -> `Upload files`.
+3. Drag the files from the ZIP into the repo root.
+4. Confirm overwrite for existing files.
+5. Commit directly to `main` with this message:
 
-- `app.py`
-- `qa_engine.py`
-- `test_qa_engine.py`
-- `requirements.txt`
-- `data/tms_lite_full.db`
-- `data/exports/*.csv`
-- `canonical_fields.yaml`
-- `data_quality_report.md`
-- `unmapped_fields.md`
-- `README.md`
-- `DEPLOYMENT.md`
-- `HANDOFF_TO_PARTNER.md`
-- `DEPLOYMENT_RESULT.md`
-- `TEST_REPORT.md`
-- `eval_questions.md`
+`Build trust and traceability layer`
 
-If GitHub OAuth is needed, complete it in the browser. Do not paste personal
-access tokens into chat or code.
+6. Open Streamlit Cloud.
+7. Reboot/redeploy the app.
+
+## Expected After Redeploy
+
+- App shows `Strict mode` and `Exploratory mode`.
+- Strict mode is default.
+- Debug / Evidence expander is available.
+- Unsupported questions return no-answer messages instead of guessed answers.
+- `eval_report.md` shows 61/61 golden eval cases passing.

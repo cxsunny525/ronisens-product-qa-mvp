@@ -48,6 +48,26 @@ to the CSV exports.
 - Data quality questions: show missing fields and products missing datasheet links.
 - Preliminary selection guidance: suggest candidate light types and database-backed product candidates for applications such as metal scratch inspection, transparent bottle edge detection, PCB inspection, and backlight inspection.
 
+## Trust And Traceability
+
+The current version has two QA modes:
+
+- **Strict mode** is the default. It only returns exact database-backed matches.
+  If there is no exact match, it says `No exact match found in the current
+  database` or `当前数据库未记录明确匹配结果`.
+- **Exploratory mode** can return similar matches, but it labels them with
+  `These are similar matches, not exact matches` and caps confidence at medium.
+
+Every `answer_question()` result now includes:
+
+- `evidence`: product, field, raw value, normalized value, source table, source URL, confidence, and reason.
+- `match_reason`: why a product was selected and whether it was exact, partial, or inferred.
+- `query_interpretation`: detected models, requested filters, application intent, language, and mode.
+- `warnings`: verifier and uncertainty warnings.
+
+`verifier.py` checks whether matched products, specs, sources, and model-like
+claims are grounded in the current database or `manual_overrides.yaml`.
+
 ## What The MVP Cannot Do Yet
 
 - It does not cover brands beyond TMS Lite.
@@ -55,6 +75,8 @@ to the CSV exports.
 - It does not provide pricing, inventory, lead time, or lifecycle status.
 - It does not replace sample testing or optical engineering validation.
 - It cannot answer questions using data not present in the current database.
+- It does not answer unsupported application questions by analogy. For example,
+  glass scratch inspection is not treated as metal scratch inspection.
 
 ## Local Run
 
@@ -106,15 +128,25 @@ Run the core engine tests:
 python test_qa_engine.py
 ```
 
+Run the golden evaluation suite:
+
+```powershell
+python eval_runner.py
+```
+
 If `pytest` is installed:
 
 ```powershell
 python -m pytest
 ```
 
-The evaluation question set is in:
+Evaluation artifacts:
 
-- `eval_questions.md`
+- `golden_eval_questions.yaml`
+- `eval_results.csv`
+- `eval_report.md`
+
+Current golden eval result: 61/61 passed, 100.0%.
 
 ## Quality And Field Dictionary
 
@@ -130,6 +162,19 @@ Unmapped raw fields:
 
 - `unmapped_fields.md`
 
+Automated data issue outputs:
+
+- `data_quality_tools.py`
+- `data_issues.csv`
+- `data_issues_summary.md`
+
+Manual, human-reviewed corrections can be added in:
+
+- `manual_overrides.yaml`
+
+Manual overrides are loaded at runtime, take priority over scraped values, and
+do not modify `data/tms_lite_full.db`.
+
 The field dictionary is intended for future adapters for CCS, OPT, Keyence,
 Smart Vision Lights, Basler, and other machine-vision suppliers.
 
@@ -143,10 +188,14 @@ Fields:
 
 - `timestamp`
 - `question`
-- `answer_summary`
-- `confidence`
 - `mode`
-- `feedback`
+- `answer_summary`
+- `matched_models`
+- `confidence`
+- `user_feedback`
+- `user_rating`
+- `suspected_issue_type`
+- `resolved_status`
 
 `logs/` is ignored by Git.
 
@@ -218,10 +267,10 @@ current MVP should use `data/tms_lite_full.db` as-is.
 
 ## Roadmap
 
-1. Review noisy extracted models and duplicate model records.
-2. Resolve redirected datasheet/catalogue URLs to final file URLs.
-3. Add family-specific dimension mapping for A/B/C and diameter fields.
-4. Add explicit application tags and light-type tags.
-5. Add the second brand adapter.
-6. Add vector/RAG retrieval over datasheet text.
+1. Review `data_issues.csv`, especially duplicate models, missing voltage/power, unmapped fields, and unparsed units.
+2. Use `manual_overrides.yaml` for human-verified corrections that should be visible before the next database refresh.
+3. Resolve redirected datasheet/catalogue URLs to final file URLs.
+4. Add family-specific dimension mapping for A/B/C and diameter fields.
+5. Add explicit application tags and light-type tags.
+6. Expand the golden eval set before adding OpenAI API or a second brand.
 7. Add authenticated hosted feedback storage.
