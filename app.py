@@ -8,6 +8,7 @@ from pathlib import Path
 import streamlit as st
 
 import qa_engine
+import strict_qa_adapter
 import zh_qa_adapter
 
 
@@ -170,7 +171,7 @@ def main() -> None:
 
     if ask and question.strip():
         with st.spinner("Searching the current product database..."):
-            result = zh_qa_adapter.answer_question(question.strip())
+            result = strict_qa_adapter.answer_question(question.strip())
         st.session_state["last_question"] = question.strip()
         st.session_state["last_result"] = result
 
