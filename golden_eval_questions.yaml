@@ -67,11 +67,11 @@ tests:
   - id: parameter_filter_003
     question: "Find red lights with datasheets."
     mode: strict
-    expected_behavior: "Strict filter should require red evidence and datasheet URL."
-    must_include: ["Found"]
+    expected_behavior: "Strict filter should not treat unparsed search text as verified red color evidence."
+    must_include: ["No exact match"]
     must_not_include: ["not exact"]
-    expected_confidence: high
-    notes: "Color plus datasheet filter."
+    expected_confidence: medium
+    notes: "The current normalized color field does not contain verified red-light records."
   - id: parameter_filter_004
     question: "Which products are coaxial light?"
     mode: strict
@@ -102,8 +102,8 @@ tests:
     expected_behavior: "Strict filter should combine color and light_type if available, or say no exact match."
     must_include: []
     must_not_include: ["invented"]
-    expected_confidence: high
-    notes: "May be no exact match depending on data."
+    expected_confidence: medium
+    notes: "No verified normalized blue backlight color records are currently available."
   - id: parameter_filter_008
     question: "Which products are UV?"
     mode: strict

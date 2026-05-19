@@ -58,6 +58,10 @@ The current version has two QA modes:
 - **Exploratory mode** can return similar matches, but it labels them with
   `These are similar matches, not exact matches` and caps confidence at medium.
 
+In Strict mode, color filters such as red or blue require a parsed color field.
+Generic page text is not enough evidence, because returning `color = not
+available` as a red/blue match would be misleading.
+
 Every `answer_question()` result now includes:
 
 - `evidence`: product, field, raw value, normalized value, source table, source URL, confidence, and reason.

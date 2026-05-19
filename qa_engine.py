@@ -1432,10 +1432,16 @@ def _row_matches_exact_filters(row: dict[str, Any], filters: dict[str, Any]) -> 
         fields.append("light_type")
         reasons.append(f"light_type matches {value}")
     if filters.get("color"):
-        hay = _text(" ".join(str(row.get(key) or "") for key in ["color", "model", "family", "category", "search_text"]))
-        if not any(color in hay for color in filters["color"]):
+        # Strict mode must not treat generic page/search text as a verified
+        # color field. If color was not parsed into the canonical row, the
+        # answer should be "not recorded" instead of returning a misleading
+        # product row with color = not available.
+        color_value = _text(row.get("color"))
+        if color_value in {"", "not available", "none"}:
             return False, fields, reasons
-        fields.append("color" if row.get("color") not in (None, "", "not available") else "search_text")
+        if not any(color in color_value for color in filters["color"]):
+            return False, fields, reasons
+        fields.append("color")
         reasons.append(f"color evidence matches {', '.join(filters['color'])}")
     return bool(fields), fields, reasons
 

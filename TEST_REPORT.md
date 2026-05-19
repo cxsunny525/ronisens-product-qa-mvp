@@ -61,6 +61,7 @@
 - Prevented similar model substitution such as `CAS2-00-010-X-Y` -> `CAS2-00-010-X-X` in Strict mode.
 - Rejected unsupported application questions such as glass scratch or Mars surface inspection.
 - Rejected unsupported business/lifecycle fields such as price, inventory, lead time, warranty, and discontinued status.
+- Tightened color filtering so Strict mode no longer accepts `search_text` as verified red/blue color evidence when the normalized `color` field is `not available`.
 
 ## Failed / Blocked Items
 
