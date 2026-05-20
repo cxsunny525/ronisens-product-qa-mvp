@@ -30,6 +30,13 @@ class MultiBrandAdvancedIlluminationTests(unittest.TestCase):
         self.assertTrue(result["matched_products"])
         self.assertTrue(all(row.get("brand") for row in result["matched_products"]))
 
+    def test_all_brands_application_recommendation_is_brand_balanced(self) -> None:
+        question = "\u6709\u54ea\u4e9b\u4ea7\u54c1\u9002\u5408\u505a\u74f6\u5b50\u8fb9\u7f18\u68c0\u6d4b"
+        result = qa_engine.answer_question(question, brand_filter=None, mode="strict")
+        brands = {row.get("brand") for row in result["matched_products"]}
+        self.assertIn("TMS LITE", brands)
+        self.assertIn("Advanced Illumination", brands)
+
     def test_fake_advanced_model_not_replaced_by_tms(self) -> None:
         result = qa_engine.answer_question("Do you have an Advanced Illumination model called FAKE-AI-123?", mode="strict")
         self.assertFalse(result["matched_products"])

@@ -17,10 +17,12 @@ except Exception:  # pragma: no cover - app can still run without overrides.
 
 ROOT = Path(__file__).resolve().parent
 UNIFIED_DB_PATH = ROOT / "data" / "ioo_product_test.db"
+ROOT_UNIFIED_DB_PATH = ROOT / "ioo_product_test.db"
 TMS_DB_PATH = ROOT / "data" / "tms_lite_full.db"
-DEFAULT_DB_PATH = UNIFIED_DB_PATH if UNIFIED_DB_PATH.exists() else TMS_DB_PATH
+DEFAULT_DB_PATH = UNIFIED_DB_PATH if UNIFIED_DB_PATH.exists() else ROOT_UNIFIED_DB_PATH if ROOT_UNIFIED_DB_PATH.exists() else TMS_DB_PATH
 EXPORT_DIR = ROOT / "data" / "exports"
 MANUAL_OVERRIDES_PATH = ROOT / "manual_overrides.yaml"
+ADVANCED_ILLUMINATION_RAW_PATH = ROOT / "advanced_illumination_raw_products.jsonl"
 NO_EXACT_ZH = "当前数据库未记录明确匹配结果。"
 NO_EXACT_EN = "No exact match found in the current database."
 NO_SUPPORTED_ANSWER_ZH = "目前系统尚未有这个答案。当前 MVP 只会在能够明确理解问题，并且当前 TMS Lite 数据库或已配置规则中有直接依据时回答；为避免误导，本问题暂不做推测。"
@@ -220,6 +222,7 @@ class Dataset:
 
 _DATASET: Dataset | None = None
 _MANUAL_OVERRIDES: dict[str, Any] | None = None
+_AUTO_IMPORT_ATTEMPTED = False
 
 
 def _norm(value: Any) -> str:
@@ -518,12 +521,43 @@ def _csv_dataset() -> Dataset:
     )
 
 
+def _ensure_unified_database_available() -> None:
+    """Create the unified pilot database if text import artifacts are present.
+
+    Streamlit Cloud uploads sometimes miss SQLite binaries when users drag files
+    manually. The Advanced Illumination JSONL and importer are text files, so
+    this startup repair builds data/ioo_product_test.db from the preserved TMS
+    database without re-crawling anything.
+    """
+    global _AUTO_IMPORT_ATTEMPTED
+    if _AUTO_IMPORT_ATTEMPTED or UNIFIED_DB_PATH.exists() or ROOT_UNIFIED_DB_PATH.exists():
+        return
+    _AUTO_IMPORT_ATTEMPTED = True
+    if not TMS_DB_PATH.exists() or not ADVANCED_ILLUMINATION_RAW_PATH.exists():
+        return
+    try:
+        from import_advanced_illumination import import_records
+
+        import_records(ADVANCED_ILLUMINATION_RAW_PATH, UNIFIED_DB_PATH)
+    except Exception:
+        # Keep the app usable with the original TMS database if repair fails.
+        return
+
+
 def load_database(force: bool = False, db_path: str | Path | None = None) -> Dataset:
     """Load SQLite product data, falling back to exported CSV files if needed."""
     global _DATASET
     if _DATASET is not None and not force:
         return _DATASET
-    path = Path(db_path) if db_path else DEFAULT_DB_PATH
+    if db_path is None:
+        _ensure_unified_database_available()
+    path = Path(db_path) if db_path else (
+        UNIFIED_DB_PATH
+        if UNIFIED_DB_PATH.exists()
+        else ROOT_UNIFIED_DB_PATH
+        if ROOT_UNIFIED_DB_PATH.exists()
+        else TMS_DB_PATH
+    )
     try:
         if path.exists():
             _DATASET = _sqlite_dataset(path)
@@ -801,6 +835,45 @@ def search_products(query: str, brand_filter: str | None = None, limit: int = 20
             hits.append(row)
     hits.sort(key=lambda row: (-float(row["score"]), row["model"]))
     return hits[:limit]
+
+
+def _brand_balanced_search(query: str, brand_filter: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
+    """Return cross-brand candidates without letting the largest brand dominate.
+
+    TMS Lite currently has hundreds of backlight/ring records while Advanced
+    Illumination is a small pilot import. In All Brands mode, pure score sorting
+    can fill the first page with TMS Lite before any Advanced Illumination
+    record appears. For selection-style answers, show a small top slice per
+    brand first, then fill remaining slots by score.
+    """
+    active_brand = _canonical_brand_name(brand_filter)
+    if active_brand:
+        return search_products(query, brand_filter=active_brand, limit=limit)
+
+    brand_names = [row["brand"] for row in get_brands() if row.get("brand") and row.get("brand") != "not available"]
+    if not brand_names:
+        return search_products(query, limit=limit)
+
+    per_brand_limit = max(1, min(5, limit // max(1, len(brand_names))))
+    selected: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    for brand in brand_names:
+        for hit in search_products(query, brand_filter=brand, limit=per_brand_limit):
+            key = (str(hit.get("brand")), str(hit.get("model")))
+            if key not in seen:
+                selected.append(hit)
+                seen.add(key)
+
+    if len(selected) < limit:
+        for hit in search_products(query, limit=limit * 3):
+            key = (str(hit.get("brand")), str(hit.get("model")))
+            if key not in seen:
+                selected.append(hit)
+                seen.add(key)
+            if len(selected) >= limit:
+                break
+
+    return selected[:limit]
 
 
 def get_product_by_model(model: str, brand_filter: str | None = None) -> dict[str, Any] | None:
@@ -1288,11 +1361,11 @@ def _legacy_answer_question(question: str) -> dict[str, Any]:
     selected_intent = _select_application_intent(question)
     if selected_intent:
         payload = APPLICATION_INTENTS[selected_intent]
-        hits = search_products(payload["query"], limit=10)
+        hits = _brand_balanced_search(payload["query"], limit=10)
         answer = (
-            f"\u521d\u6b65\u9009\u578b\u903b\u8f91\uff1a{APPLICATION_LOGIC_ZH.get(selected_intent, payload['logic'])} \u4e0b\u65b9\u5019\u9009\u4ea7\u54c1\u53ea\u6765\u81ea\u5f53\u524d TMS Lite \u6570\u636e\u5e93\u3002"
+            f"\u521d\u6b65\u9009\u578b\u903b\u8f91\uff1a{APPLICATION_LOGIC_ZH.get(selected_intent, payload['logic'])} \u4e0b\u65b9\u5019\u9009\u4ea7\u54c1\u6765\u81ea\u5f53\u524d\u9009\u62e9\u7684\u6570\u636e\u5e93\u8303\u56f4\u3002"
             if is_zh
-            else f"Initial lighting-selection logic: {payload['logic']} The products below are candidates retrieved from the current TMS Lite database only."
+            else f"Initial lighting-selection logic: {payload['logic']} The products below are candidates retrieved from the current selected database scope."
         )
         missing = [
             "\u9009\u578b\u5efa\u8bae\u53ea\u662f\u521d\u6b65\u5efa\u8bae\uff0c\u9700\u8981\u7ed3\u5408\u6837\u54c1\u3001\u51e0\u4f55\u7ed3\u6784\u3001\u5de5\u4f5c\u8ddd\u79bb\u3001\u76f8\u673a/\u955c\u5934\u548c\u5b9e\u9645\u56fe\u50cf\u9a8c\u8bc1\u3002"
@@ -1769,7 +1842,7 @@ def _strict_answer_question(question: str, brand_filter: str | None = None) -> d
     selected_intent = _supported_application_intent(question)
     if selected_intent:
         payload = APPLICATION_INTENTS[selected_intent]
-        hits = search_products(payload["query"], brand_filter=active_brand, limit=10)
+        hits = _brand_balanced_search(payload["query"], brand_filter=active_brand, limit=10)
         if not hits:
             return _no_supported_answer(question, "strict", active_brand)
         sources = _sources_from_hits(hits)
@@ -1791,7 +1864,7 @@ def _strict_answer_question(question: str, brand_filter: str | None = None) -> d
                 )
             )
         answer = (
-            f"初步选型逻辑：{APPLICATION_LOGIC_ZH.get(selected_intent, payload['logic'])} 下方候选产品只来自当前 TMS Lite 数据库；这不是最终选型结论。"
+            f"初步选型逻辑：{APPLICATION_LOGIC_ZH.get(selected_intent, payload['logic'])} 下方候选产品来自当前选择的数据库范围；这不是最终选型结论。"
             if is_zh
             else f"Initial selection logic: {payload['logic']} The candidates below come only from the current database scope and are not a final selection conclusion."
         )
