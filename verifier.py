@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import re
+import sqlite3
 from typing import Any
 
 import qa_engine
@@ -42,6 +43,14 @@ def _all_source_urls() -> set[str]:
         for key in ["url", "final_url", "source_url"]:
             if asset.get(key):
                 urls.add(str(asset[key]))
+    if ds.db_path:
+        try:
+            conn = sqlite3.connect(ds.db_path)
+            for row in conn.execute("SELECT url FROM knowledge_documents WHERE url IS NOT NULL AND url != ''"):
+                urls.add(str(row[0]))
+            conn.close()
+        except Exception:
+            pass
     return urls
 
 

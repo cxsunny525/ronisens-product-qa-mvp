@@ -198,6 +198,45 @@ EXAMPLE_QUESTIONS = [
     "Which fields are missing most often?",
 ]
 
+KNOWLEDGE_QUERY_TERMS = [
+    "camera",
+    "lens",
+    "shutter",
+    "resolution",
+    "field of view",
+    "working distance",
+    "focal length",
+    "telecentric",
+    "exposure",
+    "pixel",
+    "sensor",
+    "why",
+    "how",
+    "difference",
+    "select",
+    "\u76f8\u673a",
+    "\u955c\u5934",
+    "\u5feb\u95e8",
+    "\u5206\u8fa8\u7387",
+    "\u89c6\u91ce",
+    "\u5de5\u4f5c\u8ddd\u79bb",
+    "\u7126\u8ddd",
+    "\u8fdc\u5fc3",
+    "\u66dd\u5149",
+    "\u50cf\u7d20",
+    "\u4f20\u611f\u5668",
+    "\u4e3a\u4ec0\u4e48",
+    "\u5982\u4f55",
+    "\u600e\u4e48",
+    "\u533a\u522b",
+    "\u9009\u62e9",
+]
+
+
+def should_use_knowledge_flow(question: str) -> bool:
+    text = str(question or "").lower()
+    return any(term.lower() in text for term in KNOWLEDGE_QUERY_TERMS)
+
 
 def render_product_qa() -> None:
     st.subheader("Ask a product question")
@@ -230,9 +269,15 @@ def render_product_qa() -> None:
     ask = st.button("Ask", type="primary")
 
     if ask and question.strip():
-        with st.spinner("Searching the current product database..."):
-            result = qa_engine.answer_question(question.strip(), brand_filter=brand_filter, mode=engine_mode)
-            result = verifier.verify_answer(result)
+        use_knowledge = should_use_knowledge_flow(question)
+        spinner_text = "Searching knowledge base and product database..." if use_knowledge else "Searching the current product database..."
+        with st.spinner(spinner_text):
+            if use_knowledge:
+                result = answer_engine.answer_question(question.strip(), brand_filter=brand_filter, mode=engine_mode)
+                result = verifier.verify_answer(result)
+            else:
+                result = qa_engine.answer_question(question.strip(), brand_filter=brand_filter, mode=engine_mode)
+                result = verifier.verify_answer(result)
         st.session_state["last_question"] = question.strip()
         st.session_state["last_result"] = result
 
@@ -242,6 +287,10 @@ def render_product_qa() -> None:
         st.divider()
         st.subheader("Answer")
         st.write(result.get("answer", ""))
+
+        if result.get("knowledge_answer"):
+            with st.expander("Knowledge Answer", expanded=True):
+                st.write(result.get("knowledge_answer", ""))
 
         c1, c2 = st.columns(2)
         c1.metric("Confidence", str(result.get("confidence", "not available")).upper())
