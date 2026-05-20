@@ -70,7 +70,8 @@ def _spec_value_exists(model: str, field_name: str, raw_value: Any, normalized_v
         spec_model = spec.get("model_normalized") or _norm(spec.get("model"))
         if _norm(spec_model) != target_model:
             continue
-        if target_field and target_field not in _norm(spec.get("spec_name")) and _norm(spec.get("spec_name")) not in target_field:
+        spec_fields = [_norm(spec.get("spec_name")), _norm(spec.get("raw_field")), _norm(spec.get("canonical_field"))]
+        if target_field and not any(target_field in field or field in target_field for field in spec_fields if field):
             continue
         if _norm(spec.get("raw_value")) in values or _norm(spec.get("normalized_value")) in values:
             return True

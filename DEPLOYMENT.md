@@ -81,6 +81,18 @@ OPENAI_API_KEY=optional-openai-key
 
 The app listens on Render's `$PORT`.
 
+## Multi-Brand Update
+
+The deployed app should include `data/ioo_product_test.db`. This unified test database preserves TMS Lite records and adds the Advanced Illumination pilot import. Keep `data/tms_lite_full.db` in the repo as the untouched source database.
+
+After pushing the update to GitHub, Streamlit Cloud should redeploy automatically. In the app, confirm the sidebar shows:
+
+- Total brands: 2
+- TMS Lite products: 654
+- Advanced Illumination products: 13
+
+If the hosted app still shows one brand, reboot the Streamlit app and confirm `data/ioo_product_test.db` was uploaded with the repository.
+
 ## D. Fast Manual Deployment Path
 
 If automatic deployment was not completed, the fastest path when you return is:

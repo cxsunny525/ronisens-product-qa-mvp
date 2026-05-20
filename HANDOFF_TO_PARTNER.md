@@ -10,7 +10,7 @@ Placeholder: `ADD_TEST_PASSWORD_HERE`
 
 ## What This MVP Can Do
 
-- Search the current TMS Lite product database.
+- Search the current TMS Lite database and Advanced Illumination pilot data.
 - Look up product models and known parameters.
 - Show product/source URLs and recorded datasheet/document links.
 - Compare several recorded models.
@@ -23,7 +23,7 @@ Placeholder: `ADD_TEST_PASSWORD_HERE`
 
 ## What This MVP Cannot Do Yet
 
-- It only covers TMS Lite.
+- Advanced Illumination is pilot data and still needs human verification.
 - It does not include pricing, stock, lead time, or lifecycle status.
 - It does not guarantee every OneDrive/FutureIP datasheet link resolves to a final PDF.
 - It does not replace real sample testing or engineering validation.
@@ -40,6 +40,10 @@ Placeholder: `ADD_TEST_PASSWORD_HERE`
 - What products may be useful for backlight inspection?
 - Which fields are missing most often?
 - Does TMS Lite have FAKE-ABC-9999?
+- What Advanced Illumination ring lights are in the database?
+- Which Advanced Illumination products are backlights?
+- Show all brands with coaxial lights.
+- Do you have an Advanced Illumination model called FAKE-AI-123?
 
 ## What Feedback To Provide
 
@@ -54,6 +58,8 @@ Please use the feedback box in the app and mention:
 
 ## Important Reminder
 
-The current database only covers TMS Lite. Answers should be judged against the
-source URLs and database records shown in the app. The MVP should not invent
-models, specs, dimensions, or datasheet URLs.
+The current database covers TMS Lite and Advanced Illumination pilot data.
+Use the Brand selector to test `All Brands`, `TMS Lite`, and
+`Advanced Illumination`. Answers should be judged against the source URLs and
+database records shown in the app. The MVP should not invent models, specs,
+dimensions, or datasheet URLs.

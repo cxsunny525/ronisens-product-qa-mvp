@@ -74,7 +74,8 @@ def _contains_none(text: str, needles: list[str]) -> tuple[bool, list[str]]:
 
 def _run_case(case: dict[str, Any]) -> dict[str, Any]:
     mode = case.get("mode") or "strict"
-    result = qa_engine.answer_question(case["question"], mode=mode)
+    brand_filter = case.get("brand_filter")
+    result = qa_engine.answer_question(case["question"], brand_filter=brand_filter, mode=mode)
     verified = verifier.verify_answer(result)
     answer_text = str(verified.get("answer") or "")
     must_include_ok, missing_includes = _contains_all(answer_text, case.get("must_include") or [])
@@ -94,6 +95,7 @@ def _run_case(case: dict[str, Any]) -> dict[str, Any]:
         "id": case.get("id"),
         "question": case.get("question"),
         "mode": mode,
+        "brand_filter": brand_filter or "",
         "passed": passed,
         "expected_behavior": case.get("expected_behavior"),
         "expected_confidence": expected_confidence,
@@ -130,6 +132,7 @@ def write_outputs() -> tuple[Path, Path, dict[str, Any]]:
         "id",
         "question",
         "mode",
+        "brand_filter",
         "passed",
         "expected_behavior",
         "expected_confidence",

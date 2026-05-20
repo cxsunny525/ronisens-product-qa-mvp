@@ -67,11 +67,11 @@ tests:
   - id: parameter_filter_003
     question: "Find red lights with datasheets."
     mode: strict
-    expected_behavior: "Strict filter should not treat unparsed search text as verified red color evidence."
-    must_include: ["No exact match"]
+    expected_behavior: "Strict filter should use explicit color or wavelength evidence, not generic search text."
+    must_include: ["exact database"]
     must_not_include: ["not exact"]
-    expected_confidence: medium
-    notes: "The current normalized color field does not contain verified red-light records."
+    expected_confidence: high
+    notes: "Advanced Illumination pilot data includes wavelength evidence such as 625nm/660nm."
   - id: parameter_filter_004
     question: "Which products are coaxial light?"
     mode: strict
@@ -102,8 +102,8 @@ tests:
     expected_behavior: "Strict filter should combine color and light_type if available, or say no exact match."
     must_include: []
     must_not_include: ["invented"]
-    expected_confidence: medium
-    notes: "No verified normalized blue backlight color records are currently available."
+    expected_confidence: high
+    notes: "Advanced Illumination pilot data includes wavelength evidence such as 455nm/470nm."
   - id: parameter_filter_008
     question: "Which products are UV?"
     mode: strict
@@ -496,3 +496,254 @@ tests:
     must_not_include: ["confidence high"]
     expected_confidence: medium
     notes: "Fuzzy exploratory."
+
+  - id: ai_lookup_001
+    question: "Does Advanced Illumination have RL322?"
+    mode: strict
+    expected_behavior: "Should find the Advanced Illumination RL322 record only."
+    must_include: ["RL322"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced Illumination model lookup."
+  - id: ai_lookup_002
+    question: "Does Advanced Illumination have DL225?"
+    mode: strict
+    expected_behavior: "Should find the Advanced Illumination DL225 record only."
+    must_include: ["DL225"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced Illumination coaxial model lookup."
+  - id: ai_lookup_003
+    question: "Do you have an Advanced Illumination model called FAKE-AI-123?"
+    mode: strict
+    expected_behavior: "No exact match found in Advanced Illumination database."
+    must_include: ["No exact match"]
+    must_not_include: ["TMS Lite", "recommended product", "available"]
+    expected_confidence: high
+    notes: "Required fake model trap."
+  - id: ai_lookup_004
+    question: "Advanced Illumination 有没有 RL208？"
+    mode: strict
+    expected_behavior: "Should find RL208 as Advanced Illumination only."
+    must_include: ["RL208"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Chinese model lookup."
+  - id: ai_category_001
+    question: "What Advanced Illumination ring lights are in the database?"
+    mode: strict
+    expected_behavior: "Should return Advanced Illumination ring-family records only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced ring category."
+  - id: ai_category_002
+    question: "Which Advanced Illumination products are backlights?"
+    mode: strict
+    expected_behavior: "Should return Advanced Illumination backlights only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced backlight category."
+  - id: ai_category_003
+    question: "Show Advanced Illumination coaxial lights."
+    mode: strict
+    expected_behavior: "Should return DL110/DL225 style coaxial records only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced coaxial category."
+  - id: ai_category_004
+    question: "Advanced Illumination 有哪些环形光源？"
+    mode: strict
+    expected_behavior: "Should return Advanced Illumination ring records only."
+    must_include: []
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Chinese ring category."
+  - id: ai_category_005
+    question: "Advanced Illumination 有哪些背光源？"
+    mode: strict
+    expected_behavior: "Should return Advanced Illumination backlight records only."
+    must_include: []
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Chinese backlight category."
+  - id: ai_param_001
+    question: "Which Advanced Illumination products have datasheets?"
+    mode: strict
+    expected_behavior: "Should only list records with datasheet URLs."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced datasheet filter."
+  - id: ai_param_002
+    question: "Find red Advanced Illumination lights."
+    mode: strict
+    expected_behavior: "Should use recorded wavelength/color evidence only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Red derived from wavelength evidence."
+  - id: ai_param_003
+    question: "Which Advanced Illumination products are 24V?"
+    mode: strict
+    expected_behavior: "Voltage is not imported for pilot records, so no exact match."
+    must_include: ["No exact match"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: medium
+    notes: "No voltage evidence trap."
+  - id: ai_param_004
+    question: "Advanced Illumination 哪些产品有规格书？"
+    mode: strict
+    expected_behavior: "Should return only Advanced Illumination products with datasheet links."
+    must_include: []
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Chinese datasheet filter."
+  - id: ai_missing_001
+    question: "Which Advanced Illumination products are missing voltage information?"
+    mode: strict
+    expected_behavior: "Should report missing voltage for Advanced Illumination only."
+    must_include: ["voltage"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced missing voltage."
+  - id: ai_missing_002
+    question: "Advanced Illumination 哪些产品缺少电压参数？"
+    mode: strict
+    expected_behavior: "Should report missing voltage for Advanced Illumination only."
+    must_include: []
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Chinese missing voltage."
+  - id: multibrand_001
+    question: "Show all brands with coaxial lights."
+    mode: strict
+    expected_behavior: "All Brands mode can show more than one brand and every row must include brand."
+    must_include: ["exact database"]
+    must_not_include: ["No exact match"]
+    expected_confidence: high
+    notes: "All Brands category lookup."
+  - id: multibrand_002
+    question: "Current database brands"
+    mode: strict
+    expected_behavior: "Should list TMS Lite and Advanced Illumination."
+    must_include: ["Advanced Illumination", "TMS LITE"]
+    must_not_include: ["No exact match"]
+    expected_confidence: high
+    notes: "Brand inventory."
+  - id: multibrand_003
+    question: "What ring lights are available across all brands?"
+    mode: strict
+    expected_behavior: "Should return exact ring records and show brand in rows."
+    must_include: ["exact database"]
+    must_not_include: ["similar matches"]
+    expected_confidence: high
+    notes: "All Brands ring lookup."
+  - id: multibrand_004
+    question: "Compare TMS Lite and Advanced Illumination ring lights."
+    mode: strict
+    expected_behavior: "Should either provide database-side comparable records or require explicit models without inventing equivalence."
+    must_include: []
+    must_not_include: ["equivalent guaranteed"]
+    expected_confidence: medium
+    notes: "Cross-brand comparison remains preliminary."
+  - id: cross_brand_trap_001
+    question: "Advanced Illumination 有没有 TMS Lite 的 CAS2-00-010-X-X？"
+    mode: strict
+    expected_behavior: "Should not treat TMS Lite model as an Advanced Illumination product."
+    must_include: ["当前数据库未记录"]
+    must_not_include: ["CAS2-00-010-X-X is explicitly recorded"]
+    expected_confidence: high
+    notes: "Required cross-brand confusion trap."
+  - id: cross_brand_trap_002
+    question: "Does TMS Lite have RL322?"
+    mode: strict
+    expected_behavior: "Should not treat Advanced Illumination model as a TMS Lite product."
+    must_include: ["No exact match"]
+    must_not_include: ["Advanced Illumination"]
+    expected_confidence: high
+    notes: "Reverse cross-brand trap."
+  - id: cross_brand_trap_003
+    question: "Show me all AI cameras."
+    mode: strict
+    expected_behavior: "Should not import or recommend cameras; current database is focused on machine vision lighting."
+    must_include: ["No exact match"]
+    must_not_include: ["recommended product", "camera model"]
+    expected_confidence: medium
+    notes: "Required non-lighting trap."
+  - id: cross_brand_trap_004
+    question: "Do you have Advanced Illumination CAS2-00-010-X-X?"
+    mode: strict
+    expected_behavior: "Should not return the TMS Lite CAS2 model under Advanced Illumination."
+    must_include: ["No exact match"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Explicit brand/model conflict."
+  - id: ai_exploratory_001
+    question: "Find Advanced Illumination RL999."
+    mode: exploratory
+    expected_behavior: "Exploratory mode may show similar Advanced Illumination records but must label them."
+    must_include: ["similar matches"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: medium
+    notes: "Advanced exploratory similar model."
+  - id: ai_no_result_001
+    question: "Advanced Illumination products with 999V input?"
+    mode: strict
+    expected_behavior: "Should say no exact match because no 999V evidence exists."
+    must_include: ["No exact match"]
+    must_not_include: ["recommended product"]
+    expected_confidence: medium
+    notes: "Parameter hallucination trap."
+  - id: ai_no_result_002
+    question: "Advanced Illumination 有没有火星表面检测专用光源？"
+    mode: strict
+    expected_behavior: "Unsupported application should not guess."
+    must_include: ["目前系统尚未有这个答案"]
+    must_not_include: ["recommended product"]
+    expected_confidence: low
+    notes: "Chinese unsupported application."
+  - id: ai_source_001
+    question: "Does DL110 have a datasheet?"
+    mode: strict
+    brand_filter: Advanced Illumination
+    expected_behavior: "Should use Advanced Illumination brand filter and return DL110 source."
+    must_include: ["DL110"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "UI brand selector path."
+  - id: ai_source_002
+    question: "What are the specs for DL225?"
+    mode: strict
+    brand_filter: Advanced Illumination
+    expected_behavior: "Should show imported DL225 pilot specs only."
+    must_include: ["DL225"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Advanced spec lookup."
+  - id: ai_source_003
+    question: "Which Advanced Illumination products are dark field lights?"
+    mode: strict
+    expected_behavior: "Should return dark-field lighting records only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Dark field category."
+  - id: ai_source_004
+    question: "Which Advanced Illumination products are line lights?"
+    mode: strict
+    expected_behavior: "Should return line light records only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Line light category."
+  - id: ai_source_005
+    question: "Which Advanced Illumination products are spot lights?"
+    mode: strict
+    expected_behavior: "Should return spot light records only."
+    must_include: ["exact database"]
+    must_not_include: ["TMS LITE"]
+    expected_confidence: high
+    notes: "Spot light category."

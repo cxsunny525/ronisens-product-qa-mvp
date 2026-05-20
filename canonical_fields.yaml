@@ -12,6 +12,7 @@ brand:
   description: Manufacturer or brand name.
   examples:
     - TMS LITE
+    - Advanced Illumination
     - CCS
     - OPT
     - Keyence
@@ -28,12 +29,14 @@ product_family:
     - series family
     - page title
     - Product Page Title
+    - Advanced Illumination product family
   category_scope:
     - all
   description: Product family, series page, or product-page title.
   examples:
     - BHP Series
     - CAS2-00 Series
+    - UltraSeal Ring Light Series
 
 series:
   display_name: Series
@@ -66,6 +69,8 @@ model:
   examples:
     - CAS2-00-040-X-X
     - BHP1010-X-X
+    - RL322
+    - AL325
 
 product_category:
   display_name: Product Category
@@ -76,6 +81,7 @@ product_category:
     - category
     - product category
     - category_path
+    - lighting
   category_scope:
     - all
   description: Broad product class used for filtering and recommendations.
@@ -94,9 +100,14 @@ light_type:
     - backlight
     - coaxial light
     - dome light
+    - diffuse light
+    - diffuse ring light
     - low angle light
+    - dark field light
+    - bright field ring light
     - spot light
     - line light
+    - pattern projector light
     - direct illumination
     - diffused illumination
   category_scope:
@@ -109,6 +120,8 @@ light_type:
     - coaxial
     - dome
     - low_angle
+    - dark_field
+    - bright_field_ring
 
 color:
   display_name: Color
@@ -118,6 +131,9 @@ color:
     - Colour
     - COLOUR
     - Color
+    - Wavelengths
+    - WHI
+    - White
     - RGBW
     - IR
     - UV
@@ -144,6 +160,8 @@ wavelength_nm:
   unit: nm
   synonyms:
     - wavelength
+    - wavelengths
+    - Wavelengths
     - wavelength_nm
     - nm
     - IR
@@ -335,6 +353,9 @@ emitting_area_mm:
   unit: mm
   synonyms:
     - emitting area
+    - Emitting Area
+    - emission area
+    - target projection
     - luminous area
     - light area
   category_scope:
@@ -420,6 +441,7 @@ ip_rating:
   synonyms:
     - IP
     - IP rating
+    - IP Rating
     - ingress protection
     - IP54
     - IP65
@@ -478,6 +500,8 @@ datasheet_url:
   synonyms:
     - Datasheet
     - DATASHEET (ID)
+    - PDF
+    - Series PDF
     - datasheet_url
     - data sheet
   category_scope:
@@ -495,6 +519,7 @@ product_url:
     - product_url
     - URL
     - product page
+    - Advanced Illumination product page
   category_scope:
     - all
   description: Source product page URL used for traceability.

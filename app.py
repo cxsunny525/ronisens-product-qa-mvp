@@ -133,11 +133,14 @@ def display_dataframe(rows: list[dict], key: str) -> None:
 
 def sidebar() -> None:
     stats = qa_engine.get_database_stats()
+    brand_stats = qa_engine.get_database_stats_by_brand()
     counts = stats.get("counts", {})
+    brands = brand_stats.get("brands", {})
     st.sidebar.header("Database")
-    st.sidebar.metric("Brands", counts.get("brands", 0))
-    st.sidebar.metric("Product families", counts.get("product_families", 0))
-    st.sidebar.metric("Products", counts.get("products", 0))
+    st.sidebar.metric("Total brands", counts.get("brands", 0))
+    st.sidebar.metric("TMS Lite products", brands.get("TMS LITE", {}).get("products", 0))
+    st.sidebar.metric("Advanced Illumination products", brands.get("Advanced Illumination", {}).get("products", 0))
+    st.sidebar.metric("Total products", counts.get("products", 0))
     st.sidebar.metric("Product specs", counts.get("product_specs", 0))
     st.sidebar.metric("Product assets", counts.get("product_assets", 0))
     st.sidebar.metric("Crawl pages", counts.get("crawl_pages", 0))
@@ -147,7 +150,7 @@ def sidebar() -> None:
     st.sidebar.divider()
     st.sidebar.caption("Current MVP limitations")
     st.sidebar.markdown(
-        "- Current database covers TMS Lite.\n"
+        "- Current database covers TMS Lite and Advanced Illumination pilot data.\n"
         "- Answers are based on scraped and normalized product records.\n"
         "- Selection recommendations are preliminary.\n"
         "- Missing values are shown as not available.\n"
@@ -162,8 +165,20 @@ def sidebar() -> None:
 
 EXAMPLE_QUESTIONS = [
     "What TMS Lite ring lights are in the database?",
+    "What Advanced Illumination ring lights are in the database?",
+    "Which Advanced Illumination products are backlights?",
+    "Which Advanced Illumination products have datasheets?",
+    "Which Advanced Illumination products are missing voltage information?",
     "Which products are 24V?",
+    "Compare TMS Lite and Advanced Illumination ring lights.",
+    "Show all brands with coaxial lights.",
     "\u6761\u5f62\u7684\u5149\u6e90\u6709\u54ea\u4e9b\uff1f",
+    "Advanced Illumination \u6709\u54ea\u4e9b\u73af\u5f62\u5149\u6e90\uff1f",
+    "Advanced Illumination \u6709\u54ea\u4e9b\u80cc\u5149\u6e90\uff1f",
+    "Advanced Illumination \u54ea\u4e9b\u4ea7\u54c1\u6709\u89c4\u683c\u4e66\uff1f",
+    "Advanced Illumination \u54ea\u4e9b\u4ea7\u54c1\u7f3a\u5c11\u7535\u538b\u53c2\u6570\uff1f",
+    "TMS Lite \u548c Advanced Illumination \u6709\u54ea\u4e9b\u540c\u7c7b\u5149\u6e90\u53ef\u4ee5\u6bd4\u8f83\uff1f",
+    "\u5f53\u524d\u6570\u636e\u5e93\u6709\u54ea\u4e9b\u54c1\u724c\uff1f",
     "\u54ea\u4e9b\u4ea7\u54c1\u6709\u89c4\u683c\u4e66\uff1f",
     "Compare CAS2-00-010-X-X, BHP1010-X-X, DLQ2-90-050-1-X.",
     "\u54ea\u4e9b\u4ea7\u54c1\u6ca1\u6709\u7535\u538b\u53c2\u6570\uff1f",
@@ -195,6 +210,13 @@ def main() -> None:
         help="Strict mode only returns explicit database matches. Exploratory mode can show similar matches and will label them.",
     )
     engine_mode = "strict" if qa_mode == "Strict mode" else "exploratory"
+    brand_choice = st.selectbox(
+        "Brand selector",
+        ["All Brands", "TMS Lite", "Advanced Illumination"],
+        index=0,
+        help="Choose one brand to prevent cross-brand mixing, or All Brands for cross-brand lookup.",
+    )
+    brand_filter = None if brand_choice == "All Brands" else brand_choice
 
     cols = st.columns(4)
     for i, example in enumerate(EXAMPLE_QUESTIONS):
@@ -207,7 +229,7 @@ def main() -> None:
 
     if ask and question.strip():
         with st.spinner("Searching the current product database..."):
-            result = qa_engine.answer_question(question.strip(), mode=engine_mode)
+            result = qa_engine.answer_question(question.strip(), brand_filter=brand_filter, mode=engine_mode)
             result = verifier.verify_answer(result)
         st.session_state["last_question"] = question.strip()
         st.session_state["last_result"] = result

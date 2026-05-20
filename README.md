@@ -249,7 +249,29 @@ Environment variables:
 4. Ask them to try questions from `eval_questions.md`.
 5. Review `logs/feedback.csv` after testing.
 
-## How To Add A Second Brand
+## Current Multi-Brand Scope
+
+The system now supports two brands:
+
+- TMS Lite: 654 products
+- Advanced Illumination pilot data: 13 lighting series/products, 47 specs, 9 asset/datasheet links
+
+The original `data/tms_lite_full.db` is preserved. The app now prefers `data/ioo_product_test.db` when it exists, so TMS Lite and Advanced Illumination can be queried through the same schema without mixing brand records.
+
+Advanced Illumination is a pilot import from public product/catalog pages and should be manually verified before commercial selection. Voltage and power are intentionally left as missing when not explicitly parsed from verified source records.
+
+## How To Run The Advanced Illumination Import
+
+```bash
+python scrape_advanced_illumination.py --limit 80
+python import_advanced_illumination.py
+python data_quality_advanced_illumination.py
+python eval_runner.py
+```
+
+Use the Streamlit Brand selector to test `All Brands`, `TMS Lite`, and `Advanced Illumination`. Strict mode will not answer an Advanced Illumination question with a TMS Lite product.
+
+## How To Add A Third Brand
 
 1. Keep the existing schema.
 2. Add a new collector/adapter that writes into `brands`, `product_families`,
@@ -274,5 +296,6 @@ current MVP should use `data/tms_lite_full.db` as-is.
 3. Resolve redirected datasheet/catalogue URLs to final file URLs.
 4. Add family-specific dimension mapping for A/B/C and diameter fields.
 5. Add explicit application tags and light-type tags.
-6. Expand the golden eval set before adding OpenAI API or a second brand.
+6. Expand Advanced Illumination beyond the pilot after human review.
 7. Add authenticated hosted feedback storage.
+8. Add a third brand such as Smart Vision Lights or CCS using the same brand-isolated importer pattern.

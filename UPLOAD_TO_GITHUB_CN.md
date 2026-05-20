@@ -26,7 +26,7 @@ https://github.com/new
 建议设置：
 
 ```text
-Repository name: ronisens-product-qa-mvp
+Repository name: ioo-product-qa-mvp
 Visibility: Private
 Initialize this repository with: 不勾选 README / .gitignore / license
 ```
@@ -36,7 +36,7 @@ Initialize this repository with: 不勾选 README / .gitignore / license
 你可以上传当前目录里的项目文件，或者使用我生成的压缩包：
 
 ```text
-ronisens-product-qa-mvp.zip
+ioo-product-qa-mvp.zip
 ```
 
 上传时请确保包含这些关键文件：
@@ -83,7 +83,7 @@ https://share.streamlit.io/
 
 1. Sign in with GitHub。
 2. New app。
-3. 选择仓库 `ronisens-product-qa-mvp`。
+3. 选择仓库 `ioo-product-qa-mvp`。
 4. Branch 选择 `main`。
 5. Main file path 填：
 
@@ -107,7 +107,7 @@ OPENAI_API_KEY = "可选，如果没有就删掉这一行"
 点击 Deploy。成功后 Streamlit Cloud 会给你一个类似这样的公网 URL：
 
 ```text
-https://ronisens-product-qa-mvp.streamlit.app/
+https://ioo-product-qa-mvp.streamlit.app/
 ```
 
 把这个 URL 和 `APP_PASSWORD` 发给合伙人即可。
@@ -135,8 +135,8 @@ OPENAI_API_KEY
 
 ## 我回来后 5-10 分钟最短动作
 
-1. GitHub 新建空仓库 `ronisens-product-qa-mvp`。
-2. 上传 `ronisens-product-qa-mvp.zip` 解压后的文件。
+1. GitHub 新建空仓库 `ioo-product-qa-mvp`。
+2. 上传 `ioo-product-qa-mvp.zip` 解压后的文件。
 3. Streamlit Cloud 选择这个仓库，入口文件 `app.py`。
 4. 设置 `APP_PASSWORD`。
 5. 点击 Deploy，拿到测试 URL。

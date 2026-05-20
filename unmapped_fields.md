@@ -42,3 +42,10 @@ Known mapped fields from the current database include:
 - `Colour`, `COLOUR`, `Color`, `RGBW`, `IR`, `UV` -> `color` / `wavelength_nm`
 - `Tap Hole (mm)`, `TapHole (mm)`, `Tap Hole E (mm)`, `Tap Hole F (mm)` -> `mounting`
 - `Drive Mode` -> `strobe_mode`
+
+
+## Advanced Illumination pilot unmapped fields
+- Advanced Illumination: Intensity
+- Advanced Illumination: Lead Time
+- Advanced Illumination: Light Conditioning
+- Advanced Illumination: Sizes

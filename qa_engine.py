@@ -16,13 +16,22 @@ except Exception:  # pragma: no cover - app can still run without overrides.
 
 
 ROOT = Path(__file__).resolve().parent
-DEFAULT_DB_PATH = ROOT / "data" / "tms_lite_full.db"
+UNIFIED_DB_PATH = ROOT / "data" / "ioo_product_test.db"
+TMS_DB_PATH = ROOT / "data" / "tms_lite_full.db"
+DEFAULT_DB_PATH = UNIFIED_DB_PATH if UNIFIED_DB_PATH.exists() else TMS_DB_PATH
 EXPORT_DIR = ROOT / "data" / "exports"
 MANUAL_OVERRIDES_PATH = ROOT / "manual_overrides.yaml"
 NO_EXACT_ZH = "当前数据库未记录明确匹配结果。"
 NO_EXACT_EN = "No exact match found in the current database."
 NO_SUPPORTED_ANSWER_ZH = "目前系统尚未有这个答案。当前 MVP 只会在能够明确理解问题，并且当前 TMS Lite 数据库或已配置规则中有直接依据时回答；为避免误导，本问题暂不做推测。"
-NO_SUPPORTED_ANSWER_EN = "The system does not have this answer yet. This MVP only answers when the question is clearly understood and directly supported by the current TMS Lite database or configured rules; to avoid misleading guidance, it will not infer an answer."
+NO_SUPPORTED_ANSWER_EN = "The system does not have this answer yet. This MVP only answers when the question is clearly understood and directly supported by the current product database or configured rules; to avoid misleading guidance, it will not infer an answer."
+NO_EXACT_ZH = "\u5f53\u524d\u6570\u636e\u5e93\u672a\u8bb0\u5f55\u660e\u786e\u5339\u914d\u7ed3\u679c\u3002"
+NO_SUPPORTED_ANSWER_ZH = "\u76ee\u524d\u7cfb\u7edf\u5c1a\u672a\u6709\u8fd9\u4e2a\u7b54\u6848\u3002\u5f53\u524d MVP \u53ea\u4f1a\u5728\u80fd\u660e\u786e\u7406\u89e3\u95ee\u9898\uff0c\u5e76\u4e14\u5f53\u524d\u4ea7\u54c1\u6570\u636e\u5e93\u6216\u5df2\u914d\u7f6e\u89c4\u5219\u4e2d\u6709\u76f4\u63a5\u4f9d\u636e\u65f6\u56de\u7b54\uff1b\u4e3a\u907f\u514d\u8bef\u5bfc\uff0c\u672c\u95ee\u9898\u6682\u4e0d\u505a\u63a8\u6d4b\u3002"
+
+BRAND_ALIASES = {
+    "TMS LITE": ["tms lite", "tms-lite", "tms", "tmslite"],
+    "Advanced Illumination": ["advanced illumination", "advill", "advancedillumination", "ai lighting"],
+}
 
 
 CANONICAL_DISPLAY = {
@@ -97,6 +106,10 @@ LIGHT_TYPE_TERMS = {
     "low_angle": ["low angle", "\u4f4e\u89d2\u5ea6", "dark field", "\u6697\u573a", "dlq", "dla"],
     "line": ["line", "\u7ebf\u626b", "\u7ebf\u5149", "line scan"],
     "spot": ["spot", "\u70b9\u5149", "hbf", "fib"],
+    "dark_field": ["dark field", "dark-field", "darkfield", "df196"],
+    "bright_field_ring": ["bright field", "bright-field", "rl208"],
+    "diffuse_ring": ["diffuse ring", "diffuse", "df198"],
+    "pattern_projector": ["pattern projector", "pattern projecting", "structured pattern", "sl256"],
     "uv": ["uv", "\u7d2b\u5916", "uv365", "uv395"],
     "ir": ["ir", "\u7ea2\u5916", "infrared", "ir850", "ir940"],
     "rgb": ["rgb"],
@@ -229,6 +242,39 @@ def _contains_any(text: str, terms: list[str]) -> bool:
     return any(term.lower() in text.lower() for term in terms)
 
 
+def _canonical_brand_name(value: str | None) -> str | None:
+    raw = _text(value or "")
+    if not raw or raw in {"all brands", "all", "全部品牌"}:
+        return None
+    for canonical, aliases in BRAND_ALIASES.items():
+        if raw == _text(canonical) or any(alias in raw for alias in aliases):
+            return canonical
+    return value.strip() if value else None
+
+
+def _detect_brand_filter(question: str, brand_filter: str | None = None) -> str | None:
+    explicit = _canonical_brand_name(brand_filter)
+    if explicit:
+        return explicit
+    q = _text(question or "")
+    if any(alias in q for alias in BRAND_ALIASES["Advanced Illumination"]):
+        return "Advanced Illumination"
+    if any(alias in q for alias in BRAND_ALIASES["TMS LITE"]):
+        return "TMS LITE"
+    return None
+
+
+def _brand_matches(product: dict[str, Any], brand_filter: str | None) -> bool:
+    canonical = _canonical_brand_name(brand_filter)
+    if not canonical:
+        return True
+    return _text(product.get("brand")) == _text(canonical)
+
+
+def _filter_products_by_brand(products: list[dict[str, Any]], brand_filter: str | None) -> list[dict[str, Any]]:
+    return [product for product in products if _brand_matches(product, brand_filter)]
+
+
 def _wants_datasheet(question: str) -> bool:
     return _contains_any(question, DATASHEET_TERMS)
 
@@ -255,18 +301,23 @@ def _rows(conn: sqlite3.Connection, query: str, params: tuple[Any, ...] = ()) ->
 
 def _first_datasheet(assets: list[dict[str, Any]]) -> str | None:
     for asset in assets:
-        if asset.get("asset_type") == "datasheet" and asset.get("url"):
-            return asset["url"]
+        asset_url = asset.get("url") or asset.get("asset_url")
+        if asset.get("asset_type") == "datasheet" and asset_url:
+            return asset_url
     for asset in assets:
-        if asset.get("asset_type") in {"pdf", "catalogue"} and asset.get("url"):
-            return asset["url"]
+        asset_url = asset.get("url") or asset.get("asset_url")
+        if asset.get("asset_type") in {"pdf", "catalogue"} and asset_url:
+            return asset_url
     return None
 
 
 def _infer_light_type(product: dict[str, Any]) -> str | None:
+    stored = product.get("stored_light_type") or product.get("light_type")
+    if stored:
+        return str(stored)
     haystack = " ".join(
         _text(product.get(key))
-        for key in ["model", "product_family", "series", "title", "product_category", "search_text"]
+        for key in ["model", "product_family", "series", "title", "product_category", "category", "description", "search_text"]
     )
     for light_type, terms in LIGHT_TYPE_TERMS.items():
         if any(term in haystack for term in terms):
@@ -280,10 +331,20 @@ def _sqlite_dataset(db_path: Path) -> Dataset:
         table_names = [row["name"] for row in _rows(conn, "SELECT name FROM sqlite_master WHERE type='table'")]
         schema = {table: [row["name"] for row in _rows(conn, f"PRAGMA table_info({table})")] for table in table_names}
         counts = {table: int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in table_names}
+        product_cols = set(schema.get("products", []))
+        spec_cols = set(schema.get("product_specs", []))
+        asset_cols = set(schema.get("product_assets", []))
+        product_description_expr = "p.description" if "description" in product_cols else "NULL"
+        product_light_type_expr = "p.light_type" if "light_type" in product_cols else "NULL"
+        spec_raw_field_expr = "ps.raw_field" if "raw_field" in spec_cols else "ps.spec_name"
+        spec_canonical_expr = "ps.canonical_field" if "canonical_field" in spec_cols else "NULL"
+        spec_confidence_expr = "ps.confidence" if "confidence" in spec_cols else "NULL"
+        asset_url_expr = "COALESCE(pa.asset_url, pa.url)" if "asset_url" in asset_cols else "pa.url"
+        asset_filename_expr = "pa.filename" if "filename" in asset_cols else "NULL"
 
         raw_products = _rows(
             conn,
-            """
+            f"""
             SELECT
                 p.id,
                 b.name AS brand,
@@ -304,7 +365,9 @@ def _sqlite_dataset(db_path: Path) -> Dataset:
                 p.specs_json,
                 p.search_text,
                 p.source_url AS product_url,
-                p.source_url
+                p.source_url,
+                {product_description_expr} AS description,
+                {product_light_type_expr} AS stored_light_type
             FROM products p
             JOIN brands b ON b.id = p.brand_id
             LEFT JOIN product_families pf ON pf.id = p.family_id
@@ -313,39 +376,47 @@ def _sqlite_dataset(db_path: Path) -> Dataset:
         )
         specs = _rows(
             conn,
-            """
+            f"""
             SELECT
                 ps.id,
+                b.name AS brand,
                 p.model,
                 p.model_normalized,
                 ps.spec_group,
                 ps.spec_name,
+                {spec_raw_field_expr} AS raw_field,
                 ps.raw_value,
                 ps.normalized_value,
                 ps.unit,
-                ps.source_url
+                ps.source_url,
+                {spec_canonical_expr} AS canonical_field,
+                {spec_confidence_expr} AS confidence
             FROM product_specs ps
             JOIN products p ON p.id = ps.product_id
+            JOIN brands b ON b.id = p.brand_id
             ORDER BY p.model, ps.spec_name
             """,
         )
         assets = _rows(
             conn,
-            """
+            f"""
             SELECT
                 pa.id,
+                b.name AS brand,
                 p.model,
                 p.model_normalized,
                 pf.family_name AS product_family,
                 pa.asset_type,
                 pa.title,
-                pa.url,
+                {asset_url_expr} AS url,
+                {asset_filename_expr} AS filename,
                 pa.final_url,
                 pa.local_path,
                 pa.source_url
             FROM product_assets pa
             LEFT JOIN products p ON p.id = pa.product_id
             LEFT JOIN product_families pf ON pf.id = pa.family_id
+            LEFT JOIN brands b ON b.id = pa.brand_id
             ORDER BY COALESCE(p.model, ''), pa.asset_type, pa.title
             """,
         )
@@ -472,6 +543,43 @@ def get_database_stats() -> dict[str, Any]:
         "counts": ds.counts,
         "schema": ds.schema,
         "mode": "OpenAI available" if has_openai_key else "Local fallback",
+    }
+
+
+def get_brands() -> list[dict[str, Any]]:
+    ds = load_database()
+    brand_counts: dict[str, int] = {}
+    for product in ds.products:
+        brand = product.get("brand") or "not available"
+        brand_counts[brand] = brand_counts.get(brand, 0) + 1
+    return [{"brand": brand, "products": count} for brand, count in sorted(brand_counts.items())]
+
+
+def get_database_stats_by_brand() -> dict[str, Any]:
+    ds = load_database()
+    brands: dict[str, dict[str, int]] = {}
+    for product in ds.products:
+        brand = product.get("brand") or "not available"
+        entry = brands.setdefault(brand, {"products": 0, "product_families": 0, "product_specs": 0, "product_assets": 0})
+        entry["products"] += 1
+    family_sets: dict[str, set[str]] = {}
+    for product in ds.products:
+        brand = product.get("brand") or "not available"
+        if product.get("product_family"):
+            family_sets.setdefault(brand, set()).add(product["product_family"])
+    for brand, families in family_sets.items():
+        brands.setdefault(brand, {"products": 0, "product_families": 0, "product_specs": 0, "product_assets": 0})["product_families"] = len(families)
+    for spec in ds.specs:
+        brand = spec.get("brand") or "not available"
+        brands.setdefault(brand, {"products": 0, "product_families": 0, "product_specs": 0, "product_assets": 0})["product_specs"] += 1
+    for asset in ds.assets:
+        brand = asset.get("brand") or "not available"
+        brands.setdefault(brand, {"products": 0, "product_families": 0, "product_specs": 0, "product_assets": 0})["product_assets"] += 1
+    return {
+        "source_type": ds.source_type,
+        "counts": ds.counts,
+        "brands": brands,
+        "brand_list": get_brands(),
     }
 
 
@@ -680,10 +788,11 @@ def _score_product(product: dict[str, Any], query: str) -> tuple[float, list[str
     return score, list(dict.fromkeys(reasons))[:6]
 
 
-def search_products(query: str, limit: int = 20) -> list[dict[str, Any]]:
+def search_products(query: str, brand_filter: str | None = None, limit: int = 20, mode: str = "strict") -> list[dict[str, Any]]:
     ds = load_database()
     hits = []
-    for product in ds.products:
+    active_brand = _detect_brand_filter(query, brand_filter)
+    for product in _filter_products_by_brand(ds.products, active_brand):
         score, reasons = _score_product(product, query)
         if score > 0:
             row = _product_public_row(product)
@@ -694,52 +803,59 @@ def search_products(query: str, limit: int = 20) -> list[dict[str, Any]]:
     return hits[:limit]
 
 
-def get_product_by_model(model: str) -> dict[str, Any] | None:
+def get_product_by_model(model: str, brand_filter: str | None = None) -> dict[str, Any] | None:
     ds = load_database()
     target = _norm(model)
-    for product in ds.products:
+    for product in _filter_products_by_brand(ds.products, brand_filter):
         if _norm(product.get("model")) == target:
             return _product_public_row(product)
     return None
 
 
-def _raw_product_by_model(model: str) -> dict[str, Any] | None:
+def _raw_product_by_model(model: str, brand_filter: str | None = None) -> dict[str, Any] | None:
     ds = load_database()
     target = _norm(model)
-    for product in ds.products:
+    for product in _filter_products_by_brand(ds.products, brand_filter):
         if _norm(product.get("model")) == target:
             return product
     return None
 
 
-def get_product_specs(model: str) -> list[dict[str, Any]]:
+def get_product_specs(model: str, brand_filter: str | None = None) -> list[dict[str, Any]]:
     ds = load_database()
     target = _norm(model)
     specs = []
     for spec in ds.specs:
+        if brand_filter and _text(spec.get("brand")) != _text(_canonical_brand_name(brand_filter)):
+            continue
         spec_model = spec.get("model_normalized") or _norm(spec.get("model"))
         if spec_model == target:
             specs.append(
                 {
+                    "brand": spec.get("brand"),
                     "model": spec.get("model"),
                     "spec_name": spec.get("spec_name"),
+                    "raw_field": spec.get("raw_field") or spec.get("spec_name"),
+                    "canonical_field": spec.get("canonical_field"),
                     "raw_value": spec.get("raw_value"),
                     "normalized_value": spec.get("normalized_value"),
                     "unit": spec.get("unit"),
                     "source_url": spec.get("source_url"),
+                    "confidence": spec.get("confidence") or "high",
                 }
             )
     return specs
 
 
-def compare_products(models: list[str]) -> list[dict[str, Any]]:
+def compare_products(models: list[str], brand_filter: str | None = None) -> list[dict[str, Any]]:
     comparison = []
     for model in models:
-        product = get_product_by_model(model)
+        product = get_product_by_model(model, brand_filter=brand_filter)
         if product is None:
             comparison.append(
                 {
                     "model": model,
+                    "brand": _canonical_brand_name(brand_filter) or "not available",
                     "status": "not available in the current database",
                     "voltage": "not available",
                     "power": "not available",
@@ -752,6 +868,7 @@ def compare_products(models: list[str]) -> list[dict[str, Any]]:
         else:
             row = {
                 "model": product["model"],
+                "brand": product.get("brand", "not available"),
                 "status": "found",
                 "family": product["family"],
                 "category": product["category"],
@@ -767,10 +884,10 @@ def compare_products(models: list[str]) -> list[dict[str, Any]]:
     return comparison
 
 
-def filter_products(filters: dict[str, Any]) -> list[dict[str, Any]]:
+def filter_products(filters: dict[str, Any], brand_filter: str | None = None) -> list[dict[str, Any]]:
     ds = load_database()
     results = []
-    for product in ds.products:
+    for product in _filter_products_by_brand(ds.products, brand_filter):
         keep = True
         hay = _haystack(product)
         for key, value in filters.items():
@@ -797,8 +914,9 @@ def filter_products(filters: dict[str, Any]) -> list[dict[str, Any]]:
     return results
 
 
-def find_missing_fields(field_name: str | None = None) -> dict[str, Any]:
+def find_missing_fields(field_name: str | None = None, brand_filter: str | None = None) -> dict[str, Any]:
     ds = load_database()
+    products = _filter_products_by_brand(ds.products, brand_filter)
     fields = [
         "brand",
         "product_family",
@@ -821,19 +939,19 @@ def find_missing_fields(field_name: str | None = None) -> dict[str, Any]:
     examples: dict[str, list[str]] = {}
     for field in fields:
         missing = []
-        for product in ds.products:
+        for product in products:
             value = product.get(field)
             if value is None or _clean(value) == "" or _clean(value).lower() in {"not available", "none"}:
                 missing.append(product.get("model") or "")
-        summary.append({"field": field, "missing_count": len(missing), "total": len(ds.products)})
+        summary.append({"field": field, "missing_count": len(missing), "total": len(products)})
         examples[field] = missing[:50]
     summary.sort(key=lambda row: row["missing_count"], reverse=True)
     return {"summary": summary, "examples": examples}
 
 
-def get_product_sources(model: str) -> list[dict[str, Any]]:
+def get_product_sources(model: str, brand_filter: str | None = None) -> list[dict[str, Any]]:
     ds = load_database()
-    product = _raw_product_by_model(model)
+    product = _raw_product_by_model(model, brand_filter=brand_filter)
     if product is None:
         return []
     target = _norm(product.get("model"))
@@ -843,6 +961,8 @@ def get_product_sources(model: str) -> list[dict[str, Any]]:
     if product.get("datasheet_url"):
         sources.append({"type": "datasheet", "title": product.get("model"), "url": product.get("datasheet_url")})
     for asset in ds.assets:
+        if brand_filter and _text(asset.get("brand")) != _text(_canonical_brand_name(brand_filter)):
+            continue
         spec_model = asset.get("model_normalized") or _norm(asset.get("model"))
         if spec_model == target and asset.get("url"):
             sources.append({"type": asset.get("asset_type") or "asset", "title": asset.get("title") or asset.get("asset_type"), "url": asset.get("url")})
@@ -1015,6 +1135,7 @@ def _legacy_answer_question(question: str) -> dict[str, Any]:
     original_q = _text(question)
     q = _text(_expanded_query(question))
     is_zh = _has_chinese(question)
+    active_brand = _detect_brand_filter(question, None)
     if not original_q:
         return _response("\u8bf7\u8f93\u5165\u4e00\u4e2a\u95ee\u9898\u3002" if is_zh else "Please enter a question.", confidence="low")
 
@@ -1028,7 +1149,35 @@ def _legacy_answer_question(question: str) -> dict[str, Any]:
             "high",
         )
 
+    if any(term in q for term in ["camera", "cameras", "lens", "lenses", "software", "sensor", "controllers", "controller", "\u76f8\u673a", "\u955c\u5934", "\u8f6f\u4ef6", "\u4f20\u611f\u5668"]) and not any(term in q for term in ["light", "\u5149\u6e90", "lighting", "illumination"]):
+        return _no_exact_response(question, "strict", "The current database is focused on machine vision lighting products; cameras, lenses, software, sensors, and controllers are not imported as main products.", active_brand)
+
+    if ("brand" in q or "\u54c1\u724c" in question) and not any(term in q for term in ["ring", "bar", "backlight", "coaxial", "datasheet", "voltage", "power"]):
+        brands = get_brands()
+        answer = (
+            "\u5f53\u524d\u6570\u636e\u5e93\u6536\u5f55\u7684\u54c1\u724c\uff1a" + ", ".join(f"{row['brand']} ({row['products']})" for row in brands)
+            if is_zh
+            else "Current database brands: " + ", ".join(f"{row['brand']} ({row['products']})" for row in brands)
+        )
+        return _response(answer, [], brands, [], [], "high", "strict", [], [], _query_interpretation(question, "strict", active_brand), [])
+
     models = _extract_models_from_question(question)
+
+    if not models and ("compare" in q or "姣旇緝" in q or "瀵规瘮" in q) and "tms" in q and "advanced illumination" in q:
+        requested_types = _requested_light_types(question)
+        if requested_types:
+            query = " ".join(requested_types)
+            tms_hits = search_products(query, brand_filter="TMS LITE", limit=5)
+            ai_hits = search_products(query, brand_filter="Advanced Illumination", limit=5)
+            rows = tms_hits + ai_hits
+            if rows:
+                answer = f"Found comparable {query} records across TMS Lite and Advanced Illumination. This is a database-side comparison list, not a final product equivalence decision."
+                evidence = []
+                match_reasons = []
+                for row in rows:
+                    evidence.extend(_evidence_for_public_row(row, ["brand", "model", "family", "light_type", "product_url", "datasheet_url"], "cross-brand category comparison"))
+                    match_reasons.append(_match_reason(row, "brand and light_type matched cross-brand comparison request", ["brand", "light_type"], exact=True))
+                return _response(answer, rows, [], _sources_from_hits(rows, limit=20), ["Cross-brand equivalence requires human review of dimensions, electrical parameters, wavelength, and optical geometry."], "medium", "strict", evidence, match_reasons, _query_interpretation(question, "strict", active_brand), [])
 
     if any(term in q for term in UNSUPPORTED_BUSINESS_FIELDS):
         products = [get_product_by_model(model) for model in models]
@@ -1049,7 +1198,7 @@ def _legacy_answer_question(question: str) -> dict[str, Any]:
         if not models or "sample" in q or "\u793a\u4f8b" in q:
             sample_hits = search_products("24V backlight ring coaxial", limit=3)
             models = [hit["model"] for hit in sample_hits]
-        table = compare_products(models)
+        table = compare_products(models, brand_filter=active_brand)
         sources = []
         for model in models:
             sources.extend(get_product_sources(model)[:3])
@@ -1228,10 +1377,12 @@ def _unsupported_application_question(question: str) -> bool:
     return True
 
 
-def _query_interpretation(question: str, mode: str) -> dict[str, Any]:
+def _query_interpretation(question: str, mode: str, brand_filter: str | None = None) -> dict[str, Any]:
+    active_brand = _detect_brand_filter(question, brand_filter)
     return {
         "language": "zh" if _is_zh_question(question) else "en",
         "mode": mode,
+        "brand_filter": active_brand or "All Brands",
         "detected_models": _extract_models_from_question(question),
         "requested_light_types": _requested_light_types(question),
         "requested_datasheet": _wants_datasheet(question),
@@ -1241,10 +1392,10 @@ def _query_interpretation(question: str, mode: str) -> dict[str, Any]:
     }
 
 
-def _no_exact_response(question: str, mode: str = "strict", reason: str | None = None) -> dict[str, Any]:
+def _no_exact_response(question: str, mode: str = "strict", reason: str | None = None, brand_filter: str | None = None) -> dict[str, Any]:
     is_zh = _is_zh_question(question)
     warning = reason or ("当前数据库没有明确证据支持该问题。" if is_zh else "The current database has no explicit evidence for this question.")
-    answer = NO_EXACT_ZH if is_zh else NO_EXACT_EN
+    answer = "\u5f53\u524d\u6570\u636e\u5e93\u672a\u8bb0\u5f55\u660e\u786e\u5339\u914d\u7ed3\u679c\u3002" if is_zh else NO_EXACT_EN
     if warning:
         answer = f"{answer} {warning}"
     return _response(
@@ -1257,12 +1408,12 @@ def _no_exact_response(question: str, mode: str = "strict", reason: str | None =
         mode,
         [],
         [],
-        _query_interpretation(question, mode),
+        _query_interpretation(question, mode, brand_filter),
         [warning],
     )
 
 
-def _no_supported_answer(question: str, mode: str = "strict") -> dict[str, Any]:
+def _no_supported_answer(question: str, mode: str = "strict", brand_filter: str | None = None) -> dict[str, Any]:
     is_zh = _is_zh_question(question)
     warning = (
         "该应用场景尚未进入已验证选型规则，也没有足够数据库证据。"
@@ -1270,7 +1421,7 @@ def _no_supported_answer(question: str, mode: str = "strict") -> dict[str, Any]:
         else "This application scenario is not covered by verified selection rules and lacks sufficient database evidence."
     )
     return _response(
-        NO_SUPPORTED_ANSWER_ZH if is_zh else NO_SUPPORTED_ANSWER_EN,
+        "\u76ee\u524d\u7cfb\u7edf\u5c1a\u672a\u6709\u8fd9\u4e2a\u7b54\u6848\u3002\u5f53\u524d MVP \u53ea\u4f1a\u5728\u80fd\u660e\u786e\u7406\u89e3\u95ee\u9898\uff0c\u5e76\u4e14\u5f53\u524d\u4ea7\u54c1\u6570\u636e\u5e93\u6216\u5df2\u914d\u7f6e\u89c4\u5219\u4e2d\u6709\u76f4\u63a5\u4f9d\u636e\u65f6\u56de\u7b54\uff1b\u4e3a\u907f\u514d\u8bef\u5bfc\uff0c\u672c\u95ee\u9898\u6682\u4e0d\u505a\u63a8\u6d4b\u3002" if is_zh else NO_SUPPORTED_ANSWER_EN,
         [],
         [],
         [],
@@ -1279,7 +1430,7 @@ def _no_supported_answer(question: str, mode: str = "strict") -> dict[str, Any]:
         mode,
         [],
         [],
-        _query_interpretation(question, mode),
+        _query_interpretation(question, mode, brand_filter),
         [warning],
     )
 
@@ -1371,6 +1522,7 @@ def _match_reason(
 ) -> dict[str, Any]:
     return {
         "product_model": row.get("model") or "not available",
+        "brand": row.get("brand") or "not available",
         "reason": reason,
         "matched_fields": fields,
         "exact_match": exact,
@@ -1392,8 +1544,10 @@ def _detect_exact_filters(question: str) -> dict[str, Any]:
     if _wants_datasheet(question) and not any(term in q for term in ["missing", "缺失", "缺少", "没有"]):
         filters["has_datasheet"] = True
     requested_types = _requested_light_types(question)
-    if requested_types:
-        filters["light_type"] = requested_types
+    spectral_types = [item for item in requested_types if item in {"uv", "ir", "rgb", "rgbw"}]
+    geometry_types = [item for item in requested_types if item not in {"uv", "ir", "rgb", "rgbw"}]
+    if geometry_types:
+        filters["light_type"] = geometry_types
     colors = []
     color_terms = {
         "red": ["red", "红光", "红色"],
@@ -1406,6 +1560,7 @@ def _detect_exact_filters(question: str) -> dict[str, Any]:
     for color, terms in color_terms.items():
         if any(term in q for term in terms):
             colors.append(color)
+    colors.extend(spectral_types)
     if colors:
         filters["color"] = colors
     return filters
@@ -1427,7 +1582,9 @@ def _row_matches_exact_filters(row: dict[str, Any], filters: dict[str, Any]) -> 
         reasons.append("datasheet URL is recorded")
     if filters.get("light_type"):
         value = _text(row.get("light_type"))
-        if value not in filters["light_type"]:
+        requested = [_text(item) for item in filters["light_type"]]
+        light_type_match = value in requested or ("ring" in requested and "ring" in value) or ("low_angle" in requested and value == "dark_field")
+        if not light_type_match:
             return False, fields, reasons
         fields.append("light_type")
         reasons.append(f"light_type matches {value}")
@@ -1439,21 +1596,29 @@ def _row_matches_exact_filters(row: dict[str, Any], filters: dict[str, Any]) -> 
         color_value = _text(row.get("color"))
         if color_value in {"", "not available", "none"}:
             return False, fields, reasons
-        if not any(color in color_value for color in filters["color"]):
+        color_aliases = {
+            "red": ["red", "625", "630", "660"],
+            "blue": ["blue", "455", "470"],
+            "green": ["green", "505", "530"],
+            "white": ["white", "whi"],
+            "uv": ["uv", "365", "375", "385", "395", "405"],
+            "ir": ["ir", "730", "850", "940"],
+        }
+        if not any(any(alias in color_value for alias in color_aliases.get(color, [color])) for color in filters["color"]):
             return False, fields, reasons
         fields.append("color")
         reasons.append(f"color evidence matches {', '.join(filters['color'])}")
     return bool(fields), fields, reasons
 
 
-def _strict_filter_products(question: str, limit: int = 20) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[str]]:
+def _strict_filter_products(question: str, limit: int = 20, brand_filter: str | None = None) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[str]]:
     filters = _detect_exact_filters(question)
     if not filters:
         return [], [], [], []
     rows_with_fields: list[tuple[dict[str, Any], list[str], list[str]]] = []
     evidence: list[dict[str, Any]] = []
     match_reasons: list[dict[str, Any]] = []
-    for product in load_database().products:
+    for product in _filter_products_by_brand(load_database().products, brand_filter):
         row = _product_public_row(product)
         matches, fields, reasons = _row_matches_exact_filters(row, filters)
         if not matches:
@@ -1492,9 +1657,10 @@ def _enrich_result(
     return result
 
 
-def _strict_answer_question(question: str) -> dict[str, Any]:
+def _strict_answer_question(question: str, brand_filter: str | None = None) -> dict[str, Any]:
     q = _text(_expanded_query(question))
     is_zh = _is_zh_question(question)
+    active_brand = _detect_brand_filter(question, brand_filter)
     if not _text(question):
         return _response("请输入一个问题。" if is_zh else "Please enter a question.", confidence="low", mode="strict", query_interpretation=_query_interpretation(question, "strict"))
 
@@ -1507,18 +1673,30 @@ def _strict_answer_question(question: str) -> dict[str, Any]:
     if _unsupported_application_question(question):
         return _no_supported_answer(question, "strict")
 
+    if any(term in q for term in ["camera", "cameras", "lens", "lenses", "software", "sensor", "controllers", "controller", "\u76f8\u673a", "\u955c\u5934", "\u8f6f\u4ef6", "\u4f20\u611f\u5668"]) and not any(term in q for term in ["light", "\u5149\u6e90", "lighting", "illumination"]):
+        return _no_exact_response(question, "strict", "The current database is focused on machine vision lighting products; cameras, lenses, software, sensors, and controllers are not imported as main products.", active_brand)
+
+    if ("brand" in q or "\u54c1\u724c" in question) and not any(term in q for term in ["ring", "bar", "backlight", "coaxial", "datasheet", "voltage", "power"]):
+        brands = get_brands()
+        answer = (
+            "\u5f53\u524d\u6570\u636e\u5e93\u6536\u5f55\u7684\u54c1\u724c\uff1a" + ", ".join(f"{row['brand']} ({row['products']})" for row in brands)
+            if is_zh
+            else "Current database brands: " + ", ".join(f"{row['brand']} ({row['products']})" for row in brands)
+        )
+        return _response(answer, [], brands, [], [], "high", "strict", [], [], _query_interpretation(question, "strict", active_brand), [])
+
     models = _extract_models_from_question(question)
 
     if "compare" in q or "比较" in q or "对比" in q:
         if not models:
             return _no_exact_response(question, "strict", "对比问题需要明确型号。" if is_zh else "Comparison requires explicit model names.")
-        table = compare_products(models)
+        table = compare_products(models, brand_filter=active_brand)
         found_rows = [row for row in table if row.get("status") == "found"]
         sources = []
         evidence = []
         match_reasons = []
         for row in found_rows:
-            sources.extend(get_product_sources(row["model"])[:3])
+            sources.extend(get_product_sources(row["model"], brand_filter=row.get("brand") or active_brand)[:3])
             evidence.extend(_evidence_for_public_row(row, ["voltage", "power", "current", "dimensions", "product_url", "datasheet_url"], "comparison field"))
             match_reasons.append(_match_reason(row, "model found exactly for comparison", ["model"], exact=True))
         missing_models = [row["model"] for row in table if row.get("status") != "found"]
@@ -1529,26 +1707,48 @@ def _strict_answer_question(question: str) -> dict[str, Any]:
             else f"Compared {len(models)} explicit model(s). {len(found_rows)} were found in the current database; missing models were not replaced by alternative products."
         )
         confidence = "high" if found_rows else "low"
-        return _response(answer, found_rows, table, sources, warnings, confidence, "strict", evidence, match_reasons, _query_interpretation(question, "strict"), warnings)
+        return _response(answer, found_rows, table, sources, warnings, confidence, "strict", evidence, match_reasons, _query_interpretation(question, "strict", active_brand), warnings)
 
     quality_question = (
         any(term in q for term in ["missing", "缺失", "缺少", "字段", "no voltage", "没有电压", "未记录"])
         or ((not models) and "没有" in question and (_wants_datasheet(question) or "电压" in question))
     )
     if quality_question:
-        legacy = _legacy_answer_question(question)
-        if legacy.get("matched_products") and not legacy.get("sources"):
-            legacy["sources"] = _sources_from_hits(legacy["matched_products"], limit=20)
-        return _enrich_result(legacy, question, "strict", warnings=[])
+        if _wants_datasheet(question):
+            products = [p for p in _filter_products_by_brand(load_database().products, active_brand) if not p.get("datasheet_url")]
+            rows = [_product_public_row(p) for p in products[:50]]
+            answer = (
+                f"\u5f53\u524d\u6570\u636e\u5e93\u4e2d\u6709 {len(products)} \u6761\u4ea7\u54c1\u8bb0\u5f55\u6ca1\u6709 datasheet_url\u3002"
+                if is_zh
+                else f"{len(products)} product records currently have no datasheet URL recorded."
+            )
+            return _response(answer, rows, [{"model": row["model"], "brand": row.get("brand"), "missing_field": "datasheet_url"} for row in rows[:50]], _sources_from_hits(rows, limit=20), [], "high", "strict", [], [], _query_interpretation(question, "strict", active_brand), [])
+        if "voltage" in q or "\u7535\u538b" in question:
+            missing = find_missing_fields("voltage_v", brand_filter=active_brand)
+            rows = [product for model in missing["examples"].get("voltage_v", []) for product in [get_product_by_model(model, brand_filter=active_brand)] if product][:50]
+            answer = (
+                f"\u5f53\u524d\u6570\u636e\u5e93\u4e2d\u6709 {missing['summary'][0]['missing_count']} \u6761\u4ea7\u54c1\u8bb0\u5f55\u6ca1\u6709\u7535\u538b\u53c2\u6570\u3002"
+                if is_zh
+                else f"{missing['summary'][0]['missing_count']} product records currently have no voltage parameter recorded."
+            )
+            return _response(answer, rows, missing["summary"], _sources_from_hits(rows, limit=20), [], "high", "strict", [], [], _query_interpretation(question, "strict", active_brand), [])
+        missing = find_missing_fields(brand_filter=active_brand)
+        answer = (
+            "\u5df2\u6839\u636e\u5f53\u524d\u6570\u636e\u5e93\u751f\u6210\u7f3a\u5931\u5b57\u6bb5\u7edf\u8ba1\uff0c\u7f3a\u5931\u6700\u591a\u7684\u5b57\u6bb5\u5e94\u4f18\u5148\u6e05\u6d17\u3002"
+            if is_zh
+            else "Missing-field summary generated from the current database. Fields with the largest missing counts should be fixed first."
+        )
+        return _response(answer, [], missing["summary"], [], [], "high", "strict", [], [], _query_interpretation(question, "strict", active_brand), [])
 
     if models:
-        exact_products = [get_product_by_model(model) for model in models]
+        exact_products = [get_product_by_model(model, brand_filter=active_brand) for model in models]
         exact_products = [product for product in exact_products if product]
         if not exact_products:
-            return _no_exact_response(question, "strict", f"Model not found: {', '.join(models)}")
+            return _no_exact_response(question, "strict", f"Model not found: {', '.join(models)}", active_brand)
         model = exact_products[0]["model"]
-        specs = get_product_specs(model)
-        sources = get_product_sources(model)
+        product_brand = exact_products[0].get("brand") or active_brand
+        specs = get_product_specs(model, brand_filter=product_brand)
+        sources = get_product_sources(model, brand_filter=product_brand)
         fields = ["brand", "family", "series", "category", "light_type", "color", "voltage", "power", "current", "dimensions", "product_url", "datasheet_url"]
         evidence = _evidence_for_public_row(exact_products[0], fields, "exact model lookup")
         evidence.extend(_evidence_for_specs(specs[:30], "raw spec for exact model lookup"))
@@ -1564,14 +1764,14 @@ def _strict_answer_question(question: str) -> dict[str, Any]:
                 if is_zh
                 else f"{model} is explicitly recorded in the current database. Known fields: voltage {exact_products[0]['voltage']}, power {exact_products[0]['power']}, current {exact_products[0]['current']}, dimensions {exact_products[0]['dimensions']}."
             )
-        return _response(answer, exact_products, specs[:30], sources, [], "high", "strict", evidence, match_reasons, _query_interpretation(question, "strict"), [])
+        return _response(answer, exact_products, specs[:30], sources, [], "high", "strict", evidence, match_reasons, _query_interpretation(question, "strict", active_brand), [])
 
     selected_intent = _supported_application_intent(question)
     if selected_intent:
         payload = APPLICATION_INTENTS[selected_intent]
-        hits = search_products(payload["query"], limit=10)
+        hits = search_products(payload["query"], brand_filter=active_brand, limit=10)
         if not hits:
-            return _no_supported_answer(question, "strict")
+            return _no_supported_answer(question, "strict", active_brand)
         sources = _sources_from_hits(hits)
         evidence = []
         match_reasons = []
@@ -1593,16 +1793,16 @@ def _strict_answer_question(question: str) -> dict[str, Any]:
         answer = (
             f"初步选型逻辑：{APPLICATION_LOGIC_ZH.get(selected_intent, payload['logic'])} 下方候选产品只来自当前 TMS Lite 数据库；这不是最终选型结论。"
             if is_zh
-            else f"Initial selection logic: {payload['logic']} The candidates below come only from the current TMS Lite database and are not a final selection conclusion."
+            else f"Initial selection logic: {payload['logic']} The candidates below come only from the current database scope and are not a final selection conclusion."
         )
         warnings = [
             "选型建议需要样品、几何结构、工作距离、相机/镜头和实际成像验证。"
             if is_zh
             else "Selection guidance requires sample, geometry, working distance, camera/lens, and image validation."
         ]
-        return _response(answer, hits, [], sources, warnings, "medium", "strict", evidence, match_reasons, _query_interpretation(question, "strict"), warnings)
+        return _response(answer, hits, [], sources, warnings, "medium", "strict", evidence, match_reasons, _query_interpretation(question, "strict", active_brand), warnings)
 
-    hits, evidence, match_reasons, filter_keys = _strict_filter_products(question, limit=20)
+    hits, evidence, match_reasons, filter_keys = _strict_filter_products(question, limit=20, brand_filter=active_brand)
     if hits:
         sources = _sources_from_hits(hits)
         answer = (
@@ -1610,17 +1810,18 @@ def _strict_answer_question(question: str) -> dict[str, Any]:
             if is_zh
             else f"Found {len(hits)} exact database match(es). Matched filter(s): {', '.join(filter_keys)}."
         )
-        return _response(answer, hits, [], sources, [], "high", "strict", evidence, match_reasons, _query_interpretation(question, "strict"), [])
+        return _response(answer, hits, [], sources, [], "high", "strict", evidence, match_reasons, _query_interpretation(question, "strict", active_brand), [])
 
-    return _no_exact_response(question, "strict")
+    return _no_exact_response(question, "strict", brand_filter=active_brand)
 
 
-def _exploratory_answer_question(question: str) -> dict[str, Any]:
+def _exploratory_answer_question(question: str, brand_filter: str | None = None) -> dict[str, Any]:
     is_zh = _is_zh_question(question)
-    strict_result = _strict_answer_question(question)
+    active_brand = _detect_brand_filter(question, brand_filter)
+    strict_result = _strict_answer_question(question, brand_filter=active_brand)
     if strict_result.get("matched_products") or strict_result.get("spec_table"):
         strict_result["mode"] = "exploratory"
-        strict_result["query_interpretation"] = _query_interpretation(question, "exploratory")
+        strict_result["query_interpretation"] = _query_interpretation(question, "exploratory", active_brand)
         if strict_result.get("confidence") == "high":
             strict_result["confidence"] = "medium"
         note = (
@@ -1630,7 +1831,7 @@ def _exploratory_answer_question(question: str) -> dict[str, Any]:
         strict_result["missing_or_uncertain"] = list(dict.fromkeys((strict_result.get("missing_or_uncertain") or []) + [note]))
         return strict_result
 
-    hits = search_products(question, limit=20)
+    hits = search_products(question, brand_filter=active_brand, limit=20)
     if not hits:
         model_queries = []
         for model in _extract_models_from_question(question):
@@ -1639,7 +1840,7 @@ def _exploratory_answer_question(question: str) -> dict[str, Any]:
                 model_queries.append("-".join(parts[:-1]))
             model_queries.append(parts[0])
         for query in model_queries:
-            hits = search_products(query, limit=20)
+            hits = search_products(query, brand_filter=active_brand, limit=20)
             if hits:
                 break
     if not hits:
@@ -1653,7 +1854,7 @@ def _exploratory_answer_question(question: str) -> dict[str, Any]:
             "exploratory",
             [],
             [],
-            _query_interpretation(question, "exploratory"),
+            _query_interpretation(question, "exploratory", active_brand),
             ["Exploratory search found no candidates."],
         )
     evidence = []
@@ -1678,16 +1879,16 @@ def _exploratory_answer_question(question: str) -> dict[str, Any]:
         if is_zh
         else f"These are similar matches, not exact matches. Found {len(hits)} potentially relevant records; review similarity reasons, sources, and evidence before using them."
     )
-    return _response(answer, hits, [], _sources_from_hits(hits), [warning], "medium", "exploratory", evidence, match_reasons, _query_interpretation(question, "exploratory"), [warning])
+    return _response(answer, hits, [], _sources_from_hits(hits), [warning], "medium", "exploratory", evidence, match_reasons, _query_interpretation(question, "exploratory", active_brand), [warning])
 
 
-def answer_question(question: str, mode: str = "strict") -> dict[str, Any]:
+def answer_question(question: str, brand_filter: str | None = None, mode: str = "strict") -> dict[str, Any]:
     normalized_mode = _text(mode)
     if normalized_mode not in {"strict", "exploratory"}:
         normalized_mode = "strict"
     if normalized_mode == "exploratory":
-        return _exploratory_answer_question(question)
-    return _strict_answer_question(question)
+        return _exploratory_answer_question(question, brand_filter=brand_filter)
+    return _strict_answer_question(question, brand_filter=brand_filter)
 
 
 if __name__ == "__main__":

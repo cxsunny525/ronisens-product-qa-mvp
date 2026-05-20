@@ -85,3 +85,30 @@ runner meet the current credibility upgrade target. Streamlit Cloud should
 redeploy from GitHub normally because runtime dependencies are in
 `requirements.txt`; local Streamlit startup was blocked only by this sandbox's
 permission issue reading the project-local dependency directories.
+
+## Multi-Brand Advanced Illumination Update
+
+Test time: 2026-05-19 15:16 America/Phoenix
+
+- Database: `data/ioo_product_test.db` preferred; original `data/tms_lite_full.db` preserved.
+- Advanced Illumination pilot import: 13 product families/products, 47 specs, 9 assets/datasheet links.
+- `python test_qa_engine.py`: passed, 23 tests.
+- `python test_multibrand_advanced_illumination.py`: passed, 11 tests.
+- `python eval_runner.py`: passed, 92/92 golden eval cases, 100.0% pass rate.
+- `advanced_illumination_data_quality_report.md`: generated.
+- `advanced_illumination_data_issues.csv`: generated, 62 issue rows.
+- Local Streamlit startup remains blocked in this sandbox by `.runtime_pkgs` access denial, but app code compiles and should run on Streamlit Cloud/Render from `requirements.txt`.
+
+Additional tested questions:
+
+- What Advanced Illumination ring lights are in the database?
+- Which Advanced Illumination products are backlights?
+- Do you have an Advanced Illumination model called FAKE-AI-123?
+- Show all brands with coaxial lights.
+- Advanced Illumination 有没有 TMS Lite 的 CAS2-00-010-X-X？
+
+Current high-risk limitations:
+
+- Advanced Illumination pilot voltage and power fields are mostly missing because they were not explicitly parsed from verified datasheets.
+- Cross-brand equivalence is not guaranteed; results are searchable candidate records, not final substitutions.
+- Pilot data should be expanded only after manual review of official datasheets and field mappings.

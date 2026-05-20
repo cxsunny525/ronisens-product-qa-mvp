@@ -24,7 +24,7 @@ The app is implemented and ready for local/hosted deployment:
 
 - Entrypoint: `app.py`
 - Engine: `qa_engine.py`
-- Database: `data/tms_lite_full.db`
+- Database: `data/ioo_product_test.db` preferred, with `data/tms_lite_full.db` preserved
 - Dependencies: `requirements.txt`
 
 ## Required Secrets
@@ -68,3 +68,14 @@ streamlit run app.py --server.port $PORT --server.address 0.0.0.0
 
 The database file is about 3.3 MB, so it is safe to include directly in the repo
 for this MVP. No Git LFS or external database is required yet.
+
+## Multi-Brand Update Status
+
+- Advanced Illumination pilot data has been imported locally.
+- `data/ioo_product_test.db` contains 2 brands, 667 products total, and 13 Advanced Illumination pilot records.
+- `python test_qa_engine.py`: passed.
+- `python test_multibrand_advanced_illumination.py`: passed.
+- `python eval_runner.py`: passed 92/92 cases.
+- Local Streamlit startup from this sandbox is still blocked by access denial on `.runtime_pkgs`, but the deployed Streamlit Cloud app should update after the GitHub repo is pushed with the new files.
+
+Current public test URL should remain whatever Streamlit Cloud assigned previously. If the hosted page does not update automatically, reboot the Streamlit app after pushing.

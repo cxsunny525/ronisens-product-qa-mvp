@@ -132,5 +132,20 @@ Not yet good enough for:
 2. Build family-level dimension maps for `A/B/C/D` and `ØA/ØB/ØC`.
 3. Resolve OneDrive/FutureIP datasheet and catalogue redirects to final file URLs where possible.
 4. Add explicit `light_type` and `application_tags` fields from family names and source pages.
-5. Add a second brand only after the canonical field dictionary is stable.
+5. Continue expanding second-brand coverage only after each pilot import has a data quality report and regression tests.
 6. Keep all answer generation grounded in `products`, `product_specs`, and `product_assets`; never invent missing specs.
+
+## Advanced Illumination Pilot Addendum
+
+- Unified database: `data/ioo_product_test.db`
+- Original TMS Lite database preserved: `data/tms_lite_full.db`
+- Advanced Illumination product families/products: 13
+- Advanced Illumination specs: 47
+- Advanced Illumination assets/datasheet links: 9
+- Advanced Illumination data issues: 62
+- Unique Advanced Illumination unmapped fields: 4 (`Intensity`, `Lead Time`, `Light Conditioning`, `Sizes`)
+
+The pilot data is suitable for validating multi-brand behavior, brand filtering,
+source traceability, and hallucination traps. It is not yet sufficient for final
+selection because voltage and power coverage are still missing for the pilot
+records.
