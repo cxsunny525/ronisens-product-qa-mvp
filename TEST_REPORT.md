@@ -211,3 +211,26 @@ Results:
 - `python test_qa_engine.py`: passed, 23/23.
 - `python eval_runner.py`: passed, 92/92, 100.0% pass rate.
 - Streamlit launch failed only because the bundled Codex runtime cannot execute `streamlit.__main__`; normal deployment should still use `streamlit run app.py`.
+
+## Streamlit Preset Button State Fix
+
+Test time: 2026-05-20 America/Phoenix
+
+Issue:
+
+- Clicking preset question buttons, or clearing the conversation after the
+  question box had rendered, could trigger Streamlit's widget state protection:
+  `st.session_state["question"]` was being modified after the `Question` widget
+  was instantiated.
+
+Fix:
+
+- `app.py` now stores preset and clear actions in `pending_question`.
+- The `question` widget state is updated only at the start of the next render,
+  before the text area widget is created.
+
+Validation:
+
+- `python -m py_compile app.py`: passed.
+- `python test_qa_engine.py`: passed, 23/23.
+- `python eval_runner.py`: passed, 92/92, 100.0% pass rate.

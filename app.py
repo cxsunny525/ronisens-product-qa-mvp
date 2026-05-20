@@ -269,6 +269,7 @@ def save_feedback(question: str, result: dict[str, Any], feedback: str, rating: 
 
 def init_session_state() -> None:
     st.session_state.setdefault("question", "")
+    st.session_state.setdefault("pending_question", None)
     st.session_state.setdefault("conversation", [])
     st.session_state.setdefault("last_result", None)
     st.session_state.setdefault("last_question", "")
@@ -423,6 +424,12 @@ def render_upload_context(context: dict[str, Any] | None, uploaded_file: Any) ->
 
 
 def render_ask_card(brand_filter: str | None, engine_mode: str, focus_choice: str) -> None:
+    pending_question = st.session_state.get("pending_question")
+    if pending_question is not None:
+        # Streamlit only allows changing widget-backed state before the widget is instantiated.
+        st.session_state["question"] = pending_question
+        st.session_state["pending_question"] = None
+
     st.markdown('<div class="ioo-card">', unsafe_allow_html=True)
     st.markdown('<div class="ioo-card-title">Ask IOO</div>', unsafe_allow_html=True)
     st.markdown(
@@ -463,7 +470,7 @@ def render_ask_card(brand_filter: str | None, engine_mode: str, focus_choice: st
             st.session_state["conversation"] = []
             st.session_state["last_result"] = None
             st.session_state["last_question"] = ""
-            st.session_state["question"] = ""
+            st.session_state["pending_question"] = ""
             st.rerun()
 
     st.markdown("**Try a demo question**")
@@ -471,7 +478,7 @@ def render_ask_card(brand_filter: str | None, engine_mode: str, focus_choice: st
     for idx, (label, prompt) in enumerate(EXAMPLE_QUESTIONS):
         with chip_cols[idx % 4]:
             if st.button(label, key=f"example_{idx}", use_container_width=True):
-                st.session_state["question"] = prompt
+                st.session_state["pending_question"] = prompt
                 st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
 
