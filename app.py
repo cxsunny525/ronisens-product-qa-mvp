@@ -176,26 +176,11 @@ def sidebar() -> None:
 
 EXAMPLE_QUESTIONS = [
     "What TMS Lite ring lights are in the database?",
-    "What Advanced Illumination ring lights are in the database?",
     "Which Advanced Illumination products are backlights?",
-    "Which Advanced Illumination products have datasheets?",
-    "Which Advanced Illumination products are missing voltage information?",
     "Which products are 24V?",
     "Compare TMS Lite and Advanced Illumination ring lights.",
-    "Show all brands with coaxial lights.",
-    "\u6761\u5f62\u7684\u5149\u6e90\u6709\u54ea\u4e9b\uff1f",
-    "Advanced Illumination \u6709\u54ea\u4e9b\u73af\u5f62\u5149\u6e90\uff1f",
-    "Advanced Illumination \u6709\u54ea\u4e9b\u80cc\u5149\u6e90\uff1f",
-    "Advanced Illumination \u54ea\u4e9b\u4ea7\u54c1\u6709\u89c4\u683c\u4e66\uff1f",
-    "Advanced Illumination \u54ea\u4e9b\u4ea7\u54c1\u7f3a\u5c11\u7535\u538b\u53c2\u6570\uff1f",
-    "TMS Lite \u548c Advanced Illumination \u6709\u54ea\u4e9b\u540c\u7c7b\u5149\u6e90\u53ef\u4ee5\u6bd4\u8f83\uff1f",
-    "\u5f53\u524d\u6570\u636e\u5e93\u6709\u54ea\u4e9b\u54c1\u724c\uff1f",
-    "\u54ea\u4e9b\u4ea7\u54c1\u6709\u89c4\u683c\u4e66\uff1f",
-    "Compare CAS2-00-010-X-X, BHP1010-X-X, DLQ2-90-050-1-X.",
-    "\u54ea\u4e9b\u4ea7\u54c1\u6ca1\u6709\u7535\u538b\u53c2\u6570\uff1f",
-    "\u68c0\u6d4b\u91d1\u5c5e\u5212\u75d5\u5e94\u8be5\u770b\u4ec0\u4e48\u5149\u6e90\uff1f",
-    "\u900f\u660e\u74f6\u8fb9\u7f18\u68c0\u6d4b\u9002\u5408\u4ec0\u4e48\u5149\u6e90\uff1f",
-    "Which fields are missing most often?",
+    "What lighting is suitable for metal scratch inspection?",
+    "How do working distance and field of view affect lens selection?",
 ]
 
 KNOWLEDGE_QUERY_TERMS = [
@@ -259,7 +244,7 @@ def render_product_qa() -> None:
     )
     brand_filter = None if brand_choice == "All Brands" else brand_choice
 
-    cols = st.columns(4)
+    cols = st.columns(3)
     for i, example in enumerate(EXAMPLE_QUESTIONS):
         with cols[i % 4]:
             if st.button(example, key=f"example_{i}", use_container_width=True):
@@ -375,7 +360,7 @@ def render_product_qa() -> None:
                 st.info("No similar-match warning for this answer.")
 
         st.subheader("Feedback")
-        rating = st.radio("Quick rating", ["👍 Helpful", "👎 Not helpful"], horizontal=True, key="feedback_rating")
+        rating = st.radio("Quick rating", ["Helpful", "Not helpful"], horizontal=True, key="feedback_rating")
         suspected_issue_type = st.selectbox(
             "Suspected issue type",
             ["Other", "Wrong answer", "Missing product", "Bad source", "Bad recommendation"],
@@ -413,7 +398,7 @@ def render_knowledge_search() -> None:
     st.subheader("Knowledge Search")
     st.caption("Search the IOO Knowledge Base pilot. Results are source-linked and pending human review unless marked otherwise.")
     if "knowledge_question" not in st.session_state:
-        st.session_state["knowledge_question"] = "What lighting is suitable for metal scratch inspection?"
+        st.session_state["knowledge_question"] = "How do working distance and field of view affect lens selection?"
     question = st.text_area("Knowledge question", key="knowledge_question", height=90)
     if st.button("Search knowledge", type="primary"):
         with st.spinner("Searching knowledge cards and source documents..."):
@@ -471,7 +456,7 @@ def render_combined_answer() -> None:
     st.subheader("Combined Answer")
     st.caption("The system retrieves knowledge first, then product candidates from the current product database.")
     if "combined_question" not in st.session_state:
-        st.session_state["combined_question"] = "\u68c0\u6d4b\u91d1\u5c5e\u5212\u75d5\u5e94\u8be5\u770b\u4ec0\u4e48\u5149\u6e90\uff1f"
+        st.session_state["combined_question"] = "How do working distance and field of view affect lens selection?"
     qa_mode = st.radio(
         "Combined answer mode",
         ["Strict mode", "Exploratory mode"],
