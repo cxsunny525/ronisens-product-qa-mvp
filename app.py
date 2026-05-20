@@ -303,8 +303,10 @@ def render_sidebar() -> tuple[str | None, str, str]:
     stats = qa_engine.get_database_stats()
     brand_stats = qa_engine.get_database_stats_by_brand()
     knowledge_stats = knowledge_engine.get_knowledge_stats()
+    knowledge_source_stats = knowledge_engine.get_knowledge_stats_by_source()
     counts = stats.get("counts", {})
     brands = brand_stats.get("brands", {})
+    edmund_stats = knowledge_source_stats.get("Edmund Optics", {})
 
     st.sidebar.markdown("### Control Panel")
     brand_choice = st.sidebar.selectbox("Brand selector", BRAND_OPTIONS, index=0)
@@ -323,6 +325,10 @@ def render_sidebar() -> tuple[str | None, str, str]:
     st.sidebar.metric("Product assets", _metric_value(counts.get("product_assets", 0)))
     knowledge_docs = knowledge_stats.get("knowledge_documents", 0)
     st.sidebar.metric("Knowledge documents", _metric_value(knowledge_docs) if knowledge_docs else "Coming soon")
+    st.sidebar.metric("Knowledge sources", _metric_value(knowledge_stats.get("knowledge_sources", 0)))
+    st.sidebar.metric("Edmund Optics documents", _metric_value(edmund_stats.get("documents", 0)))
+    st.sidebar.metric("Edmund Optics cards", _metric_value(edmund_stats.get("cards", 0)))
+    st.sidebar.metric("Pending review documents", _metric_value(knowledge_stats.get("pending_review_documents", 0)))
 
     st.sidebar.markdown("---")
     st.sidebar.markdown("### Trust / Limitations")
@@ -651,7 +657,8 @@ def render_sources(title: str, sources: list[dict[str, Any]]) -> None:
     for source in sources[:12]:
         url = source.get("url") or "not available"
         label = source.get("title") or source.get("source_name") or source.get("type") or "source"
-        source_type = source.get("type") or "source"
+        source_name = source.get("source_name") or source.get("publisher")
+        source_type = source_name or source.get("type") or "source"
         if url != "not available":
             st.markdown(f"- **{source_type}**: [{label}]({url})")
         else:
@@ -698,6 +705,15 @@ def render_answer_card(result: dict[str, Any] | None, focus_choice: str) -> None
     st.markdown("### Knowledge / selection logic")
     knowledge_answer = result.get("knowledge_answer")
     if knowledge_answer:
+        knowledge_source_names = sorted(
+            {
+                str(source.get("source_name") or source.get("publisher"))
+                for source in result.get("knowledge_sources", [])
+                if source.get("source_name") or source.get("publisher")
+            }
+        )
+        if "Edmund Optics" in knowledge_source_names:
+            st.caption("Knowledge source: Edmund Optics")
         st.write(knowledge_answer)
     else:
         st.caption("Knowledge base module is under development for this question. This answer is currently based on product database and built-in selection rules.")

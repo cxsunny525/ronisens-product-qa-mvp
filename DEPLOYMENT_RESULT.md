@@ -79,3 +79,19 @@ for this MVP. No Git LFS or external database is required yet.
 - Local Streamlit startup from this sandbox is still blocked by access denial on `.runtime_pkgs`, but the deployed Streamlit Cloud app should update after the GitHub repo is pushed with the new files.
 
 Current public test URL should remain whatever Streamlit Cloud assigned previously. If the hosted page does not update automatically, reboot the Streamlit app after pushing.
+
+## Edmund Optics Knowledge Update Status
+
+- Edmund Optics knowledge import tooling has been added:
+  `crawl_edmund_knowledge.py`, `import_edmund_knowledge.py`,
+  `extract_edmund_knowledge.py`, and `knowledge_quality_edmund.py`.
+- Reports generated:
+  `EDMUND_KNOWLEDGE_IMPORT_REPORT.md`, `edmund_knowledge_issues.csv`, and
+  `edmund_knowledge_inventory.csv`.
+- The local Codex runtime blocked outbound socket access while attempting to
+  crawl Edmund Optics, so this workspace did not download new full Edmund pages.
+- Current database contains 9 existing source-linked Edmund Optics knowledge
+  records and 9 generated Edmund knowledge cards.
+- To expand online, run `python crawl_edmund_knowledge.py --limit 150` from a
+  network-enabled machine, then run the import, extract, and quality scripts.
+  The crawler enforces Edmund's 10 second crawl delay.

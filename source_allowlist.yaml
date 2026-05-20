@@ -26,21 +26,19 @@ sources:
   - source_name: Edmund Optics
     domain: edmundoptics.com
     base_urls:
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/backlight-illumination-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-spot-and-bar-lights-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/darkfield-illumination-with-ring-lights-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-dome-lights-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-ring-lights-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/in-line-telecentric-illumination-for-machine-vision/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/imaging/resolution/
-      - https://www.edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity/
-    source_type: application_note
-    priority: 1
-    allowed_content_types: [html]
-    crawl_strategy: seed_urls
-    max_pages: 10
-    notes: Public imaging and illumination application notes. Use summaries and citations, not full-text republication.
+      - https://www.edmundoptics.com/knowledge-center/
+      - https://www.edmundoptics.com/knowledge-center/application-notes/imaging/
+      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/
+      - https://www.edmundoptics.com/capabilities/imaging-optics/resources
+    source_type: knowledge_articles
+    priority: high
+    allowed_content_types:
+      - text/html
+    crawl_strategy: sitemap_plus_filtered_internal_links
+    max_pages: 150
+    crawl_delay_seconds: 10
+    respect_robots_txt: true
+    notes: Edmund Optics knowledge articles for machine vision lighting, filters, lenses, cameras, and imaging system design.
 
   - source_name: Cognex
     domain: cognex.com

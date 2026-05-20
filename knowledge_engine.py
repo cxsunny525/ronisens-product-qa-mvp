@@ -164,6 +164,49 @@ def get_knowledge_stats(db_path: str | Path | None = None) -> dict[str, Any]:
     return counts
 
 
+def get_knowledge_stats_by_source(db_path: str | Path | None = None) -> dict[str, Any]:
+    ensure_knowledge_schema(db_path)
+    with connect(db_path) as conn:
+        rows = _rows(
+            conn,
+            """
+            SELECT
+                ks.source_name,
+                ks.domain,
+                COUNT(DISTINCT kd.id) AS documents,
+                COUNT(DISTINCT kch.id) AS chunks,
+                SUM(CASE WHEN kd.review_status = 'pending' THEN 1 ELSE 0 END) AS pending_documents,
+                SUM(CASE WHEN kd.review_status = 'needs_review' THEN 1 ELSE 0 END) AS needs_review_documents,
+                SUM(CASE WHEN kd.review_status = 'rejected' THEN 1 ELSE 0 END) AS rejected_documents
+            FROM knowledge_sources ks
+            LEFT JOIN knowledge_documents kd ON kd.source_id = ks.id
+            LEFT JOIN knowledge_chunks kch ON kch.document_id = kd.id
+            GROUP BY ks.id
+            ORDER BY ks.source_name
+            """,
+        )
+        card_rows = _rows(conn, "SELECT id, source_document_ids FROM knowledge_cards")
+        doc_source_rows = _rows(
+            conn,
+            """
+            SELECT kd.id, ks.source_name
+            FROM knowledge_documents kd
+            LEFT JOIN knowledge_sources ks ON ks.id = kd.source_id
+            """,
+        )
+    result = {row.get("source_name") or "Unknown": row for row in rows}
+    doc_to_source = {int(row["id"]): row.get("source_name") or "Unknown" for row in doc_source_rows}
+    for source_name, row in result.items():
+        row["cards"] = 0
+    for card in card_rows:
+        doc_ids = [int(item) for item in _parse_json_list(card.get("source_document_ids")) if str(item).isdigit()]
+        card_sources = {doc_to_source.get(doc_id) for doc_id in doc_ids}
+        for source_name in card_sources:
+            if source_name in result:
+                result[source_name]["cards"] += 1
+    return result
+
+
 def _tokenize(text: str) -> list[str]:
     text = (text or "").lower()
     words = re.findall(r"[a-z0-9][a-z0-9_+-]{1,}|[\u4e00-\u9fff]{2,}", text)
@@ -229,7 +272,7 @@ def search_knowledge(query: str, limit: int = 8) -> list[dict[str, Any]]:
     ensure_knowledge_schema()
     query_tokens = _tokenize(query)
     with connect() as conn:
-        rows = _rows(
+        doc_rows = _rows(
             conn,
             """
             SELECT kd.*, ks.source_name, ks.domain, ks.license_status
@@ -237,12 +280,36 @@ def search_knowledge(query: str, limit: int = 8) -> list[dict[str, Any]]:
             LEFT JOIN knowledge_sources ks ON ks.id = kd.source_id
             """,
         )
-    scored = []
-    for row in rows:
+        chunk_rows = _rows(
+            conn,
+            """
+            SELECT kd.*, ks.source_name, ks.domain, ks.license_status,
+                   kc.chunk_text, kc.tags_json AS chunk_tags_json, kc.chunk_index
+            FROM knowledge_chunks kc
+            JOIN knowledge_documents kd ON kd.id = kc.document_id
+            LEFT JOIN knowledge_sources ks ON ks.id = kd.source_id
+            """,
+        )
+    scored_by_doc: dict[int, dict[str, Any]] = {}
+    for row in doc_rows:
         score = _score(query_tokens, row)
         if score > 0:
             row["score"] = round(score, 2)
-            scored.append(row)
+            row["source_url"] = row.get("url")
+            row["publisher"] = row.get("publisher") or row.get("source_name")
+            scored_by_doc[int(row["id"])] = row
+    for row in chunk_rows:
+        score = _score(query_tokens, row)
+        if score <= 0:
+            continue
+        row["score"] = round(score, 2)
+        row["source_url"] = row.get("url")
+        row["publisher"] = row.get("publisher") or row.get("source_name")
+        row["best_chunk_text"] = row.get("chunk_text")
+        doc_id = int(row["id"])
+        if doc_id not in scored_by_doc or row["score"] > scored_by_doc[doc_id].get("score", 0):
+            scored_by_doc[doc_id] = row
+    scored = list(scored_by_doc.values())
     scored.sort(key=lambda item: (-item["score"], -(item.get("quality_score") or 0), item.get("title") or ""))
     return scored[:limit]
 

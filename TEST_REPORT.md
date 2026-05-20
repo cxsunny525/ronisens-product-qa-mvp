@@ -184,3 +184,30 @@ Upload checks:
 Blocked:
 
 - Full local `streamlit run app.py` remains blocked in this Codex sandbox because the available local Streamlit package has no runnable `streamlit.__main__` entry point. The app compiles/imports successfully and should run on Streamlit Cloud from `requirements.txt`.
+
+## Edmund Optics Knowledge Import
+
+Test time: 2026-05-19 America/Phoenix
+
+Commands run:
+
+- `python crawl_edmund_knowledge.py --dry-run --limit 20`
+- `python crawl_edmund_knowledge.py --limit 150 --force`
+- `python import_edmund_knowledge.py`
+- `python extract_edmund_knowledge.py`
+- `python knowledge_quality_edmund.py`
+- `python test_qa_engine.py`
+- `python eval_runner.py`
+- `python -m streamlit run app.py --server.headless true --server.port 8501 --server.address 127.0.0.1`
+
+Results:
+
+- Edmund crawler dry-run completed and kept `crawl_delay_seconds = 10.0`.
+- The local Codex runtime blocked outbound socket access with WinError 10013, so no new Edmund full pages were downloaded in this environment.
+- Existing source-linked Edmund knowledge records in the database: 9.
+- Edmund chunks generated: 9.
+- Edmund knowledge cards generated: 9.
+- `EDMUND_KNOWLEDGE_IMPORT_REPORT.md`, `edmund_knowledge_issues.csv`, and `edmund_knowledge_inventory.csv` were generated.
+- `python test_qa_engine.py`: passed, 23/23.
+- `python eval_runner.py`: passed, 92/92, 100.0% pass rate.
+- Streamlit launch failed only because the bundled Codex runtime cannot execute `streamlit.__main__`; normal deployment should still use `streamlit run app.py`.

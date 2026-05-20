@@ -104,11 +104,10 @@ Knowledge tables are stored in the same SQLite database:
 - `knowledge_cards`
 - `knowledge_crawl_log`
 
-The Streamlit app now has three tabs:
-
-- `Product QA`: product database only.
-- `Knowledge Search`: knowledge cards and source documents only.
-- `Combined Answer`: knowledge explanation first, then product candidates.
+The current Streamlit app presents a unified investor-demo workspace. Knowledge
+retrieval is shown in the `Knowledge / selection logic` and `Knowledge sources`
+sections of an answer, while product records remain in `Product candidates` and
+`Product sources`.
 
 Knowledge answers must cite source URLs. If no relevant knowledge source is
 found, the app should say so and should not invent a source.
@@ -170,6 +169,67 @@ records before using knowledge cards outside internal testing.
 - Keep `source_url`, publisher, retrieved date, and review status.
 - Use summaries, tags, and recommendation logic as internal test artifacts.
 - Treat unknown licenses as internal-use-only until reviewed.
+
+### Edmund Optics Knowledge Import
+
+The Edmund Optics import is a dedicated knowledge-base expansion for public
+official Edmund Optics Knowledge Center, application note, and imaging-resource
+articles. It is not a product crawler.
+
+Imported scope:
+
+- Machine vision illumination and lighting fundamentals.
+- Filters for contrast improvement, including bandpass, longpass, shortpass,
+  neutral density, color, interference, and polarization filters.
+- Lens selection topics such as focal length, field of view, working distance,
+  depth of field, telecentric lenses, aperture, and distortion.
+- Camera and imaging-system topics such as sensor size, resolution, shutter
+  behavior, exposure, and line scan imaging.
+
+Excluded scope:
+
+- Product category pages and SKU pages.
+- Cart, account, search, quote, specsheet, modal, profile, order history, saved
+  list, Solr, document endpoints, and digital catalog paths.
+- Unrelated corporate, careers, events, press-release, ecommerce, and
+  discontinued-product pages.
+
+Compliance notes:
+
+- `crawl_edmund_knowledge.py` reads Edmund Optics robots rules and enforces a
+  minimum 10 second crawl delay because Edmund Optics specifies
+  `Crawl-delay: 10`.
+- Documents are stored as internal test records with `license_status = unknown`
+  unless a human review changes that status.
+- The app should show summaries, tags, recommendation logic, and source URLs. It
+  should not display full Edmund articles as IOO-authored content.
+
+Run a safe dry run:
+
+```powershell
+python crawl_edmund_knowledge.py --dry-run --limit 20
+```
+
+Run the real crawl from a network-enabled machine:
+
+```powershell
+python crawl_edmund_knowledge.py --limit 150
+```
+
+Import and extract knowledge cards:
+
+```powershell
+python import_edmund_knowledge.py
+python extract_edmund_knowledge.py
+python knowledge_quality_edmund.py
+streamlit run app.py
+```
+
+Quality outputs:
+
+- `EDMUND_KNOWLEDGE_IMPORT_REPORT.md`
+- `edmund_knowledge_issues.csv`
+- `edmund_knowledge_inventory.csv`
 
 ## What The MVP Cannot Do Yet
 
