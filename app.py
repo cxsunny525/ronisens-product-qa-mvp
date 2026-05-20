@@ -244,9 +244,10 @@ def render_product_qa() -> None:
     )
     brand_filter = None if brand_choice == "All Brands" else brand_choice
 
-    cols = st.columns(3)
+    column_count = 3
+    cols = st.columns(column_count)
     for i, example in enumerate(EXAMPLE_QUESTIONS):
-        with cols[i % 4]:
+        with cols[i % column_count]:
             if st.button(example, key=f"example_{i}", use_container_width=True):
                 st.session_state["question"] = example
 
