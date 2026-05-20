@@ -1,0 +1,335 @@
+﻿severity,issue_type,model,family_name,detail,source_url
+medium,low_core_field_coverage,F-DLC3-00-130-8-FWNA-24V,DL-F-DLC3-00-130-8-FWNA-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-dlc3-00-130-8-fwna-24v
+medium,low_core_field_coverage,F-HPD3-00-130-8-FWNA-24V,DL-F-HPD3-00-130-8-FWNA-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-hpd3-00-130-8-fwna-24v
+medium,low_core_field_coverage,F-IDQ-00-130-8-FWNA-24V,DL-F-IDQ-00-130-8-FWNA-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-idq-00-130-8-fwna-24v
+medium,low_core_field_coverage,F-IDS5-00-130-8-FWNA-24V,DL-F-IDS5-00-130-8-FWNA-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-ids5-00-130-8-fwna-24v
+medium,low_core_field_coverage,40A,PTP-40-320x80-4.2V-40A,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ptp-40-320x80-4.2v-40a-2069708409
+medium,low_core_field_coverage,MA-IDD-X-150D30-4-RGBW-12V-16CH,DL-MA-IDD-X-150D30-4-RGBW-12V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idd-x-150d30-4-rgbw-12v-16ch
+medium,low_core_field_coverage,MA-IDD-X-225D40-8-RGBW-24V-16CH,DL-MA-IDD-X-225D40-8-RGBW-24V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idd-x-225d40-8-rgbw-24v-16ch
+medium,low_core_field_coverage,MA-IDD-X-225D40-8-RGBW-24V-16CH,D-MA-IDD-X-225D40-8-RGBW-24V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idd-x-225d40-8-rgbw-24v-16ch-rs232
+medium,low_core_field_coverage,MA-IDQ-X-150D30-4-RGBW-12V-16CH,DL-MA-IDQ-X-150D30-4-RGBW-12V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idq-x-150d30-4-rgbw-12v-16ch
+medium,low_core_field_coverage,MA-IDQ-X-225D40-8-RGBW-24V-16CH,DL-MA-IDQ-X-225D40-8-RGBW-24V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idq-x-225d40-8-rgbw-24v-16ch
+medium,low_core_field_coverage,MA-IDQ-X-225D40-8-RGBW-24V-16CH,D-MA-IDQ-X-225D40-8-RGBW-24V-16CH,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-ma-idq-x-225d40-8-rgbw-24v-16ch-rs232
+medium,low_core_field_coverage,F-DLC3-00-130-1-FWNB-24V,DL-F-DLC3-00-130-1-FWNB-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-dlc3-00-130-1-fwnb-24v-67359344
+medium,low_core_field_coverage,F-HPD3-00-130-1-FWNB-24V,DL-F-HPD3-00-130-1-FWNB-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-hpd3-00-130-1-fwnb-24v
+medium,low_core_field_coverage,F-IDQ-00-130-1-FWNB-24V,DL-F-IDQ-00-130-1-FWNB-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-idq-00-130-1-fwnb-24v
+medium,low_core_field_coverage,F-IDS5-00-130-1-FWNB-24V,DL-F-IDS5-00-130-1-FWNB-24V,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dl-f-ids5-00-130-1-fwnb-24v
+medium,low_core_field_coverage,2CH-HS,DRV-2CH-HS,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/drv-2ch-hs
+medium,low_core_field_coverage,2CH-HS-HBL,DRV-2CH-HS-HBL,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/drv-2ch-hs-hbl
+medium,low_core_field_coverage,CP-LCD,DRV-CP-LCD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/drv-cp-lcd
+medium,low_core_field_coverage,21-4CH-A1-RS-LL,LC-21-4CH-A1-RS-LL,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lc-21-4ch-a1-rs-ll-1479307220
+medium,low_core_field_coverage,21-8CH-HS,LC-21-8CH-HS,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lc-21-8ch-hs
+medium,low_core_field_coverage,21-8CH-HS-TCP,LC-21-8CH-HS-TCP,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lc-21-8ch-hs-tcp
+medium,low_core_field_coverage,F-IDQ-IDS5-HBL3-FWNA,DK-F-IDQ-IDS5-HBL3-FWNA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-f-idq-ids5-hbl3-fwna
+medium,low_core_field_coverage,DK-LIGHTING-SET-V1,TME-DK-LIGHTING-SET-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/tme-dk-lighting-set-v1
+medium,low_core_field_coverage,OD-LSQ-24V-V1,DK-OD-LSQ-24V-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-od-lsq-24v-v1
+medium,low_core_field_coverage,OD-LSQF-24V-V1,DK-OD-LSQF-24V-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-od-lsqf-24v-v1
+medium,low_core_field_coverage,F-DXX-070-100-120-V1,DK-F-DXX-070-100-120-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-f-dxx-070-100-120-v1
+medium,low_core_field_coverage,F-DXX-D080-100-130-V1,DK-F-DXX-D080-100-130-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-f-dxx-d080-100-130-v1
+medium,low_core_field_coverage,LIGHTING-PM-40-V1,DK-LIGHTING-PM-40-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-lighting-pm-40-v1
+medium,low_core_field_coverage,RGBW-V1,DK-RGBW-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-rgbw-v1
+medium,low_core_field_coverage,MA-IDD-LC-20-V1,DK-MA-IDD-LC-20-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-ma-idd-lc-20-v1
+medium,low_core_field_coverage,MA-IDQ-LC-20-V1,DK-MA-IDQ-LC-20-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-ma-idq-lc-20-v1
+medium,low_core_field_coverage,3SWIR-HLBS2-F-HPD3-V1,DK-3SWIR-HLBS2-F-HPD3-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-3swir-hlbs2-f-hpd3-v1
+medium,low_core_field_coverage,4NIR-HLBS2-F-HPD3-V1,DK-4NIR-HLBS2-F-HPD3-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-4nir-hlbs2-f-hpd3-v1
+medium,low_core_field_coverage,4UV-HLBS2-F-HPD3-V1,DK-4UV-HLBS2-F-HPD3-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/dk-4uv-hlbs2-f-hpd3-v1
+medium,low_core_field_coverage,DIRECT ILLUMINATION - HLBQ2 2 ROWS,DIRECT ILLUMINATION - HLBQ2 2 ROWS,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/direct-illumination-hlbq2-2-rows
+medium,low_core_field_coverage,DIRECT ILLUMINATION - HLBS2 2 ROWS,DIRECT ILLUMINATION - HLBS2 2 ROWS,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/direct-illumination-hlbs2-2rows
+medium,low_core_field_coverage,LBRX-12,DIRECT ILLUMINATION - LBRX 12 ROWS,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/direct-illumination-lbrx-12-rows
+medium,low_core_field_coverage,PM2-025,MODULAR ILLUMINATION - PM2-025,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/modular-illumination-pm2-025
+medium,low_core_field_coverage,PM2-040,MODULAR ILLUMINATION - PM2-040,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/modular-illumination-pm2-040
+medium,low_core_field_coverage,STARTER-V1,PTS4-STARTER-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/pts3-starter-v1
+medium,low_core_field_coverage,STATION-OPTO-EBD-01,TME-STATION-OPTO-EBD-01,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/tme-station-opto-ebd-01
+medium,low_core_field_coverage,Lens 2D-TCEL150,TME-STATION-OPTO-LIQUID LENS-V1,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/tme-station-opto-liquid-lens-v1
+medium,low_core_field_coverage,CAS2,RGBW ILLUMINATION - CAS2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-cas2
+medium,low_core_field_coverage,DLF3,RGBW ILLUMINATION - DLF3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-dlf3
+medium,low_core_field_coverage,DLR3,RGBW ILLUMINATION - DLR3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-dlr3
+medium,low_core_field_coverage,HPD2,RGBW ILLUMINATION - HPD2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-hpd2
+medium,low_core_field_coverage,IDS5,RGBW ILLUMINATION - IDS5,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-ids5
+medium,low_core_field_coverage,LSW2,RGBW ILLUMINATION - LSW2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-lsw2
+medium,low_core_field_coverage,MD-IDQ3,RGBW ILLUMINATION - MD-IDQ3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-md-idq3
+medium,low_core_field_coverage,MD-IDT3,RGBW ILLUMINATION - MD-IDT3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-md-idt3
+medium,low_core_field_coverage,LBRQ-1,UV ILLUMINATION - LBRQ 1 ROW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lbrq-1-row
+medium,low_core_field_coverage,LBRX-1,UV ILLUMINATION - LBRX 1 ROW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lbrx-1-row
+medium,low_core_field_coverage,DXX,DIFFUSED SQUARE ILLUMINATION - F - DXX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/diffused-square-illumination-dla
+medium,low_core_field_coverage,IDDC,HALF CIRCLE ILLUMINATION - IDDC,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/half-circle-illumination-iddc
+medium,low_core_field_coverage,LLAC,HALF CIRCLE ILLUMINATION - LLAC,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/half-circle-illumination-llac
+medium,low_core_field_coverage,LSWC,HALF CIRCLE ILLUMINATION - LSWC,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/half-circle-illumination-lswc
+medium,low_core_field_coverage,DLC2,RGBW ILLUMINATION - DLC2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-dlc
+medium,low_core_field_coverage,HPD,RGBW ILLUMINATION - HPD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-hpd
+medium,low_core_field_coverage,MD-MLBQ,RGBW ILLUMINATION - MD-MLBQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-md-mlbq
+medium,low_core_field_coverage,MLBQ,RGBW ILLUMINATION - MLBQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/rgbw-illumination-mlbq
+medium,low_core_field_coverage,HPD,UV ILLUMINATION - HPD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-hpd
+medium,low_core_field_coverage,LLA,UV ILLUMINATION - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lla
+medium,low_core_field_coverage,LSW,UV ILLUMINATION - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lsw
+medium,low_core_field_coverage,CAS3-00-150-X-X,CAS3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/cas3-serie.html
+medium,low_core_field_coverage,CAS3-00-200-X-X,CAS3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/cas3-serie.html
+medium,low_core_field_coverage,CAS3-00-250-X-X,CAS3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/cas3-serie.html
+medium,low_core_field_coverage,LC-18-1CH-X10,LC-18-1CH-X10 Controller,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lc-18-1ch-x10-controller.html
+medium,low_core_field_coverage,UV385,UV Illumination - HPD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-hpd.html
+medium,low_core_field_coverage,UV395,UV Illumination - HPD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-hpd.html
+medium,low_core_field_coverage,UV405,UV Illumination - HPD,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-hpd.html
+medium,low_core_field_coverage,UV385,UV Illumination - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-uv-illumination-serie.html
+medium,low_core_field_coverage,UV395,UV Illumination - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-uv-illumination-serie.html
+medium,low_core_field_coverage,UV405,UV Illumination - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-uv-illumination-serie.html
+medium,low_core_field_coverage,CAS2-00-025-X-UV365,UV Illumination - CAS2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/cas2-uv-illumination-serie.html
+medium,low_core_field_coverage,CAS2-00-040-X-UV365,UV Illumination - CAS2,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/cas2-uv-illumination-serie.html
+medium,low_core_field_coverage,UV385,UV Illumination - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-uv-illumination-serie.html
+medium,low_core_field_coverage,UV395,UV Illumination - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-uv-illumination-serie.html
+medium,low_core_field_coverage,UV405,UV Illumination - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-uv-illumination-serie.html
+medium,low_core_field_coverage,UV385,UV Illumination - LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-uv-illumination-serie.html
+medium,low_core_field_coverage,UV395,UV Illumination - LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-uv-illumination-serie.html
+medium,low_core_field_coverage,UV405,UV Illumination - LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-uv-illumination-serie.html
+medium,low_core_field_coverage,UV385,UV Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lbrq.html
+medium,low_core_field_coverage,UV395,UV Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lbrq.html
+medium,low_core_field_coverage,UV405,UV Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/uv-illumination-lbrq.html
+medium,low_core_field_coverage,LBRX-00-040-3-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-080-3-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-120-3-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-160-3-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-200-3-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-040-6-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-080-6-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-120-6-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-160-6-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRX-00-200-6-IR850,IR-Illumination- LBRX,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrx-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-025-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-050-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-075-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-100-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-030-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-060-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-090-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHS4-00-120-X-IR850,IR-Illumination - BHS4,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhs4-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-040-3-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-080-3-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-120-3-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-160-3-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-200-3-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-040-6-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-080-6-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-120-6-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-160-6-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LBRQ-00-200-6-IR850,IR-Illumination - LBRQ,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbrq-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LSW-15-070-3-IR850,IR-Illumination - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LSW-15-070-3-IR940,IR-Illumination - LSW,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LLA-60-090-2-IR850,IR-Illumination - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,LLA-60-090-2-IR940,IR-Illumination - LLA,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-ir-beleuchtungsserie.html
+medium,low_core_field_coverage,BHLX3-00-160X160-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-160X240-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-160X320-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-160X400-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-240X240-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-240X320-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-240X400-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-320X320-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-320X400-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,BHLX3-00-400X400-X-IR850,IR-Illumination - BHLX3,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/ir-illumination-bhlx3.html
+medium,low_core_field_coverage,IDQ3-00-120-1-RGB,RGB Illumination - IDQ3,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/rgb-illumination-idq3.html
+medium,low_core_field_coverage,IDQ3-00-190-1-RGB,RGB Illumination - IDQ3,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/rgb-illumination-idq3.html
+medium,low_core_field_coverage,IDQ3-00-300-1-RGB,RGB Illumination - IDQ3,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/rgb-illumination-idq3.html
+medium,low_core_field_coverage,IDQ3-00-120-1-X,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,IDQ3-00-190-1-X,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,IDQ3-00-300-1-X,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,IDQ3-00-120-1-RGB,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,IDQ3-00-190-1-RGB,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,IDQ3-00-300-1-RGB,IDQ3 Series,"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/idq-serie.html
+medium,low_core_field_coverage,LLA-90-118-1-X,LLA-90 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lla-90-serie.html
+medium,low_core_field_coverage,LSW-00-157-7-X-24V,LSW Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-series.html
+medium,low_core_field_coverage,LSW-45-120-3-X-24V,LSW Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-series.html
+medium,low_core_field_coverage,LSW-45-170-5-X-24V,LSW Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsw-series.html
+medium,low_core_field_coverage,R,"LSQ-00, 15, 30, 45 LSQ Stackable Series","缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lsq-series-stackable.html
+medium,low_core_field_coverage,LBMQ-00-040-1-X,LBMQ Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbmq-serie.html
+medium,low_core_field_coverage,LBMQ-00-040-2-X,LBMQ Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbmq-serie.html
+medium,low_core_field_coverage,LBMQ-00-040-3-X,LBMQ Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbmq-serie.html
+medium,low_core_field_coverage,LBM-00-040-1-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,LBM-00-080-1-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,LBM-00-040-2-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,LBM-00-080-2-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,LBM-00-040-3-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,LBM-00-080-3-X,LBM Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/lbm-serie.html
+medium,low_core_field_coverage,R,HLBQ2 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hlbq2-serie.html
+medium,low_core_field_coverage,HBFS2-00-08-1-X-5V,HBFS2 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbfs2-series.html
+medium,low_core_field_coverage,HBFS2-00-08-1-W-24V,HBFS2 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbfs2-series.html
+medium,low_core_field_coverage,HBF2-00-16-1-X-5V,HBF2-16 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf2-16-series.html
+medium,low_core_field_coverage,HBF2-00-16-1-W-24V,HBF2-16 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf2-16-series.html
+medium,low_core_field_coverage,HBFS-00-08-1-X-5V,HBFS Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf-serie-hbfs.html
+medium,low_core_field_coverage,HBFS-00-08-1-W-24V,HBFS Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf-serie-hbfs.html
+medium,low_core_field_coverage,HBF-00-16-1-X-5V,HBF-16 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf-serie-hbf-16.html
+medium,low_core_field_coverage,HBF-00-16-1-W-24V,HBF-16 Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/hbf-serie-hbf-16.html
+medium,low_core_field_coverage,HPD-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,HPD-00-240-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,HPD-00-070-1-RGBW-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-00-070-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-00-100-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-00-150-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-00-200-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS5-00-250-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDS4-00-360-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,IDSL-00-150-1-X-24V-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,LBRQ-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,LLA-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,MLLA-4CH,4 SECTION LED ILLUMINATION SERIES,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/4-section-led-illumination-series-1091998366.html
+medium,low_core_field_coverage,R,BHH Series,"缺少核心字段: 电压, 功率, 电流, 重量, 尺寸",https://www.tms-lite.com/bhh-serie.html
+medium,low_core_field_coverage,(F-DLC3-00-070-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-45-070-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-60-070-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLF5-90-070-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLC3-00-100-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-45-100-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-60-100-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLF5-90-100-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLC3-00-120-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-45-120-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLS4-60-120-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLF5-90-120-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLA2-00-070-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+medium,low_core_field_coverage,(F-DLA2-00-100-DIFFUSER),F-DXX SERIES ( SQUARE ),"缺少核心字段: 电压, 功率, 电流, 重量",https://www.tms-lite.com/dlc-dlf-dls-45-60-dla-dlp-dlg-series.html
+low,same_model_multiple_sources,UV385,,同一规范化型号出现在 5 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,UV395,,同一规范化型号出现在 5 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,UV405,,同一规范化型号出现在 5 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-040-X-X,,同一规范化型号出现在 4 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-025-X-X,,同一规范化型号出现在 3 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LLA-60-090-2-X,,同一规范化型号出现在 3 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-15-070-3-X,,同一规范化型号出现在 3 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,R,,同一规范化型号出现在 3 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-160X160-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-160X240-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-160X320-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-160X400-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-240X240-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-240X320-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-240X400-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-320X320-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-320X400-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHLX3-00-400X400-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-025-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-030-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-050-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-060-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-075-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-090-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-100-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,BHS4-00-120-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-020-X-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-025-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-040-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-070-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-070-X-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,CAS2-00-100-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD-00-070-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD-00-240-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD-00-240-3-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD2-00-050-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD2-00-080-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD2-00-100-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,HPD2-00-130-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-120-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-120-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-190-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-190-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-300-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDQ3-00-300-X-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS4-00-150-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS4-00-200-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-050-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-070-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-100-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-150-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-150-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-200-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-200-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-250-1-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDS5-00-250-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDT3-00-120-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDT3-00-150-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,IDT3-00-200-1-RGB,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-040-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-040-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-080-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-080-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-120-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-120-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-160-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-160-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-200-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRQ-00-200-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-040-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-040-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-080-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-080-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-120-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-120-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-160-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-160-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-200-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LBRX-00-200-6-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LLA-60-070-1-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-00-050-2-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-15-050-2-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-15-070-2-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-15-090-4-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-30-050-2-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-30-070-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-30-090-4-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-45-050-2-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,LSW-45-070-3-X,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,MA-IDD-X-225D40-8-RGBW-24V-16CH,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,MA-IDQ-X-225D40-8-RGBW-24V-16CH,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,same_model_multiple_sources,MLBQ-00-090-2-RGBW,,同一规范化型号出现在 2 个来源页面，可能是正常多颜色/多系列，也可能需要合并。,
+low,no_linked_assets,BHP1010-X-X,BHP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/bhp-serie.html
+low,no_linked_assets,BHP1515-X-X,BHP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/bhp-serie.html
+low,no_linked_assets,BHP1520-X-X,BHP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/bhp-serie.html
+low,no_linked_assets,CAS2,RGBW ILLUMINATION - CAS2,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-cas2
+low,no_linked_assets,DIRECT ILLUMINATION - HLBQ2 2 ROWS,DIRECT ILLUMINATION - HLBQ2 2 ROWS,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/direct-illumination-hlbq2-2-rows
+low,no_linked_assets,DIRECT ILLUMINATION - HLBS2 2 ROWS,DIRECT ILLUMINATION - HLBS2 2 ROWS,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/direct-illumination-hlbs2-2rows
+low,no_linked_assets,DLC2,RGBW ILLUMINATION - DLC2,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-dlc
+low,no_linked_assets,DLF3,RGBW ILLUMINATION - DLF3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-dlf3
+low,no_linked_assets,DLR3,RGBW ILLUMINATION - DLR3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-dlr3
+low,no_linked_assets,DXX,DIFFUSED SQUARE ILLUMINATION - F - DXX,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/diffused-square-illumination-dla
+low,no_linked_assets,HCAS2-00-035-X-X,HCAS2 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hcas2-serie.html
+low,no_linked_assets,HCAS2-00-070-X-X,HCAS2 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hcas2-serie.html
+low,no_linked_assets,HLBQ3-00-065-1-X,HLBQ3 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hlbq3-series.html
+low,no_linked_assets,HLBQ3-00-130-1-X,HLBQ3 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hlbq3-series.html
+low,no_linked_assets,HPD,RGBW ILLUMINATION - HPD,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-hpd
+low,no_linked_assets,HPD,UV ILLUMINATION - HPD,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/uv-illumination-hpd
+low,no_linked_assets,HPD2,RGBW ILLUMINATION - HPD2,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-hpd2
+low,no_linked_assets,HPDP-00-070-1-X,HPDP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hpdp-serie.html
+low,no_linked_assets,HPDP-00-110-2-X,HPDP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/hpdp-serie.html
+low,no_linked_assets,IDDC,HALF CIRCLE ILLUMINATION - IDDC,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/half-circle-illumination-iddc
+low,no_linked_assets,IDS5,RGBW ILLUMINATION - IDS5,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-ids5
+low,no_linked_assets,IDS5-00-150-1-RGBW,RGBW Illumination - IDS5,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/ids5-rgbw-beleuchtungen.html
+low,no_linked_assets,IDS5-00-200-1-RGBW,RGBW Illumination - IDS5,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/ids5-rgbw-beleuchtungen.html
+low,no_linked_assets,IDS5-00-250-1-RGBW,RGBW Illumination - IDS5,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/ids5-rgbw-beleuchtungen.html
+low,no_linked_assets,LBRP-00-040-3-X,LBRP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lbrp-serie.html
+low,no_linked_assets,LBRP-00-080-3-X,LBRP Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lbrp-serie.html
+low,no_linked_assets,LBRQ-1,UV ILLUMINATION - LBRQ 1 ROW,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/uv-illumination-lbrq-1-row
+low,no_linked_assets,LBRX-1,UV ILLUMINATION - LBRX 1 ROW,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/uv-illumination-lbrx-1-row
+low,no_linked_assets,LBRX-12,DIRECT ILLUMINATION - LBRX 12 ROWS,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/direct-illumination-lbrx-12-rows
+low,no_linked_assets,LLA,UV ILLUMINATION - LLA,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/uv-illumination-lla
+low,no_linked_assets,LLAC,HALF CIRCLE ILLUMINATION - LLAC,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/half-circle-illumination-llac
+low,no_linked_assets,LSN6-00-075-1-X,LSN6 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsn6-series.html
+low,no_linked_assets,LSN6-00-150-1-X,LSN6 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsn6-series.html
+low,no_linked_assets,LSN6-00-225-1-X,LSN6 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsn6-series.html
+low,no_linked_assets,LSN6-00-300-1-X,LSN6 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsn6-series.html
+low,no_linked_assets,LSNY-00-075-1-X,LSNY Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsny-series.html
+low,no_linked_assets,LSNY-00-150-1-X,LSNY Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsny-series.html
+low,no_linked_assets,LSNY-00-225-1-X,LSNY Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsny-series.html
+low,no_linked_assets,LSNY-00-300-1-X,LSNY Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/lsny-series.html
+low,no_linked_assets,LSW,UV ILLUMINATION - LSW,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/uv-illumination-lsw
+low,no_linked_assets,LSW2,RGBW ILLUMINATION - LSW2,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-lsw2
+low,no_linked_assets,LSWC,HALF CIRCLE ILLUMINATION - LSWC,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/half-circle-illumination-lswc
+low,no_linked_assets,MD-IDQ3,RGBW ILLUMINATION - MD-IDQ3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-idq3
+low,no_linked_assets,MD-IDQ3-360-1-RGBW,RGBW Illumination - MD-IDQ3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-idq3.html
+low,no_linked_assets,MD-IDQ3-360-X-X,MD-IDQ3 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/md-idq-3-serie.html
+low,no_linked_assets,MD-IDT3,RGBW ILLUMINATION - MD-IDT3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-idt3
+low,no_linked_assets,MD-IDT3-00-360-1-RGBW,RGBW Illumination - MD-IDT3,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-idt3.html
+low,no_linked_assets,MD-IDT3-00-360-1-X,MD-IDT3 Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/md-idt-3-serie.html
+low,no_linked_assets,MD-MLBQ,RGBW ILLUMINATION - MD-MLBQ,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-mlbq
+low,no_linked_assets,MD-MLBQ-00-360-2-RGBW,RGBW Illumination - MD-MLBQ,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-md-mlbq.html
+low,no_linked_assets,MD-MLBQ-00-360-2-X,MD-MLBQ Series,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/md-mlbq-serie.html
+low,no_linked_assets,MLBQ,RGBW ILLUMINATION - MLBQ,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/rgbw-illumination-mlbq
+low,no_linked_assets,PM2-025,MODULAR ILLUMINATION - PM2-025,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/modular-illumination-pm2-025
+low,no_linked_assets,PM2-040,MODULAR ILLUMINATION - PM2-040,该产品/系列未关联 datasheet、drawing、catalogue 或其他资料链接。,https://www.tms-lite.com/modular-illumination-pm2-040
