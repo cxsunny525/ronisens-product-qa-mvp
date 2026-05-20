@@ -146,3 +146,41 @@ Knowledge risks:
 - All source licenses are currently marked unknown.
 - Live crawler behavior should be retested in a network-enabled runtime.
 - Rule-based retrieval works for pilot questions but should be upgraded with reviewed embeddings later.
+
+## Investor Demo UI Redesign
+
+Test time: 2026-05-19 America/Phoenix
+
+- Page title changed to `IOO.pro Product Intelligence Test`.
+- Main UI reorganized into hero, sidebar control panel, Ask IOO card, unified answer card, sources/evidence, feedback, and recent conversation history.
+- Brand selector, Strict/Exploratory mode, and question focus remain available.
+- Upload intake added for `png`, `jpg`, `jpeg`, `pdf`, `txt`, and `md`.
+- Technical details are now inside a collapsed expander by default.
+- Feedback options were simplified to Helpful / Partially helpful / Not helpful.
+
+Validation:
+
+- `python -m py_compile app.py`: passed.
+- `python test_qa_engine.py`: passed, 23/23.
+- `python test_multibrand_advanced_illumination.py`: passed, 12/12.
+- `python eval_runner.py`: passed, 92/92.
+
+Questions checked:
+
+- Which products are suitable for metal scratch inspection?
+- Compare TMS Lite and Advanced Illumination ring lights.
+- Which products have datasheets?
+- Which products are missing voltage information?
+- Do you have a model called FAKE-123?
+- Advanced Illumination 有没有 TMS Lite 的 CAS2-00-010-X-X？
+- 检测透明瓶边缘应该用什么光源？
+- 哪些产品有规格书？
+
+Upload checks:
+
+- Uploaded `txt` behavior was smoke-tested with a fake text file object and parsed as text context.
+- Uploaded image behavior was smoke-tested with a fake image file object and produced the no-vision-model warning.
+
+Blocked:
+
+- Full local `streamlit run app.py` remains blocked in this Codex sandbox because the available local Streamlit package has no runnable `streamlit.__main__` entry point. The app compiles/imports successfully and should run on Streamlit Cloud from `requirements.txt`.
