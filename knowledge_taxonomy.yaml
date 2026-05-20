@@ -1,0 +1,64 @@
+lighting_type:
+  - ring_light
+  - bar_light
+  - backlight
+  - coaxial_light
+  - dome_light
+  - dark_field
+  - bright_field
+  - line_scan_light
+  - spot_light
+  - polarized_light
+  - uv_light
+  - ir_light
+  - swir_light
+  - structured_light
+
+application:
+  - scratch_detection
+  - surface_inspection
+  - edge_detection
+  - measurement
+  - ocr
+  - barcode
+  - transparent_object_inspection
+  - pcb_inspection
+  - semiconductor_inspection
+  - food_packaging
+  - pharmaceutical
+  - battery_inspection
+  - web_inspection
+
+material:
+  - metal
+  - glass
+  - plastic
+  - paper
+  - ceramic
+  - rubber
+  - transparent_material
+  - reflective_surface
+  - matte_surface
+
+camera_topic:
+  - sensor_size
+  - resolution
+  - frame_rate
+  - global_shutter
+  - rolling_shutter
+  - monochrome_vs_color
+  - exposure
+  - gain
+  - triggering
+  - interface
+  - pixel_size
+
+lens_topic:
+  - focal_length
+  - working_distance
+  - field_of_view
+  - depth_of_field
+  - telecentric_lens
+  - distortion
+  - aperture
+  - c_mount

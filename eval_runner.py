@@ -24,7 +24,7 @@ EVAL_REPORT = ROOT / "eval_report.md"
 
 def _load_cases() -> list[dict[str, Any]]:
     text = EVAL_SET.read_text(encoding="utf-8")
-    if yaml is not None:
+    if yaml is not None and hasattr(yaml, "safe_load"):
         payload = yaml.safe_load(text) or {}
         return list(payload.get("tests") or [])
 

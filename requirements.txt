@@ -4,3 +4,6 @@ pyyaml
 openai
 python-dotenv
 pytest
+requests
+beautifulsoup4
+trafilatura

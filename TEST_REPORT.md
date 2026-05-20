@@ -112,3 +112,37 @@ Current high-risk limitations:
 - Advanced Illumination pilot voltage and power fields are mostly missing because they were not explicitly parsed from verified datasheets.
 - Cross-brand equivalence is not guaranteed; results are searchable candidate records, not final substitutions.
 - Pilot data should be expanded only after manual review of official datasheets and field mappings.
+
+## IOO Knowledge Base Pilot Update
+
+Test time: 2026-05-19 America/Phoenix
+
+- Knowledge schema created in `data/ioo_product_test.db`.
+- `source_allowlist.yaml`: created.
+- `knowledge_taxonomy.yaml`: created.
+- `crawl_knowledge.py --dry-run --limit 10`: passed.
+- `crawl_knowledge.py --limit 30`: completed with 26 pilot documents saved. Live HTTP fetches failed in the local runtime, so the crawler used source-linked curated pilot fallback notes.
+- `extract_knowledge.py`: generated 26 knowledge cards and 26 chunks.
+- `knowledge_quality_report.py`: generated `knowledge_quality_report.md` and `knowledge_issues.csv`.
+- `python test_qa_engine.py`: passed, 23 tests.
+- `python test_multibrand_advanced_illumination.py`: passed, 12 tests.
+- `python eval_runner.py`: passed, 92/92 golden eval cases, 100.0% pass rate.
+- `app.py` imports successfully with the new Knowledge Search and Combined Answer tabs.
+
+Knowledge smoke tests:
+
+- `金属划痕检测用什么光源？`: retrieved 5 knowledge cards and 5 knowledge sources.
+- `透明物体边缘检测怎么打光？`: retrieved 5 knowledge cards and 5 knowledge sources.
+- `global shutter 和 rolling shutter 有什么区别？`: retrieved shutter-related source cards.
+- `透明瓶边缘检测适合什么光源？` in Combined Answer: returned knowledge sources plus Advanced Illumination `BL2-XXYY` and TMS Lite backlight candidates.
+
+Blocked item:
+
+- Full `streamlit run app.py` could not be launched from this sandbox because local Streamlit executable access is denied and `python -m streamlit` is not runnable with the bundled project package. The app module imports successfully and should run in Streamlit Cloud from `requirements.txt`.
+
+Knowledge risks:
+
+- All pilot knowledge documents are pending review.
+- All source licenses are currently marked unknown.
+- Live crawler behavior should be retested in a network-enabled runtime.
+- Rule-based retrieval works for pilot questions but should be upgraded with reviewed embeddings later.

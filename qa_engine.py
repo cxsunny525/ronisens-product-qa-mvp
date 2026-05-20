@@ -1139,6 +1139,10 @@ def _response(
 ) -> dict[str, Any]:
     return {
         "answer": answer,
+        "knowledge_answer": "",
+        "product_recommendations": matched_products or [],
+        "knowledge_sources": [],
+        "product_sources": sources or [],
         "matched_products": matched_products or [],
         "spec_table": spec_table or [],
         "sources": sources or [],

@@ -10,22 +10,31 @@ current database`.
 
 ## Current Data Scope
 
-Current database coverage: TMS Lite only.
+Current product database coverage:
+
+- TMS Lite product data
+- Advanced Illumination pilot product data
+- IOO Knowledge Base pilot data for machine vision education and selection logic
 
 SQLite database:
 
-- `data/tms_lite_full.db`
+- `data/ioo_product_test.db` preferred for the current app
+- `data/tms_lite_full.db` preserved as the original TMS Lite database
 
 Current database statistics:
 
 | Table | Count |
 | --- | ---: |
-| `brands` | 1 |
-| `product_families` | 175 |
-| `products` | 654 |
-| `product_specs` | 6712 |
-| `product_assets` | 2910 |
-| `crawl_pages` | 726 |
+| `brands` | 2 |
+| `product_families` | 188 |
+| `products` | 667 |
+| `product_specs` | 6759 |
+| `product_assets` | 2919 |
+| `crawl_pages` | 741 |
+| `knowledge_sources` | 7 |
+| `knowledge_documents` | 26 |
+| `knowledge_cards` | 26 |
+| `knowledge_chunks` | 26 |
 
 CSV exports:
 
@@ -34,17 +43,19 @@ CSV exports:
 - `data/exports/product_assets.csv`
 
 The app uses SQLite first. If SQLite cannot be loaded, `qa_engine.py` falls back
-to the CSV exports.
+to the CSV exports for product data. Knowledge-base features require SQLite.
 
 ## What The MVP Can Do
 
-- Model lookup: check whether a TMS Lite model exists in the current database.
+- Model lookup: check whether a TMS Lite or Advanced Illumination model exists in the current database.
 - Parameter lookup: show voltage, power, current, dimensions, weight, and raw specs when recorded.
 - Datasheet/source lookup: show product URL and recorded datasheet/document links.
 - Parameter filtering: search for 24V products, red lights, ring lights, coaxial lights, datasheet-backed records, and similar queries.
 - Product comparison: compare known fields across several models.
 - Data quality questions: show missing fields and products missing datasheet links.
 - Preliminary selection guidance: suggest candidate light types and database-backed product candidates for applications such as metal scratch inspection, transparent bottle edge detection, PCB inspection, and backlight inspection.
+- Knowledge Search: retrieve source-linked knowledge cards for lighting, camera, lens, and application-selection topics.
+- Combined Answer: explain the selection principle from the knowledge base first, then list database-backed product candidates.
 
 ## Trust And Traceability
 
@@ -69,6 +80,96 @@ Every `answer_question()` result now includes:
 
 `verifier.py` checks whether matched products, specs, sources, and model-like
 claims are grounded in the current database or `manual_overrides.yaml`.
+
+## IOO Knowledge Base
+
+The IOO Knowledge Base is a pilot module for public, source-linked machine
+vision education material. It is designed to explain principles before the app
+recommends database-backed products.
+
+Current pilot scope:
+
+- 7 allowlisted sources
+- 26 knowledge documents
+- 26 knowledge cards
+- 26 searchable chunks
+- All documents are `pending` review and `license_status = unknown` until a
+  human reviews the source terms.
+
+Knowledge tables are stored in the same SQLite database:
+
+- `knowledge_sources`
+- `knowledge_documents`
+- `knowledge_chunks`
+- `knowledge_cards`
+- `knowledge_crawl_log`
+
+The Streamlit app now has three tabs:
+
+- `Product QA`: product database only.
+- `Knowledge Search`: knowledge cards and source documents only.
+- `Combined Answer`: knowledge explanation first, then product candidates.
+
+Knowledge answers must cite source URLs. If no relevant knowledge source is
+found, the app should say so and should not invent a source.
+
+### Data Source Allowlist
+
+Knowledge crawling is restricted to `source_allowlist.yaml`. Current source
+families include:
+
+- Advanced Illumination application guide
+- Smart Vision Lights resources and training pages
+- Edmund Optics application notes
+- Cognex machine vision lighting and hardware pages
+- Basler camera and lens basics
+- LUCID Vision Labs technical articles
+- STEMMER IMAGING machine vision and optics pages
+- Vision Systems Design only after manual review
+
+The crawler checks robots rules, uses polite delay, and does not bypass login,
+CAPTCHA, paywalls, or other access controls.
+
+### Run Knowledge Crawl And Extraction
+
+```powershell
+python crawl_knowledge.py --dry-run --limit 10
+python crawl_knowledge.py --limit 30
+python extract_knowledge.py
+python knowledge_quality_report.py
+```
+
+If the runtime has no network access, `crawl_knowledge.py` uses
+`knowledge_seed_documents.jsonl` as an internal pilot fallback. Those records are
+short source-linked notes, not full third-party articles, and remain pending
+human review.
+
+### Review Knowledge Quality
+
+Quality outputs:
+
+- `knowledge_quality_report.md`
+- `knowledge_issues.csv`
+- `KNOWLEDGE_BASE_REPORT.md`
+
+Review unknown licenses, short extraction bodies, missing tags, and low-quality
+records before using knowledge cards outside internal testing.
+
+### Add A New Knowledge Source
+
+1. Add the domain and seed URLs to `source_allowlist.yaml`.
+2. Keep `max_pages` low for the first pilot.
+3. Run `crawl_knowledge.py --dry-run --source "Source Name"`.
+4. Run the real crawl only if robots rules allow it.
+5. Run `extract_knowledge.py` and `knowledge_quality_report.py`.
+6. Review `knowledge_issues.csv` and source URLs before exposing results.
+
+### Compliance Notes
+
+- Do not republish full third-party articles as IOO content.
+- Keep `source_url`, publisher, retrieved date, and review status.
+- Use summaries, tags, and recommendation logic as internal test artifacts.
+- Treat unknown licenses as internal-use-only until reviewed.
 
 ## What The MVP Cannot Do Yet
 
@@ -107,6 +208,7 @@ Create a local `.env` file only for local development. Do not commit it.
 ```text
 OPENAI_API_KEY=
 APP_PASSWORD=
+FIRECRAWL_API_KEY=
 ```
 
 `APP_PASSWORD`:
@@ -119,6 +221,14 @@ APP_PASSWORD=
 - Optional.
 - If set, the app may use OpenAI to polish grounded local answers.
 - If not set, the app runs in local keyword/rule-based fallback mode.
+
+`FIRECRAWL_API_KEY`:
+
+- Optional.
+- If set, `crawl_knowledge.py` can use Firecrawl's scrape API for cleaner
+  markdown extraction.
+- If not set, the crawler uses direct HTTP/trafilatura fallback, and if the
+  runtime has no network it uses the internal pilot seed notes.
 
 Secrets must never be written into source code or committed to Git.
 
@@ -148,7 +258,16 @@ Evaluation artifacts:
 - `eval_results.csv`
 - `eval_report.md`
 
-Current golden eval result: 61/61 passed, 100.0%.
+Current golden eval result after multi-brand update: 92/92 passed, 100.0%.
+
+Knowledge pilot checks:
+
+```powershell
+python crawl_knowledge.py --dry-run --limit 10
+python crawl_knowledge.py --limit 30
+python extract_knowledge.py
+python knowledge_quality_report.py
+```
 
 ## Quality And Field Dictionary
 

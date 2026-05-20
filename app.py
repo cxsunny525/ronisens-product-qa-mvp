@@ -8,6 +8,8 @@ from pathlib import Path
 
 import streamlit as st
 
+import answer_engine
+import knowledge_engine
 import qa_engine
 import verifier
 
@@ -134,6 +136,7 @@ def display_dataframe(rows: list[dict], key: str) -> None:
 def sidebar() -> None:
     stats = qa_engine.get_database_stats()
     brand_stats = qa_engine.get_database_stats_by_brand()
+    knowledge_stats = knowledge_engine.get_knowledge_stats()
     counts = stats.get("counts", {})
     brands = brand_stats.get("brands", {})
     st.sidebar.header("Database")
@@ -144,6 +147,14 @@ def sidebar() -> None:
     st.sidebar.metric("Product specs", counts.get("product_specs", 0))
     st.sidebar.metric("Product assets", counts.get("product_assets", 0))
     st.sidebar.metric("Crawl pages", counts.get("crawl_pages", 0))
+    st.sidebar.divider()
+    st.sidebar.header("Knowledge Base")
+    st.sidebar.metric("Knowledge sources", knowledge_stats.get("knowledge_sources", 0))
+    st.sidebar.metric("Knowledge documents", knowledge_stats.get("knowledge_documents", 0))
+    st.sidebar.metric("Knowledge cards", knowledge_stats.get("knowledge_cards", 0))
+    st.sidebar.metric("Knowledge chunks", knowledge_stats.get("knowledge_chunks", 0))
+    st.sidebar.metric("Approved documents", knowledge_stats.get("approved_documents", 0))
+    st.sidebar.metric("Pending review documents", knowledge_stats.get("pending_review_documents", 0))
     st.sidebar.divider()
     st.sidebar.write(f"Data source: **{stats.get('source_type')}**")
     st.sidebar.write(f"Run mode: **{stats.get('mode')}**")
@@ -188,16 +199,7 @@ EXAMPLE_QUESTIONS = [
 ]
 
 
-def main() -> None:
-    st.set_page_config(page_title=APP_TITLE, page_icon="QA", layout="wide")
-    st.title(APP_TITLE)
-    st.caption(APP_SUBTITLE)
-
-    if not check_password():
-        st.stop()
-
-    sidebar()
-
+def render_product_qa() -> None:
     st.subheader("Ask a product question")
     if "question" not in st.session_state:
         st.session_state["question"] = EXAMPLE_QUESTIONS[0]
@@ -341,6 +343,164 @@ def main() -> None:
                 st.success(f"Feedback saved to {FEEDBACK_PATH}")
             else:
                 st.info("Please write feedback before saving.")
+
+
+def display_knowledge_sources(sources: list[dict]) -> None:
+    if not sources:
+        st.info("No knowledge sources returned.")
+        return
+    for source in sources:
+        url = source.get("url") or "not available"
+        title = source.get("title") or source.get("source_name") or "knowledge source"
+        license_status = source.get("license_status") or "unknown"
+        review_status = source.get("review_status") or "pending"
+        if url != "not available":
+            st.markdown(f"- [{title}]({url}) | review: `{review_status}` | license: `{license_status}`")
+        else:
+            st.markdown(f"- {title} | review: `{review_status}` | license: `{license_status}`")
+
+
+def render_knowledge_search() -> None:
+    st.subheader("Knowledge Search")
+    st.caption("Search the IOO Knowledge Base pilot. Results are source-linked and pending human review unless marked otherwise.")
+    if "knowledge_question" not in st.session_state:
+        st.session_state["knowledge_question"] = "What lighting is suitable for metal scratch inspection?"
+    question = st.text_area("Knowledge question", key="knowledge_question", height=90)
+    if st.button("Search knowledge", type="primary"):
+        with st.spinner("Searching knowledge cards and source documents..."):
+            st.session_state["knowledge_result"] = knowledge_engine.retrieve_knowledge_for_question(question, limit=8)
+    result = st.session_state.get("knowledge_result")
+    if not result:
+        return
+    st.subheader("Knowledge Answer")
+    st.write(result.get("knowledge_answer", ""))
+    cards = result.get("cards", [])
+    st.subheader("Knowledge Cards")
+    if cards:
+        st.dataframe(
+            [
+                {
+                    "topic": card.get("topic"),
+                    "summary": card.get("summary"),
+                    "lighting_type": card.get("lighting_type"),
+                    "camera_topic": card.get("camera_topic"),
+                    "lens_topic": card.get("lens_topic"),
+                    "application": card.get("application"),
+                    "material": card.get("material"),
+                    "review_status": card.get("verified_status"),
+                    "tags": ", ".join(card.get("tags") or []),
+                    "score": card.get("score"),
+                }
+                for card in cards
+            ],
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.info("No knowledge cards matched. Showing document-level matches if available.")
+        docs = result.get("documents", [])
+        if docs:
+            st.dataframe(
+                [
+                    {
+                        "title": doc.get("title"),
+                        "source_name": doc.get("source_name"),
+                        "summary": doc.get("summary"),
+                        "review_status": doc.get("review_status"),
+                        "score": doc.get("score"),
+                    }
+                    for doc in docs
+                ],
+                use_container_width=True,
+                hide_index=True,
+            )
+    st.subheader("Knowledge Sources")
+    display_knowledge_sources(result.get("sources", []))
+
+
+def render_combined_answer() -> None:
+    st.subheader("Combined Answer")
+    st.caption("The system retrieves knowledge first, then product candidates from the current product database.")
+    if "combined_question" not in st.session_state:
+        st.session_state["combined_question"] = "\u68c0\u6d4b\u91d1\u5c5e\u5212\u75d5\u5e94\u8be5\u770b\u4ec0\u4e48\u5149\u6e90\uff1f"
+    qa_mode = st.radio(
+        "Combined answer mode",
+        ["Strict mode", "Exploratory mode"],
+        index=0,
+        horizontal=True,
+        key="combined_mode",
+    )
+    engine_mode = "strict" if qa_mode == "Strict mode" else "exploratory"
+    brand_choice = st.selectbox(
+        "Combined brand selector",
+        ["All Brands", "TMS Lite", "Advanced Illumination"],
+        index=0,
+        key="combined_brand",
+    )
+    brand_filter = None if brand_choice == "All Brands" else brand_choice
+    question = st.text_area("Combined question", key="combined_question", height=100)
+    if st.button("Ask combined engine", type="primary"):
+        with st.spinner("Retrieving knowledge and product candidates..."):
+            result = answer_engine.answer_question(question.strip(), brand_filter=brand_filter, mode=engine_mode)
+        st.session_state["combined_result"] = result
+    result = st.session_state.get("combined_result")
+    if not result:
+        return
+    st.subheader("Knowledge Answer")
+    st.write(result.get("knowledge_answer", ""))
+    st.subheader("Product Candidates")
+    display_dataframe(result.get("product_recommendations", []), "combined_products")
+    c1, c2 = st.columns(2)
+    c1.metric("Confidence", str(result.get("confidence", "not available")).upper())
+    c2.metric("Mode", str(result.get("mode", "local")).upper())
+    st.subheader("Knowledge Sources")
+    display_knowledge_sources(result.get("knowledge_sources", []))
+    st.subheader("Product Sources")
+    product_sources = result.get("product_sources", [])
+    if product_sources:
+        for source in product_sources:
+            url = source.get("url") or "not available"
+            label = source.get("title") or source.get("type") or "product source"
+            if url != "not available":
+                st.markdown(f"- **{source.get('type', 'source')}**: [{label}]({url})")
+            else:
+                st.markdown(f"- **{source.get('type', 'source')}**: not available")
+    else:
+        st.info("No product sources returned.")
+    st.subheader("Missing / Uncertain")
+    missing = result.get("missing_or_uncertain", [])
+    if missing:
+        for item in missing:
+            st.warning(item)
+    else:
+        st.success("No additional uncertainty flagged.")
+    with st.expander("Combined Debug / Evidence", expanded=False):
+        st.json(
+            {
+                "query_interpretation": result.get("query_interpretation", {}),
+                "warnings": result.get("warnings", []),
+                "knowledge_cards": result.get("knowledge_cards", []),
+                "match_reason": result.get("match_reason", []),
+            }
+        )
+
+
+def main() -> None:
+    st.set_page_config(page_title=APP_TITLE, page_icon="QA", layout="wide")
+    st.title(APP_TITLE)
+    st.caption(APP_SUBTITLE)
+
+    if not check_password():
+        st.stop()
+
+    sidebar()
+    product_tab, knowledge_tab, combined_tab = st.tabs(["Product QA", "Knowledge Search", "Combined Answer"])
+    with product_tab:
+        render_product_qa()
+    with knowledge_tab:
+        render_knowledge_search()
+    with combined_tab:
+        render_combined_answer()
 
 
 if __name__ == "__main__":

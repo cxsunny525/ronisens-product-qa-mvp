@@ -1,0 +1,201 @@
+questions:
+  - id: kb_001
+    question: "金属划痕检测用什么光源？"
+    expected_behavior: "Should explain low-angle or dark-field lighting and cite knowledge sources."
+    must_include: ["dark", "source"]
+    must_not_include: ["FAKE"]
+  - id: kb_002
+    question: "透明物体边缘检测怎么打光？"
+    expected_behavior: "Should explain backlight/silhouette logic."
+    must_include: ["backlight"]
+    must_not_include: ["invented"]
+  - id: kb_003
+    question: "背光适合什么场景？"
+    expected_behavior: "Should explain silhouettes, edges, holes, or measurement."
+    must_include: ["edge"]
+    must_not_include: ["price"]
+  - id: kb_004
+    question: "同轴光适合什么场景？"
+    expected_behavior: "Should explain flat reflective surfaces or in-line illumination."
+    must_include: ["coaxial"]
+    must_not_include: ["stock"]
+  - id: kb_005
+    question: "暗场和明场有什么区别？"
+    expected_behavior: "Should compare lighting geometry and contrast mechanism."
+    must_include: ["dark"]
+    must_not_include: ["datasheet"]
+  - id: kb_006
+    question: "环形光和条形光怎么选？"
+    expected_behavior: "Should explain compact front lighting versus directional lighting."
+    must_include: ["ring"]
+    must_not_include: ["guaranteed"]
+  - id: kb_007
+    question: "为什么有时候要用偏振光？"
+    expected_behavior: "Should explain glare/specular reflection reduction."
+    must_include: ["glare"]
+    must_not_include: ["exact model"]
+  - id: kb_008
+    question: "UV 在机器视觉里有什么用途？"
+    expected_behavior: "Should discuss wavelength/material contrast and fluorescence if available."
+    must_include: ["wavelength"]
+    must_not_include: ["invent"]
+  - id: kb_009
+    question: "IR 在机器视觉里有什么用途？"
+    expected_behavior: "Should discuss wavelength/material contrast if available."
+    must_include: ["wavelength"]
+    must_not_include: ["invent"]
+  - id: kb_010
+    question: "如何选择相机分辨率？"
+    expected_behavior: "Should mention smallest feature, FOV, pixel size, lens, and contrast."
+    must_include: ["resolution"]
+    must_not_include: ["lighting product"]
+  - id: kb_011
+    question: "global shutter 和 rolling shutter 有什么区别？"
+    expected_behavior: "Should explain motion distortion differences."
+    must_include: ["shutter"]
+    must_not_include: ["lens only"]
+  - id: kb_012
+    question: "工作距离和视野怎么影响镜头选择？"
+    expected_behavior: "Should mention focal length, sensor size, FOV, and working distance."
+    must_include: ["working distance"]
+    must_not_include: ["power"]
+  - id: kb_013
+    question: "检测 PCB 缺陷适合什么光源？"
+    expected_behavior: "Should provide preliminary lighting logic and cite sources."
+    must_include: ["lighting"]
+    must_not_include: ["guaranteed"]
+  - id: kb_014
+    question: "食品包装检测如何选择光源？"
+    expected_behavior: "Should answer cautiously if knowledge is limited."
+    must_include: ["knowledge"]
+    must_not_include: ["fake source"]
+  - id: kb_015
+    question: "高反光金属表面怎么减少眩光？"
+    expected_behavior: "Should mention diffuse, polarization, or geometry changes."
+    must_include: ["glare"]
+    must_not_include: ["guaranteed"]
+  - id: kb_016
+    question: "line scan lighting 适合什么场景？"
+    expected_behavior: "Should answer cautiously if pilot knowledge lacks line-scan details."
+    must_include: ["knowledge"]
+    must_not_include: ["invented source"]
+  - id: kb_017
+    question: "如果产品库没有匹配产品，系统应该怎么回答？"
+    expected_behavior: "Should say no explicit product candidate and avoid inventing."
+    must_include: ["No explicit product"]
+    must_not_include: ["recommended model"]
+  - id: kb_018
+    question: "What light is suitable for metal scratch inspection?"
+    expected_behavior: "Should retrieve dark-field or low-angle knowledge."
+    must_include: ["dark"]
+    must_not_include: ["available in stock"]
+  - id: kb_019
+    question: "How should I light transparent bottle edges?"
+    expected_behavior: "Should explain backlight and silhouette."
+    must_include: ["backlight"]
+    must_not_include: ["guarantee"]
+  - id: kb_020
+    question: "When should I use a dome light?"
+    expected_behavior: "Should explain diffuse lighting for curved/glossy surfaces."
+    must_include: ["dome"]
+    must_not_include: ["price"]
+  - id: kb_021
+    question: "When should I use coaxial illumination?"
+    expected_behavior: "Should mention flat reflective surfaces or in-line lighting."
+    must_include: ["coaxial"]
+    must_not_include: ["camera model"]
+  - id: kb_022
+    question: "What is dark field lighting good for?"
+    expected_behavior: "Should mention scratches, edges, texture, or low-angle contrast."
+    must_include: ["scratch"]
+    must_not_include: ["stock"]
+  - id: kb_023
+    question: "What is bright field lighting good for?"
+    expected_behavior: "Should explain front/reflective geometry."
+    must_include: ["bright"]
+    must_not_include: ["datasheet"]
+  - id: kb_024
+    question: "How do I reduce glare on reflective metal?"
+    expected_behavior: "Should mention polarization, diffuse, geometry, or sample testing."
+    must_include: ["glare"]
+    must_not_include: ["guaranteed"]
+  - id: kb_025
+    question: "How do I choose lens focal length?"
+    expected_behavior: "Should mention FOV, working distance, sensor size."
+    must_include: ["focal"]
+    must_not_include: ["illumination only"]
+  - id: kb_026
+    question: "How do I choose camera resolution for measurement?"
+    expected_behavior: "Should mention feature size, FOV, optical resolution."
+    must_include: ["resolution"]
+    must_not_include: ["voltage"]
+  - id: kb_027
+    question: "Why use a telecentric lens?"
+    expected_behavior: "Should mention measurement repeatability and perspective error."
+    must_include: ["telecentric"]
+    must_not_include: ["power"]
+  - id: kb_028
+    question: "What is rolling shutter distortion?"
+    expected_behavior: "Should explain sequential readout and moving object distortion."
+    must_include: ["rolling"]
+    must_not_include: ["lighting type"]
+  - id: kb_029
+    question: "What is global shutter useful for?"
+    expected_behavior: "Should explain moving targets and geometric preservation."
+    must_include: ["global"]
+    must_not_include: ["lens model"]
+  - id: kb_030
+    question: "What lighting should I use for OCR?"
+    expected_behavior: "Should answer cautiously if OCR-specific evidence is limited."
+    must_include: ["knowledge"]
+    must_not_include: ["guaranteed"]
+  - id: kb_031
+    question: "What lighting should I use for barcode reading?"
+    expected_behavior: "Should answer cautiously if barcode-specific evidence is limited."
+    must_include: ["knowledge"]
+    must_not_include: ["invented"]
+  - id: kb_032
+    question: "How should I inspect matte plastic?"
+    expected_behavior: "Should answer from available material/lighting logic or flag limited evidence."
+    must_include: ["knowledge"]
+    must_not_include: ["fake"]
+  - id: kb_033
+    question: "How should I inspect shiny curved plastic?"
+    expected_behavior: "Should mention diffuse or dome if matched."
+    must_include: ["diffuse"]
+    must_not_include: ["guaranteed"]
+  - id: kb_034
+    question: "Can the system recommend a product if the knowledge base has no source?"
+    expected_behavior: "Should warn that recommendation requires verification."
+    must_include: ["source"]
+    must_not_include: ["invented source"]
+  - id: kb_035
+    question: "Can the system explain a principle without a source URL?"
+    expected_behavior: "Should not invent sources and should mark missing knowledge source."
+    must_include: ["source"]
+    must_not_include: ["fake URL"]
+  - id: kb_036
+    question: "Mars surface inspection lighting"
+    expected_behavior: "Should not overclaim; product recommendations should be absent or cautious."
+    must_include: ["No"]
+    must_not_include: ["guaranteed"]
+  - id: kb_037
+    question: "Which light can detect invisible unicorn defects?"
+    expected_behavior: "Should not invent application-specific sources or products."
+    must_include: ["No"]
+    must_not_include: ["unicorn light"]
+  - id: kb_038
+    question: "What source says backlight is useful for edge detection?"
+    expected_behavior: "Should return backlight knowledge source URL."
+    must_include: ["source"]
+    must_not_include: ["not cited"]
+  - id: kb_039
+    question: "What source says dark field is useful for scratches?"
+    expected_behavior: "Should return dark-field source URL."
+    must_include: ["source"]
+    must_not_include: ["not cited"]
+  - id: kb_040
+    question: "What source says global shutter is better for moving objects?"
+    expected_behavior: "Should return camera shutter source URL."
+    must_include: ["source"]
+    must_not_include: ["lighting product"]
