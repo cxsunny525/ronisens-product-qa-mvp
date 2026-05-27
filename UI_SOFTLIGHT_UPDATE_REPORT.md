@@ -1,4 +1,4 @@
-# IOO Soft Light Lab UI Update Report
+﻿# IOO Soft Light Lab UI Update Report
 
 Date: 2026-05-27
 
@@ -102,3 +102,4 @@ streamlit run app.py
   it uses the same existing `closest_ioo_products` result data.
 - The product action buttons are placeholders until account, save, compare, and
   spec-sheet routing are implemented.
+

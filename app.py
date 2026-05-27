@@ -125,58 +125,22 @@ def inject_css() -> None:
         h1, h2, h3 { letter-spacing: -0.025em; color: var(--ioo-text-100) !important; }
         p, span, label, div { color: inherit; }
         .ioo-topbar {
-          display: grid; grid-template-columns: minmax(280px, 1fr) auto; gap: 24px; align-items: center;
-          margin-bottom: 22px;
-          padding: 4px 0 8px;
+          display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
+          margin-bottom: 18px;
         }
-        .ioo-brand-lockup {
-          display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center;
-          min-width: 260px;
+        .ioo-brand-lockup { display: flex; align-items: center; gap: 12px; }
+        .ioo-mark {
+          width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center;
+          background: #FFFFFF; border: 1px solid var(--ioo-line-600);
+          box-shadow: 0 10px 30px rgba(70,94,102,0.10);
         }
-        .ioo-wordmark {
-          display: inline-flex; align-items: center; gap: 8px;
-          color: var(--ioo-text-100);
-          line-height: 0.86;
-          filter: drop-shadow(0 12px 24px rgba(70,94,102,0.10));
+        .ioo-mark-ring {
+          width: 29px; height: 29px; border-radius: 50%; display: grid; place-items: center;
+          border: 4px solid var(--ioo-optic-cyan);
         }
-        .ioo-wordmark-letter {
-          font-size: clamp(42px, 4.3vw, 66px);
-          font-weight: 900;
-          letter-spacing: -0.06em;
-          color: var(--ioo-text-100);
-        }
-        .ioo-wordmark-mark {
-          width: clamp(42px, 4.2vw, 62px);
-          height: clamp(42px, 4.2vw, 62px);
-          border-radius: 19px;
-          display: grid; place-items: center;
-          background: rgba(255,255,255,0.92);
-          border: 1px solid rgba(191,212,208,0.95);
-          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.80), 0 16px 36px rgba(43,167,165,0.14);
-        }
-        .ioo-wordmark-ring {
-          width: 68%;
-          height: 68%;
-          border-radius: 50%;
-          display: grid;
-          place-items: center;
-          border: clamp(4px, 0.45vw, 6px) solid var(--ioo-optic-cyan);
-          background: rgba(221,246,242,0.55);
-        }
-        .ioo-wordmark-dot {
-          width: 30%;
-          height: 30%;
-          border-radius: 50%;
-          background: var(--ioo-lamp-amber);
-          box-shadow: 0 0 0 3px rgba(200,132,44,0.12);
-        }
-        .ioo-logo-sub {
-          color: var(--ioo-text-500);
-          font-size: clamp(0.82rem, 0.9vw, 0.98rem);
-          margin-top: 7px;
-          letter-spacing: 0.02em;
-          font-weight: 560;
-        }
+        .ioo-mark-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ioo-lamp-amber); }
+        .ioo-logo { font-size: 1.06rem; font-weight: 820; color: var(--ioo-text-100); letter-spacing: 0.01em; }
+        .ioo-logo-sub { color: var(--ioo-text-500); font-size: 0.78rem; margin-top: 1px; }
         .ioo-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
         .ioo-credit-pill,
         .ioo-streak-pill,
@@ -380,11 +344,9 @@ def inject_css() -> None:
             margin-bottom: 12px;
             padding: 10px 0 4px;
           }
-          .ioo-brand-lockup { min-width: 0; }
-          .ioo-wordmark { gap: 6px; }
-          .ioo-wordmark-letter { font-size: 42px; }
-          .ioo-wordmark-mark { width: 42px; height: 42px; border-radius: 14px; }
-          .ioo-logo-sub { font-size: 0.76rem; margin-top: 5px; }
+          .ioo-mark { width: 42px; height: 42px; border-radius: 14px; }
+          .ioo-logo { font-size: 1.28rem; }
+          .ioo-logo-sub { display: none; }
           .ioo-status {
             justify-content: flex-start;
             flex-wrap: nowrap;
@@ -592,12 +554,11 @@ def render_topbar(openai_enabled: bool) -> None:
         f"""
         <div class="ioo-topbar">
           <div class="ioo-brand-lockup">
-            <div class="ioo-wordmark" aria-label="IOO">
-              <span class="ioo-wordmark-letter">I</span>
-              <span class="ioo-wordmark-mark"><span class="ioo-wordmark-ring"><span class="ioo-wordmark-dot"></span></span></span>
-              <span class="ioo-wordmark-letter">O</span>
+            <div class="ioo-mark"><div class="ioo-mark-ring"><div class="ioo-mark-dot"></div></div></div>
+            <div>
+              <div class="ioo-logo">IOO</div>
+              <div class="ioo-logo-sub">Industrial Optics Online</div>
             </div>
-            <div class="ioo-logo-sub">Industrial Optics Online</div>
           </div>
           <div class="ioo-status">
             <span class="ioo-credit-pill"><span>Credits</span><strong>{st.session_state.get('points', 0):,}</strong></span>
