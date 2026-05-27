@@ -1,0 +1,75 @@
+{
+  "brand": {
+    "name": "IOO",
+    "fullName": "Industrial Optics Online",
+    "positioning": "A bright, calm, engineering-first workspace for machine vision lighting selection.",
+    "themeName": "Soft Light Lab"
+  },
+  "colors": {
+    "ink950": "#22333B",
+    "ink900": "#30464F",
+    "panel850": "#FFFFFF",
+    "panel800": "#F8FCFB",
+    "panel760": "#EEF6F4",
+    "line600": "#D5E5E2",
+    "line500": "#BFD4D0",
+    "text100": "#22333B",
+    "text300": "#465E66",
+    "text500": "#6F838A",
+    "text650": "#91A2A7",
+    "opticCyan": "#2BA7A5",
+    "opticCyanSoft": "#DDF6F2",
+    "lampAmber": "#C8842C",
+    "lampAmberSoft": "#FFF1D6",
+    "signalGreen": "#6EA47D",
+    "softLavender": "#E8E7FF",
+    "dangerSoft": "#C86C61",
+    "shadowBlue": "#DDEBEA"
+  },
+  "gradients": {
+    "restField": "linear-gradient(135deg, #F8FBF9 0%, #EEF6F4 48%, #EAF3F7 100%)",
+    "focusGlow": "radial-gradient(circle at 50% 12%, rgba(43,167,165,0.15), rgba(248,251,249,0) 46%)",
+    "creditGlow": "linear-gradient(135deg, rgba(255,241,214,0.95), rgba(221,246,242,0.88))"
+  },
+  "typography": {
+    "ui": "Inter, IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif",
+    "mono": "JetBrains Mono, SFMono-Regular, Consolas, monospace",
+    "scale": {
+      "xs": "12px",
+      "sm": "13px",
+      "base": "15px",
+      "md": "17px",
+      "lg": "20px",
+      "xl": "28px",
+      "xxl": "42px"
+    }
+  },
+  "radius": {
+    "sm": "8px",
+    "md": "14px",
+    "lg": "22px",
+    "xl": "30px"
+  },
+  "spacing": {
+    "1": "4px",
+    "2": "8px",
+    "3": "12px",
+    "4": "16px",
+    "5": "20px",
+    "6": "24px",
+    "8": "32px",
+    "10": "40px"
+  },
+  "interaction": {
+    "desktopMinTarget": "36px",
+    "touchMinTarget": "44px",
+    "safeMotion": "180ms ease",
+    "panelShadow": "0 24px 70px rgba(70,94,102,0.14)"
+  },
+  "avoid": [
+    "pure black page backgrounds",
+    "large dark panels",
+    "high-saturation warning colors",
+    "glossy gaming reward language"
+  ]
+}

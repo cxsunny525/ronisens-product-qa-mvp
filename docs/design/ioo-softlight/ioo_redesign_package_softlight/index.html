@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IOO Soft Light Workspace Prototype</title>
+  <link rel="stylesheet" href="styles/ui.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand-lockup" href="#" aria-label="IOO home">
+        <img src="assets/logo-ioo-mark.svg" alt="IOO logo mark" />
+        <span>
+          <span class="brand-title">IOO</span>
+          <span class="brand-subtitle">Industrial Optics Online</span>
+        </span>
+      </a>
+      <nav class="header-actions" aria-label="Account and rewards">
+        <span class="credit-pill"><span>Credits</span><b class="credit-value">1,260</b></span>
+        <span class="streak-pill">8-day engineer streak</span>
+        <button class="auth-button">Sign in / Apply</button>
+      </nav>
+    </header>
+
+    <section class="layout" aria-label="IOO redesigned workspace">
+      <aside class="panel left-rail" aria-label="Account, history, and shortcuts">
+        <section class="profile-card">
+          <div class="avatar-row">
+            <span class="avatar">SC</span>
+            <span>
+              <span class="profile-name">Guest Engineer</span>
+              <span class="profile-meta">Apply for an engineering account</span>
+            </span>
+          </div>
+          <div class="points-row">
+            <span class="mini-metric"><strong>+40</strong><span>today</span></span>
+            <span class="mini-metric"><strong>2.7k</strong><span>next reward</span></span>
+          </div>
+        </section>
+
+        <div class="section-title"><span>Dialog history</span><span>12</span></div>
+        <div class="history-list">
+          <a class="history-item active" href="#">Scratch on polished wafer<small>2 product matches</small></a>
+          <a class="history-item" href="#">Bottle cap print inspection<small>Saved yesterday</small></a>
+          <a class="history-item" href="#">Dark-field angle setup<small>Reference guide</small></a>
+          <a class="history-item" href="#">Line-scan lens notes<small>3 links attached</small></a>
+        </div>
+
+        <div class="section-title"><span>Field shortcuts</span><span>tap</span></div>
+        <div class="shortcut-grid">
+          <a class="shortcut" href="#"><b>Ask by defect</b>Scratch, dent, stain, burr</a>
+          <a class="shortcut" href="#"><b>Upload image</b>Get lighting direction</a>
+          <a class="shortcut" href="#"><b>Compare lights</b>Bar, coaxial, dome</a>
+          <a class="shortcut" href="#"><b>Redeem credits</b>Samples and support</a>
+        </div>
+      </aside>
+
+      <section class="panel chat-panel" aria-label="IOO engineering assistant">
+        <div class="chat-hero">
+          <div class="kicker">soft precision workspace</div>
+          <h1>Ask IOO in a calmer engineering space.</h1>
+          <p>Describe the defect, surface, camera angle, space limit, or current failure mode. IOO keeps recommended products nearby while the page stays bright, quiet, and low-glare.</p>
+          <div class="prompt-chips" aria-label="Prompt starters">
+            <button class="chip">Recommend light for hairline scratches</button>
+            <button class="chip">Explain coaxial vs dome</button>
+            <button class="chip">Need 470nm blue bar light</button>
+            <button class="chip">Build a quote shortlist</button>
+          </div>
+        </div>
+
+        <div class="chat-feed">
+          <article class="message user">
+            <div class="bubble">I need to inspect faint scratches on a reflective metal surface. The camera is fixed above the part.</div>
+            <div class="msg-avatar">ME</div>
+          </article>
+          <article class="message">
+            <div class="msg-avatar">IOO</div>
+            <div class="bubble">
+              <strong>Start with low-angle dark-field or coaxial comparison.</strong><br />
+              For mirror-like metal, vertical illumination may hide shallow scratches. A low-angle bar pair can convert surface disruption into bright contrast. If the surface is flat and highly specular, compare coaxial as a control image.
+              <div class="answer-tools">
+                <button class="tool-button">Add to shortlist</button>
+                <button class="tool-button">Show setup diagram</button>
+                <button class="tool-button">Earn +15 credits</button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <form class="chat-composer">
+          <div class="composer-box">
+            <div class="composer-input">
+              <textarea aria-label="Ask IOO" placeholder="Describe surface, defect, FOV, working distance, speed, color, and space limits..."></textarea>
+              <button class="send-button" type="button" aria-label="Send">-></button>
+            </div>
+            <div class="composer-footer">
+              <span>Attach image, drawing, spec sheet, or current setup.</span>
+              <span class="earn-line">Helpful engineering questions earn credits.</span>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <aside class="panel product-rail" aria-label="Recommended products">
+        <div class="rail-header">
+          <h2>Recommended products</h2>
+          <p>Persistent, reachable, and non-intrusive. On mobile this becomes a bottom sheet for production-floor use.</p>
+        </div>
+        <div class="product-stack">
+          <article class="product-card">
+            <div class="product-image"><img src="assets/product-light-bar.svg" alt="Bar light illustration" /></div>
+            <div class="product-info">
+              <h3>IOO-BAR-120</h3>
+              <p>Low-angle bar light candidate for scratch contrast.</p>
+              <div class="spec-tags"><span>470/630/850nm</span><span>24V</span><span>IP option</span></div>
+              <div class="card-links"><a href="#">Details</a><a href="#">Datasheet</a><a href="#">3D model</a></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image"><img src="assets/product-coaxial.svg" alt="Coaxial light illustration" /></div>
+            <div class="product-info">
+              <h3>IOO-COAX-60</h3>
+              <p>Control candidate for flat reflective surfaces.</p>
+              <div class="spec-tags"><span>white/red</span><span>24V</span><span>compact</span></div>
+              <div class="card-links"><a href="#">Details</a><a href="#">Datasheet</a><a href="#">Compare</a></div>
+            </div>
+          </article>
+          <article class="product-card">
+            <div class="product-image"><img src="assets/product-dome.svg" alt="Dome light illustration" /></div>
+            <div class="product-info">
+              <h3>IOO-DOME-100</h3>
+              <p>Diffuse option if glare and curvature dominate.</p>
+              <div class="spec-tags"><span>white</span><span>large area</span><span>diffuse</span></div>
+              <div class="card-links"><a href="#">Details</a><a href="#">Datasheet</a><a href="#">Quote</a></div>
+            </div>
+          </article>
+        </div>
+        <section class="reward-card">
+          <h3>Reward progress</h3>
+          <p>1,260 / 1,850 credits toward sample shipping, application review, or priority quote support.</p>
+          <div class="reward-meter"><span></span></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div class="mobile-product-tab" aria-label="Mobile product drawer shortcut">
+    <span><b>3 products recommended</b><br /><span>Tap to view models, images, and datasheets</span></span>
+    <button>Open</button>
+  </div>
+</body>
+</html>

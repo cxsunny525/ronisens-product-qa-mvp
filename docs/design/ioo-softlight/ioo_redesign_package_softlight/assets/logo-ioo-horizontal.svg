@@ -1,0 +1,16 @@
+<svg width="520" height="128" viewBox="0 0 520 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="520" height="128" rx="30" fill="#FFFFFF" stroke="#D5E5E2"/>
+  <g transform="translate(28 20)">
+    <rect width="88" height="88" rx="26" fill="#F8FCFB" stroke="#D5E5E2"/>
+    <circle cx="44" cy="44" r="27" stroke="#BFD4D0" stroke-width="6"/>
+    <circle cx="44" cy="44" r="15" stroke="#2BA7A5" stroke-width="6"/>
+    <circle cx="44" cy="44" r="4" fill="#C8842C"/>
+    <path d="M13 44H27" stroke="#2BA7A5" stroke-width="6" stroke-linecap="round"/>
+    <path d="M61 44H75" stroke="#C8842C" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="134" y="62" fill="#22333B" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800" letter-spacing="-1.2">IOO</text>
+  <text x="134" y="89" fill="#6F838A" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="500">Industrial Optics Online</text>
+  <path d="M370 41H480" stroke="#D5E5E2" stroke-width="2"/>
+  <path d="M370 60H448" stroke="#2BA7A5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M370 80H474" stroke="#C8842C" stroke-width="3" stroke-linecap="round"/>
+</svg>

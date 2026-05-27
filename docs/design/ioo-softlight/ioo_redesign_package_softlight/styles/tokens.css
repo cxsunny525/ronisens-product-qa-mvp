@@ -1,0 +1,32 @@
+:root {
+  --ioo-ink-950: #22333B;
+  --ioo-ink-900: #30464F;
+  --ioo-panel-850: #FFFFFF;
+  --ioo-panel-800: #F8FCFB;
+  --ioo-panel-760: #EEF6F4;
+  --ioo-line-600: #D5E5E2;
+  --ioo-line-500: #BFD4D0;
+  --ioo-text-100: #22333B;
+  --ioo-text-300: #465E66;
+  --ioo-text-500: #6F838A;
+  --ioo-text-650: #91A2A7;
+  --ioo-optic-cyan: #2BA7A5;
+  --ioo-optic-cyan-soft: #DDF6F2;
+  --ioo-lamp-amber: #C8842C;
+  --ioo-lamp-amber-soft: #FFF1D6;
+  --ioo-signal-green: #6EA47D;
+  --ioo-soft-lavender: #E8E7FF;
+  --ioo-danger-soft: #C86C61;
+  --ioo-shadow-blue: #DDEBEA;
+  --ioo-gradient-rest-field: linear-gradient(135deg, #F8FBF9 0%, #EEF6F4 48%, #EAF3F7 100%);
+  --ioo-gradient-focus-glow: radial-gradient(circle at 50% 12%, rgba(43,167,165,0.15), rgba(248,251,249,0) 46%);
+  --ioo-gradient-credit-glow: linear-gradient(135deg, rgba(255,241,214,0.95), rgba(221,246,242,0.88));
+  --ioo-font-ui: Inter, IBM Plex Sans, system-ui, -apple-system, Segoe UI, sans-serif;
+  --ioo-font-mono: JetBrains Mono, SFMono-Regular, Consolas, monospace;
+  --ioo-radius-sm: 8px;
+  --ioo-radius-md: 14px;
+  --ioo-radius-lg: 22px;
+  --ioo-radius-xl: 30px;
+  --ioo-shadow-panel: 0 24px 70px rgba(70,94,102,0.14);
+  --ioo-motion-safe: 180ms ease;
+}
