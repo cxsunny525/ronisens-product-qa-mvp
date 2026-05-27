@@ -196,17 +196,26 @@ def inject_css() -> None:
           color: var(--ioo-text-300); font-size: 12px;
         }
         .shortcut-soft b { display: block; color: var(--ioo-text-100); margin-bottom: 7px; }
-        .chat-panel-soft { min-height: calc(100vh - 128px); }
-        .ioo-hero {
-          padding: 28px 30px 20px; border-bottom: 1px solid var(--ioo-line-600);
-          background: var(--ioo-gradient-focus-glow); text-align: left; margin: 0;
+        .chat-panel-soft { min-height: auto; }
+        .compact-intro {
+          margin: 0 0 12px;
+          padding: 14px 16px;
+          border-radius: 22px;
+          border: 1px solid rgba(213,229,226,0.92);
+          background: rgba(255,255,255,0.74);
         }
-        .kicker { color: var(--ioo-optic-cyan); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 760; }
-        .ioo-hero h1 {
-          font-size: clamp(30px, 4.2vw, 46px); line-height: 1.04; letter-spacing: -0.045em;
-          margin: 10px 0 10px; color: var(--ioo-text-100) !important;
+        .compact-intro h1 {
+          font-size: clamp(22px, 2.5vw, 30px);
+          line-height: 1.12;
+          margin: 0 0 5px;
+          letter-spacing: -0.035em;
         }
-        .ioo-hero p { color: var(--ioo-text-500); margin: 0; max-width: 650px; line-height: 1.62; font-size: 1rem; }
+        .compact-intro p {
+          color: var(--ioo-text-500);
+          margin: 0;
+          font-size: 0.94rem;
+          line-height: 1.45;
+        }
         .ioo-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
         .ioo-card {
           background: rgba(255,255,255,0.80); border: 1px solid var(--ioo-line-600);
@@ -316,22 +325,88 @@ def inject_css() -> None:
         .reward-meter { margin-top: 12px; height: 9px; border-radius: 999px; background: rgba(191,212,208,0.88); overflow: hidden; }
         .reward-meter span { display: block; height: 100%; width: 68%; background: linear-gradient(90deg, var(--ioo-lamp-amber), var(--ioo-optic-cyan)); border-radius: inherit; }
         .mobile-product-tab { display: none; }
+        .mobile-product-drawer { display: none; }
         @media (max-width: 1160px) {
           .left-rail-soft, .product-rail-soft, .chat-panel-soft { min-height: auto; }
         }
         @media (max-width: 820px) {
-          .block-container { padding-top: 4.6rem; padding-left: 0.8rem; padding-right: 0.8rem; padding-bottom: 6rem; }
-          .ioo-topbar { grid-template-columns: 1fr; gap: 10px; }
-          .ioo-status { justify-content: flex-start; }
-          .ioo-credit-pill, .ioo-streak-pill, .ioo-auth-button { min-height: 44px; white-space: nowrap; }
-          .ioo-hero { padding: 22px 18px 16px; }
-          .ioo-hero h1 { font-size: 2rem; }
+          .block-container {
+            padding-top: 4.25rem;
+            padding-left: 0.82rem;
+            padding-right: 0.82rem;
+            padding-bottom: 7.4rem;
+          }
+          .ioo-topbar {
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px 0 4px;
+          }
+          .ioo-mark { width: 42px; height: 42px; border-radius: 14px; }
+          .ioo-logo { font-size: 1.28rem; }
+          .ioo-logo-sub { display: none; }
+          .ioo-status {
+            justify-content: flex-start;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 2px;
+          }
+          .ioo-credit-pill, .ioo-streak-pill, .ioo-auth-button {
+            min-height: 42px;
+            white-space: nowrap;
+            padding: 0 13px;
+            font-size: 0.82rem;
+          }
+          .left-rail-soft,
+          .product-rail-soft {
+            display: none !important;
+          }
+          .soft-panel {
+            border-radius: 24px;
+            box-shadow: 0 16px 42px rgba(70,94,102,0.13);
+          }
+          .compact-intro {
+            margin-bottom: 10px;
+            padding: 13px 14px;
+            border-radius: 20px;
+          }
+          .compact-intro h1 { font-size: 1.35rem; }
+          .compact-intro p { font-size: 0.88rem; }
+          div[data-testid="stTextArea"] textarea {
+            min-height: 116px !important;
+            font-size: 0.96rem !important;
+          }
+          div[data-testid="stFileUploader"] section {
+            min-height: 74px !important;
+          }
+          div.stButton > button,
+          div[data-testid="stFileUploader"] button {
+            min-height: 44px !important;
+          }
           .ioo-how { grid-template-columns: 1fr; }
           .shortcut-grid-soft { grid-template-columns: repeat(4, minmax(128px, 1fr)); overflow-x: auto; }
           .history-mobile-row { display: flex; overflow-x: auto; gap: 8px; padding-bottom: 2px; }
           .history-mobile-row .history-item-soft { min-width: 184px; }
+          .ioo-card {
+            padding: 15px 15px;
+            border-radius: 20px;
+          }
+          .ioo-card h3,
+          .ioo-card h2,
+          .ioo-card h1 {
+            font-size: 1.05rem !important;
+          }
           .soft-product-card { grid-template-columns: 74px 1fr; }
           .soft-product-image { min-height: 74px; }
+          .mobile-product-drawer {
+            display: block;
+            margin-top: 14px;
+            margin-bottom: 16px;
+            padding: 14px;
+          }
+          .mobile-product-drawer .soft-product-card {
+            background: rgba(255,255,255,0.88);
+          }
           .mobile-product-tab {
             position: fixed; left: 12px; right: 12px; bottom: 12px; display: grid;
             grid-template-columns: 1fr auto; gap: 10px; align-items: center; min-height: 58px;
@@ -344,6 +419,7 @@ def inject_css() -> None:
           .mobile-product-tab .open-pill {
             min-height: 42px; border-radius: 15px; background: linear-gradient(135deg, #2BA7A5, #4F8EA3);
             color: #FFFFFF; font-weight: 800; padding: 10px 13px; text-align: center;
+            text-decoration: none;
           }
         }
         </style>
@@ -491,10 +567,9 @@ def render_topbar(openai_enabled: bool) -> None:
 def render_hero() -> None:
     st.markdown(
         """
-        <div class="ioo-hero soft-panel chat-panel-soft">
-          <div class="kicker">soft precision workspace</div>
-          <h1>Ask IOO in a calmer engineering space.</h1>
-          <p>Describe the defect, surface, camera angle, space limit, or current failure mode. IOO keeps recommended products nearby while the page stays bright, quiet, and low-glare.</p>
+        <div class="compact-intro">
+          <h1>Find a practical machine vision lighting setup.</h1>
+          <p>Tell IOO what you need to inspect. Add material, defect, field of view, working distance, speed, or a sample image if available.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -558,12 +633,11 @@ def render_search_card() -> None:
         st.session_state["question"] = pending
         st.session_state["pending_question"] = None
     st.markdown("### Ask IOO")
-    st.caption("Describe an inspection problem, upload a requirement note, or start with one of the examples below.")
     st.text_area(
         "Describe your inspection problem",
         key="question",
-        height=150,
-        placeholder="Describe your inspection problem, material, defect, camera setup, or lighting challenge...",
+        height=128,
+        placeholder="Example: Inspect faint scratches on reflective metal. FOV 80 mm, working distance 120 mm, top camera.",
         label_visibility="collapsed",
     )
     uploaded_file = st.file_uploader(
@@ -571,7 +645,7 @@ def render_search_card() -> None:
         type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
         help="Upload a sample image, sketch, or requirement note. Text notes are used immediately.",
     )
-    st.caption("Upload a sample image, sketch, or requirement note. Visual interpretation can be enabled with a vision model; text notes are used immediately.")
+    st.caption("Upload image, sketch, PDF, or requirement note. Text notes are used immediately; image reasoning requires a vision model.")
     upload_context = process_upload(uploaded_file)
     render_upload_context(upload_context, uploaded_file)
     ask_col, clear_col = st.columns([3, 1])
@@ -585,9 +659,9 @@ def render_search_card() -> None:
             st.session_state["pending_question"] = ""
             st.session_state["uploaded_context"] = None
             st.rerun()
-    chip_cols = st.columns(5)
+    chip_cols = st.columns(2)
     for idx, (label, prompt) in enumerate(EXAMPLE_PROMPTS):
-        with chip_cols[idx % 5]:
+        with chip_cols[idx % 2]:
             if st.button(label, key=f"example_{idx}", use_container_width=True):
                 st.session_state["pending_question"] = prompt
                 st.rerun()
@@ -821,8 +895,24 @@ def render_mobile_product_tab() -> None:
         f"""
         <div class="mobile-product-tab">
           <span><b>{e(label)}</b><br><span>Models, images, spec links, save and compare actions</span></span>
-          <span class="open-pill">Open</span>
+          <a class="open-pill" href="#ioo-mobile-products">Open</a>
         </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_mobile_product_drawer() -> None:
+    products = current_recommended_products()
+    count = len(products)
+    title = f"{count} recommended products" if count else "Recommended products"
+    st.markdown(
+        f"""
+        <section id="ioo-mobile-products" class="soft-panel mobile-product-drawer">
+          <div class="product-rail-title">{e(title)}</div>
+          <div class="product-rail-sub">Mobile product drawer for quick field review. Public IOO models only.</div>
+          {product_cards_html(products, limit=4)}
+        </section>
         """,
         unsafe_allow_html=True,
     )
@@ -910,6 +1000,7 @@ def main() -> None:
     with center_col:
         render_hero()
         render_search_card()
+        render_mobile_product_drawer()
         render_answer(st.session_state.get("last_result"))
     with right_col:
         render_product_rail()
