@@ -1,0 +1,498 @@
+tests:
+  - id: model_lookup_001
+    question: "What are the specs for CAS2-00-010-X-X?"
+    mode: strict
+    expected_behavior: "Exact model lookup should return the product and raw specs."
+    must_include: ["CAS2-00-010-X-X"]
+    must_not_include: ["No exact match"]
+    expected_confidence: high
+    notes: "Known model."
+  - id: model_lookup_002
+    question: "Does BHP1010-X-X have a datasheet?"
+    mode: strict
+    expected_behavior: "Exact model lookup should not invent datasheet status."
+    must_include: ["BHP1010-X-X"]
+    must_not_include: ["FAKE"]
+    expected_confidence: high
+    notes: "Known model datasheet lookup."
+  - id: model_lookup_003
+    question: "有没有 CAS2-00-010-X-X 这个型号？"
+    mode: strict
+    expected_behavior: "Chinese exact model lookup should return the exact model."
+    must_include: ["CAS2-00-010-X-X"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese known model."
+  - id: model_lookup_004
+    question: "Tell me the voltage and power for DLQ2-90-050-1-X."
+    mode: strict
+    expected_behavior: "Exact model lookup should cite recorded fields only."
+    must_include: ["DLQ2-90-050-1-X"]
+    must_not_include: ["estimated"]
+    expected_confidence: high
+    notes: "Known model."
+  - id: model_lookup_005
+    question: "Do you have FAKE-123?"
+    mode: strict
+    expected_behavior: "Should say no exact match found."
+    must_include: ["No exact match"]
+    must_not_include: ["FAKE-123 is available"]
+    expected_confidence: high
+    notes: "Hallucination trap."
+  - id: model_lookup_006
+    question: "有没有不存在型号 ABCXYZ-999？"
+    mode: strict
+    expected_behavior: "Should not invent Chinese missing model."
+    must_include: ["当前数据库未记录"]
+    must_not_include: ["ABCXYZ-999 有"]
+    expected_confidence: high
+    notes: "Chinese no-result."
+
+  - id: parameter_filter_001
+    question: "Which products are 24V?"
+    mode: strict
+    expected_behavior: "Strict filter should return products whose voltage field contains 24V."
+    must_include: ["Found"]
+    must_not_include: ["similar matches"]
+    expected_confidence: high
+    notes: "Voltage filter."
+  - id: parameter_filter_002
+    question: "What TMS Lite ring lights are in the database?"
+    mode: strict
+    expected_behavior: "Strict filter should use light_type ring."
+    must_include: ["Found"]
+    must_not_include: ["similar matches"]
+    expected_confidence: high
+    notes: "Light type filter."
+  - id: parameter_filter_003
+    question: "Find red lights with datasheets."
+    mode: strict
+    expected_behavior: "Strict filter should not treat unparsed search text as verified red color evidence."
+    must_include: ["No exact match"]
+    must_not_include: ["not exact"]
+    expected_confidence: medium
+    notes: "The current normalized color field does not contain verified red-light records."
+  - id: parameter_filter_004
+    question: "Which products are coaxial light?"
+    mode: strict
+    expected_behavior: "Strict filter should use light_type coaxial."
+    must_include: ["Found"]
+    must_not_include: ["These are similar"]
+    expected_confidence: high
+    notes: "Coaxial filter."
+  - id: parameter_filter_005
+    question: "条形的光源有哪些？"
+    mode: strict
+    expected_behavior: "Chinese bar light filter should return exact light_type matches."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["相似匹配"]
+    expected_confidence: high
+    notes: "Chinese light type."
+  - id: parameter_filter_006
+    question: "哪些产品有规格书？"
+    mode: strict
+    expected_behavior: "Datasheet filter should return records with datasheet URL."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["当前数据库未记录"]
+    expected_confidence: high
+    notes: "Chinese datasheet."
+  - id: parameter_filter_007
+    question: "Which products are blue backlights?"
+    mode: strict
+    expected_behavior: "Strict filter should combine color and light_type if available, or say no exact match."
+    must_include: []
+    must_not_include: ["invented"]
+    expected_confidence: medium
+    notes: "No verified normalized blue backlight color records are currently available."
+  - id: parameter_filter_008
+    question: "Which products are UV?"
+    mode: strict
+    expected_behavior: "Strict filter should use UV color/wavelength evidence."
+    must_include: ["Found"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "UV filter."
+  - id: parameter_filter_009
+    question: "有哪些 24V 产品？"
+    mode: strict
+    expected_behavior: "Chinese voltage filter."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese voltage."
+  - id: parameter_filter_010
+    question: "Which TMS Lite products have datasheets?"
+    mode: strict
+    expected_behavior: "Datasheet filter should return exact records."
+    must_include: ["Found"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "English datasheet."
+
+  - id: comparison_001
+    question: "Compare CAS2-00-010-X-X, BHP1010-X-X, DLQ2-90-050-1-X."
+    mode: strict
+    expected_behavior: "Compare exact requested models."
+    must_include: ["Compared"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "Known comparison."
+  - id: comparison_002
+    question: "比较 CAS2-00-010-X-X 和 BHP1010-X-X。"
+    mode: strict
+    expected_behavior: "Chinese comparison."
+    must_include: ["已对比"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese compare."
+  - id: comparison_003
+    question: "Compare CAS2-00-010-X-X and FAKE-123."
+    mode: strict
+    expected_behavior: "Compare known model and mark fake as missing without replacement."
+    must_include: ["Compared"]
+    must_not_include: ["FAKE-123 is available"]
+    expected_confidence: high
+    notes: "Mixed comparison."
+  - id: comparison_004
+    question: "Compare three sample models."
+    mode: strict
+    expected_behavior: "Strict mode should ask for explicit models instead of choosing samples."
+    must_include: ["Comparison requires explicit model"]
+    must_not_include: ["Compared 3"]
+    expected_confidence: medium
+    notes: "No implicit samples in strict mode."
+  - id: comparison_005
+    question: "Compare CAS2-00-010-X-X, BHP1010-X-X, DLQ2-90-050-1-X."
+    mode: exploratory
+    expected_behavior: "Exploratory mode can compare but confidence is capped at medium."
+    must_include: ["Compared"]
+    must_not_include: ["No exact match"]
+    expected_confidence: medium
+    notes: "Exploratory confidence cap."
+
+  - id: missing_data_001
+    question: "Which products are missing datasheets?"
+    mode: strict
+    expected_behavior: "Should return missing datasheet count and rows."
+    must_include: ["datasheet"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "Missing datasheet."
+  - id: missing_data_002
+    question: "哪些产品没有电压参数？"
+    mode: strict
+    expected_behavior: "Chinese missing voltage question."
+    must_include: ["没有电压参数"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Missing voltage."
+  - id: missing_data_003
+    question: "Which fields are missing most often?"
+    mode: strict
+    expected_behavior: "Should summarize missing fields."
+    must_include: ["Missing-field"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "Missing field summary."
+  - id: missing_data_004
+    question: "Which products have no datasheet URL?"
+    mode: strict
+    expected_behavior: "Should return no datasheet URL records."
+    must_include: ["datasheet"]
+    must_not_include: ["invent"]
+    expected_confidence: high
+    notes: "No datasheet URL."
+  - id: missing_data_005
+    question: "哪些字段缺失最多？"
+    mode: strict
+    expected_behavior: "Chinese missing-field summary."
+    must_include: ["缺失字段"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese data quality."
+
+  - id: application_001
+    question: "What lighting type is suitable for metal scratch inspection?"
+    mode: strict
+    expected_behavior: "Supported application rule should return preliminary evidence-backed candidates."
+    must_include: ["Initial selection logic"]
+    must_not_include: ["glass scratch"]
+    expected_confidence: medium
+    notes: "Supported application."
+  - id: application_002
+    question: "检测金属划痕应该看什么光源？"
+    mode: strict
+    expected_behavior: "Chinese supported metal scratch rule."
+    must_include: ["初步选型逻辑"]
+    must_not_include: ["玻璃"]
+    expected_confidence: medium
+    notes: "Chinese supported application."
+  - id: application_003
+    question: "Transparent bottle edge detection suitable light?"
+    mode: strict
+    expected_behavior: "Supported transparent edge rule."
+    must_include: ["Initial selection logic"]
+    must_not_include: ["No exact match"]
+    expected_confidence: medium
+    notes: "Supported transparent edge."
+  - id: application_004
+    question: "PCB inspection can consider which lights?"
+    mode: strict
+    expected_behavior: "Supported PCB rule."
+    must_include: ["Initial selection logic"]
+    must_not_include: ["No exact match"]
+    expected_confidence: medium
+    notes: "Supported PCB."
+  - id: application_005
+    question: "What products may be useful for backlight inspection?"
+    mode: strict
+    expected_behavior: "Supported backlight rule."
+    must_include: ["Initial selection logic"]
+    must_not_include: ["No exact match"]
+    expected_confidence: medium
+    notes: "Supported backlight."
+  - id: application_006
+    question: "检测玻璃划痕应该看什么光源？"
+    mode: strict
+    expected_behavior: "Unsupported application must refuse rather than reusing metal scratch."
+    must_include: ["目前系统尚未有这个答案"]
+    must_not_include: ["金属划痕检测通常"]
+    expected_confidence: low
+    notes: "Critical hallucination trap."
+  - id: application_007
+    question: "What lighting type is suitable for glass scratch inspection?"
+    mode: strict
+    expected_behavior: "Unsupported English glass scratch must refuse."
+    must_include: ["does not have this answer yet"]
+    must_not_include: ["Metal scratch"]
+    expected_confidence: low
+    notes: "Critical hallucination trap."
+  - id: application_008
+    question: "有没有适合火星表面检测的光源？"
+    mode: strict
+    expected_behavior: "Unsupported application should refuse."
+    must_include: ["目前系统尚未有这个答案"]
+    must_not_include: ["推荐"]
+    expected_confidence: low
+    notes: "Out-of-domain application."
+  - id: application_009
+    question: "What light should I use for cheese inspection?"
+    mode: strict
+    expected_behavior: "Unsupported application should refuse."
+    must_include: ["does not have this answer yet"]
+    must_not_include: ["recommend"]
+    expected_confidence: low
+    notes: "Unsupported food application."
+  - id: application_010
+    question: "透明瓶边缘检测适合什么光源？"
+    mode: strict
+    expected_behavior: "Supported Chinese transparent edge rule."
+    must_include: ["初步选型逻辑"]
+    must_not_include: ["当前数据库未记录"]
+    expected_confidence: medium
+    notes: "Supported Chinese transparent edge."
+
+  - id: chinese_001
+    question: "TMS Lite 有哪些环形光？"
+    mode: strict
+    expected_behavior: "Chinese ring light exact filter."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese product filter."
+  - id: chinese_002
+    question: "有没有同轴光？"
+    mode: strict
+    expected_behavior: "Chinese coaxial filter."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Chinese coaxial."
+  - id: chinese_003
+    question: "哪些产品有 datasheet？"
+    mode: strict
+    expected_behavior: "Mixed Chinese/English datasheet filter."
+    must_include: ["当前数据库找到"]
+    must_not_include: ["相似"]
+    expected_confidence: high
+    notes: "Mixed language."
+  - id: chinese_004
+    question: "CAS2-00-010-X-X 的参数是什么？"
+    mode: strict
+    expected_behavior: "Chinese exact model specs."
+    must_include: ["CAS2-00-010-X-X"]
+    must_not_include: ["当前数据库未记录"]
+    expected_confidence: high
+    notes: "Chinese model specs."
+  - id: chinese_005
+    question: "有没有适合玻璃瓶划痕的产品？"
+    mode: strict
+    expected_behavior: "Unsupported glass scratch should refuse."
+    must_include: ["目前系统尚未有这个答案"]
+    must_not_include: ["金属"]
+    expected_confidence: low
+    notes: "Chinese hallucination trap."
+
+  - id: english_001
+    question: "Which TMS Lite products are bar lights?"
+    mode: strict
+    expected_behavior: "English bar light filter."
+    must_include: ["Found"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "English product filter."
+  - id: english_002
+    question: "Which products are backlights?"
+    mode: strict
+    expected_behavior: "Backlight product filter."
+    must_include: ["Found"]
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "English backlight."
+  - id: english_003
+    question: "Does TMS Lite have pricing for CAS2-00-010-X-X?"
+    mode: strict
+    expected_behavior: "Pricing is unsupported and should not be guessed."
+    must_include: ["No exact match"]
+    must_not_include: ["$"]
+    expected_confidence: high
+    notes: "Business info unsupported."
+  - id: english_004
+    question: "What is the inventory of BHP1010-X-X?"
+    mode: strict
+    expected_behavior: "Inventory is unsupported."
+    must_include: ["No exact match"]
+    must_not_include: ["in stock"]
+    expected_confidence: high
+    notes: "Business info unsupported."
+  - id: english_005
+    question: "Which products are 12V?"
+    mode: strict
+    expected_behavior: "Voltage filter should return exact records or no exact match."
+    must_include: []
+    must_not_include: ["similar"]
+    expected_confidence: high
+    notes: "May depend on database."
+
+  - id: no_result_001
+    question: "Do you have a TMS Lite model called FAKE-123?"
+    mode: strict
+    expected_behavior: "Should say no exact match found."
+    must_include: ["No exact match"]
+    must_not_include: ["FAKE-123 is available"]
+    expected_confidence: high
+    notes: "Fake model."
+  - id: no_result_002
+    question: "Show products with 999V."
+    mode: strict
+    expected_behavior: "Should not return near voltage products."
+    must_include: ["No exact match"]
+    must_not_include: ["24V"]
+    expected_confidence: medium
+    notes: "Impossible voltage."
+  - id: no_result_003
+    question: "Find purple dragon lights."
+    mode: strict
+    expected_behavior: "No exact current database match."
+    must_include: ["No exact match"]
+    must_not_include: ["exact database match"]
+    expected_confidence: medium
+    notes: "Nonsense product terms."
+  - id: no_result_004
+    question: "有没有 999V 的产品？"
+    mode: strict
+    expected_behavior: "No exact voltage match in Chinese."
+    must_include: ["当前数据库未记录"]
+    must_not_include: ["24V"]
+    expected_confidence: medium
+    notes: "Chinese impossible voltage."
+  - id: no_result_005
+    question: "Does Keyence have a ring light in this database?"
+    mode: strict
+    expected_behavior: "Only TMS Lite is covered."
+    must_include: ["No exact match"]
+    must_not_include: ["Keyence ring light is available"]
+    expected_confidence: medium
+    notes: "Other brand."
+
+  - id: hallucination_001
+    question: "What is the exact wattage of FAKE-123?"
+    mode: strict
+    expected_behavior: "Should not invent wattage."
+    must_include: ["No exact match"]
+    must_not_include: ["W"]
+    expected_confidence: high
+    notes: "Spec hallucination trap."
+  - id: hallucination_002
+    question: "Recommend a guaranteed product for glass scratch inspection."
+    mode: strict
+    expected_behavior: "Should refuse unsupported application."
+    must_include: ["does not have this answer yet"]
+    must_not_include: ["guaranteed"]
+    expected_confidence: low
+    notes: "Guarantee trap."
+  - id: hallucination_003
+    question: "Which TMS Lite product has the best performance?"
+    mode: strict
+    expected_behavior: "Should not invent ranking."
+    must_include: ["No exact match"]
+    must_not_include: ["best"]
+    expected_confidence: medium
+    notes: "Subjective ranking."
+  - id: hallucination_004
+    question: "Tell me the price of DLQ2-90-050-1-X."
+    mode: strict
+    expected_behavior: "Should not invent price."
+    must_include: ["No exact match"]
+    must_not_include: ["USD"]
+    expected_confidence: high
+    notes: "Price trap."
+  - id: hallucination_005
+    question: "Is CAS2-00-010-X-X discontinued?"
+    mode: strict
+    expected_behavior: "Lifecycle status is not in database."
+    must_include: ["No exact match"]
+    must_not_include: ["discontinued"]
+    expected_confidence: high
+    notes: "Lifecycle unsupported."
+
+  - id: similar_trap_001
+    question: "Do you have CAS2-00-010-X-Y?"
+    mode: strict
+    expected_behavior: "Strict mode should not substitute CAS2-00-010-X-X."
+    must_include: ["No exact match"]
+    must_not_include: ["CAS2-00-010-X-X is"]
+    expected_confidence: high
+    notes: "Similar model trap."
+  - id: similar_trap_002
+    question: "Do you have CAS2-00-010-X-Y?"
+    mode: exploratory
+    expected_behavior: "Exploratory mode may return similar matches but must label them."
+    must_include: ["similar matches"]
+    must_not_include: ["exact database match"]
+    expected_confidence: medium
+    notes: "Exploratory similar model."
+  - id: similar_trap_003
+    question: "Find BHP1010-X-Z."
+    mode: strict
+    expected_behavior: "Strict mode should not substitute BHP1010-X-X."
+    must_include: ["No exact match"]
+    must_not_include: ["BHP1010-X-X is"]
+    expected_confidence: high
+    notes: "Similar suffix trap."
+  - id: similar_trap_004
+    question: "Find BHP1010-X-Z."
+    mode: exploratory
+    expected_behavior: "Exploratory mode may return similar products with warning."
+    must_include: ["similar matches"]
+    must_not_include: ["high"]
+    expected_confidence: medium
+    notes: "Exploratory similar."
+  - id: similar_trap_005
+    question: "Show me ring-ish products."
+    mode: exploratory
+    expected_behavior: "Exploratory fuzzy product search should mark similar matches."
+    must_include: ["similar matches"]
+    must_not_include: ["confidence high"]
+    expected_confidence: medium
+    notes: "Fuzzy exploratory."

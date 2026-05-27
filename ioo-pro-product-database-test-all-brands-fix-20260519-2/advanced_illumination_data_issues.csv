@@ -1,0 +1,63 @@
+﻿issue_type,severity,model,product_family,field_name,raw_value,source_url,suggested_fix,status
+missing_voltage,medium,AL325,Modular Bar Lights,voltage_v,,https://advancedillumination.com/products/al325-series/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,AL325,Modular Bar Lights,power_w,,https://advancedillumination.com/products/al325-series/,Parse power from verified datasheet if available.,open
+missing_datasheet,medium,BL2-XXYY,High Intensity Back-lit Backlights,datasheet_url,,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Verify whether a datasheet exists on the official product page.,open
+missing_voltage,medium,BL2-XXYY,High Intensity Back-lit Backlights,voltage_v,,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,BL2-XXYY,High Intensity Back-lit Backlights,power_w,,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,DF196,MicroBrite Direct Dark Field Series,voltage_v,,https://advancedillumination.com/products/df196-series_2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,DF196,MicroBrite Direct Dark Field Series,power_w,,https://advancedillumination.com/products/df196-series_2/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,DF198,MicroBrite Diffuse Ring Light Series,voltage_v,,https://advancedillumination.com/products/df198-series_2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,DF198,MicroBrite Diffuse Ring Light Series,power_w,,https://advancedillumination.com/products/df198-series_2/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,DL110,Linear Coaxial Light,voltage_v,,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL110-Series.pdf,Parse voltage from verified datasheet if available.,open
+missing_power,medium,DL110,Linear Coaxial Light,power_w,,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL110-Series.pdf,Parse power from verified datasheet if available.,open
+missing_voltage,medium,DL225,Square Coaxial Lights,voltage_v,,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL225-Series.pdf,Parse voltage from verified datasheet if available.,open
+missing_power,medium,DL225,Square Coaxial Lights,power_w,,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL225-Series.pdf,Parse power from verified datasheet if available.,open
+missing_datasheet,medium,LL330,Sealed High Intensity Line Lights,datasheet_url,,https://advancedillumination.com/products/sealed-high-intensity-line-lights/,Verify whether a datasheet exists on the official product page.,open
+missing_voltage,medium,LL330,Sealed High Intensity Line Lights,voltage_v,,https://advancedillumination.com/products/sealed-high-intensity-line-lights/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,LL330,Sealed High Intensity Line Lights,power_w,,https://advancedillumination.com/products/sealed-high-intensity-line-lights/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,RL208,MicroBrite Direct Bright Field Series,voltage_v,,https://advancedillumination.com/products/rl208_series_2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,RL208,MicroBrite Direct Bright Field Series,power_w,,https://advancedillumination.com/products/rl208_series_2/,Parse power from verified datasheet if available.,open
+missing_datasheet,medium,RL322,UltraSeal Ring Light Series,datasheet_url,,https://advancedillumination.com/products/ultraseal-ring-light-series/,Verify whether a datasheet exists on the official product page.,open
+missing_voltage,medium,RL322,UltraSeal Ring Light Series,voltage_v,,https://advancedillumination.com/products/ultraseal-ring-light-series/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,RL322,UltraSeal Ring Light Series,power_w,,https://advancedillumination.com/products/ultraseal-ring-light-series/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,SL164,Compact High Intensity Spot Light,voltage_v,,https://advancedillumination.com/products/sl164-series-2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,SL164,Compact High Intensity Spot Light,power_w,,https://advancedillumination.com/products/sl164-series-2/,Parse power from verified datasheet if available.,open
+missing_datasheet,medium,SL246,High Intensity Spot Light,datasheet_url,,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Verify whether a datasheet exists on the official product page.,open
+missing_voltage,medium,SL246,High Intensity Spot Light,voltage_v,,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,SL246,High Intensity Spot Light,power_w,,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,SL256,High Intensity Pattern Projecting Spot Light,voltage_v,,https://advancedillumination.com/products/sl256/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,SL256,High Intensity Pattern Projecting Spot Light,power_w,,https://advancedillumination.com/products/sl256/,Parse power from verified datasheet if available.,open
+missing_voltage,medium,SL316,UltraSeal Spot Light,voltage_v,,https://advancedillumination.com/products/ultraseal-washdown-spot-light/,Parse voltage from verified datasheet if available.,open
+missing_power,medium,SL316,UltraSeal Spot Light,power_w,,https://advancedillumination.com/products/ultraseal-washdown-spot-light/,Parse power from verified datasheet if available.,open
+unmapped_field,low,AL325,Modular Bar Lights,Intensity,"73,000 Lux",https://advancedillumination.com/products/al325-series/,Map only after the field meaning is verified.,open
+unmapped_field,low,AL325,Modular Bar Lights,Lead Time,In Stock,https://advancedillumination.com/products/al325-series/,Map only after the field meaning is verified.,open
+unmapped_field,low,AL325,Modular Bar Lights,Light Conditioning,Diffuser,https://advancedillumination.com/products/al325-series/,Map only after the field meaning is verified.,open
+unmapped_field,low,BL2-XXYY,High Intensity Back-lit Backlights,Intensity,86000 Lux,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,BL2-XXYY,High Intensity Back-lit Backlights,Lead Time,2 Weeks,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,BL2-XXYY,High Intensity Back-lit Backlights,Light Conditioning,Collimator Polarizer,https://advancedillumination.com/products/high-intensity-back-lit-backlights-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF196,MicroBrite Direct Dark Field Series,Intensity,"78,000 Lux",https://advancedillumination.com/products/df196-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF196,MicroBrite Direct Dark Field Series,Lead Time,In Stock,https://advancedillumination.com/products/df196-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF196,MicroBrite Direct Dark Field Series,Light Conditioning,N/A,https://advancedillumination.com/products/df196-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF198,MicroBrite Diffuse Ring Light Series,Intensity,"47,000 Lux",https://advancedillumination.com/products/df198-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF198,MicroBrite Diffuse Ring Light Series,Lead Time,2 Weeks,https://advancedillumination.com/products/df198-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DF198,MicroBrite Diffuse Ring Light Series,Light Conditioning,N/A,https://advancedillumination.com/products/df198-series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,DL110,Linear Coaxial Light,Lead Time,1-2 Week BTO Lead Times Typical,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL110-Series.pdf,Map only after the field meaning is verified.,open
+unmapped_field,low,DL225,Square Coaxial Lights,Lead Time,1-2 Week BTO Lead Times,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL225-Series.pdf,Map only after the field meaning is verified.,open
+unmapped_field,low,DL225,Square Coaxial Lights,Sizes,25mm 50mm 75mm 100mm 150mm,https://www.advancedillumination.com/wp-content/uploads/2025/03/DL225-Series.pdf,Map only after the field meaning is verified.,open
+unmapped_field,low,LL330,Sealed High Intensity Line Lights,Intensity,1200000 Lux,https://advancedillumination.com/products/sealed-high-intensity-line-lights/,Map only after the field meaning is verified.,open
+unmapped_field,low,LL330,Sealed High Intensity Line Lights,Lead Time,3 Weeks,https://advancedillumination.com/products/sealed-high-intensity-line-lights/,Map only after the field meaning is verified.,open
+unmapped_field,low,RL208,MicroBrite Direct Bright Field Series,Intensity,"41,400 Lux",https://advancedillumination.com/products/rl208_series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,RL208,MicroBrite Direct Bright Field Series,Lead Time,In Stock,https://advancedillumination.com/products/rl208_series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,RL208,MicroBrite Direct Bright Field Series,Light Conditioning,N/A,https://advancedillumination.com/products/rl208_series_2/,Map only after the field meaning is verified.,open
+unmapped_field,low,RL322,UltraSeal Ring Light Series,Light Conditioning,Polarizer,https://advancedillumination.com/products/ultraseal-ring-light-series/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL164,Compact High Intensity Spot Light,Intensity,"201,000 Lux",https://advancedillumination.com/products/sl164-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL164,Compact High Intensity Spot Light,Lead Time,In Stock,https://advancedillumination.com/products/sl164-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL164,Compact High Intensity Spot Light,Light Conditioning,Diffuser,https://advancedillumination.com/products/sl164-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL246,High Intensity Spot Light,Intensity,110000 Lux,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL246,High Intensity Spot Light,Lead Time,2 Weeks,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL246,High Intensity Spot Light,Light Conditioning,N/A,https://advancedillumination.com/products/high-intensity-spot-light-series-2/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL256,High Intensity Pattern Projecting Spot Light,Lead Time,2 Weeks,https://advancedillumination.com/products/sl256/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL256,High Intensity Pattern Projecting Spot Light,Light Conditioning,N/A,https://advancedillumination.com/products/sl256/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL316,UltraSeal Spot Light,Intensity,150000 Lux,https://advancedillumination.com/products/ultraseal-washdown-spot-light/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL316,UltraSeal Spot Light,Lead Time,2 Weeks,https://advancedillumination.com/products/ultraseal-washdown-spot-light/,Map only after the field meaning is verified.,open
+unmapped_field,low,SL316,UltraSeal Spot Light,Light Conditioning,Diffuser,https://advancedillumination.com/products/ultraseal-washdown-spot-light/,Map only after the field meaning is verified.,open

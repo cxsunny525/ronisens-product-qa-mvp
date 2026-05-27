@@ -1,0 +1,6 @@
+streamlit
+pandas
+pyyaml
+openai
+python-dotenv
+pytest

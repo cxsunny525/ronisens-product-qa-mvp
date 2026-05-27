@@ -2,96 +2,67 @@
 
 ## Status
 
-Public deployment was not completed from this environment.
+Public deployment was not completed from this local Codex environment.
 
 ## Reason
 
-- `git` is not installed or not available on PATH.
-- `gh` is not installed or not available on PATH.
-- GitHub connector login is available as `cxsunny525`, but no accessible
-  repositories were listed and the available connector tools do not expose a
-  create-repository action.
-- Streamlit Cloud and Render require account authorization that is not available
-  in this local Codex session.
+- `git` is not available in this environment, so I could not inspect diff,
+  commit, or push from here.
+- Streamlit Cloud deployment requires the user's GitHub / Streamlit account
+  session in the browser.
+- Local Streamlit launch could not be completed with the bundled runtime, but
+  the app imports successfully and is ready for Streamlit Cloud.
 
-## Test URL
+## What Changed
 
-Not available yet.
+- The app is now `IOO Lighting AI`.
+- The public UI is single-brand and search-style.
+- Public recommendations use IOO public SKUs.
+- 631 public IOO lighting products are available in `public_products.csv`.
+- OpenAI API integration is configured through `OPENAI_API_KEY`.
+- Local fallback mode works without an API key.
+- IOO Insight Points and conversation logs were added.
+- Upload handling supports images, PDFs, text notes, and markdown notes.
 
-## Local App Status
+## Verification
 
-The app is implemented and ready for local/hosted deployment:
+- Python compile check: passed.
+- App/helper imports: passed.
+- Product QA regression tests: passed, 23/23.
+- Lightweight answer smoke tests: passed.
+- Public-facing file scan found no old public brand wording in the checked UI,
+  handoff, deployment, report, and public CSV files.
 
-- Entrypoint: `app.py`
-- Engine: `qa_engine.py`
-- Database: `data/ioo_product_test.db` preferred, with `data/tms_lite_full.db` preserved
-- Dependencies: `requirements.txt`
+## Manual Upload Path
 
-## Required Secrets
+1. Upload the updated project files to GitHub.
+2. Confirm these files are included:
+   - `app.py`
+   - `answer_engine.py`
+   - `sku_mapping.py`
+   - `brand_config.py`
+   - `config/brand_config.yaml`
+   - `public_products.csv`
+   - `ioo_sku_mapping.csv`
+   - `SKU_MAPPING_REPORT.md`
+   - `README.md`
+   - `DEPLOYMENT.md`
+   - `DEPLOYMENT_RESULT.md`
+   - `TEST_REPORT.md`
+   - `UI_REDESIGN_REPORT.md`
+   - `MAJOR_VERSION_UPGRADE_REPORT.md`
+3. In Streamlit Cloud, open App -> Settings -> Secrets.
+4. Add:
 
-Set these in Streamlit Cloud or Render:
-
-```text
-APP_PASSWORD=choose-a-test-password
-OPENAI_API_KEY=optional
+```toml
+OPENAI_API_KEY = "your_api_key_here"
+APP_PASSWORD = "optional_test_password"
 ```
 
-`OPENAI_API_KEY` is optional. Without it, the MVP runs in local fallback mode.
+5. Reboot the Streamlit app.
 
-## Fastest Path To A Public Test URL
+## Fastest Test Questions
 
-1. Create a private GitHub repo named `ioo-product-qa-mvp`.
-2. Push this folder using the steps in `GITHUB_HANDOFF.md`.
-3. Open Streamlit Cloud.
-4. Create a new app from the GitHub repo.
-5. Set app file to `app.py`.
-6. Add `APP_PASSWORD` in secrets.
-7. Deploy.
-
-Estimated time after account access is ready: 5-10 minutes.
-
-## Render Alternative
-
-Build command:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start command:
-
-```bash
-streamlit run app.py --server.port $PORT --server.address 0.0.0.0
-```
-
-## Notes
-
-The database file is about 3.3 MB, so it is safe to include directly in the repo
-for this MVP. No Git LFS or external database is required yet.
-
-## Multi-Brand Update Status
-
-- Advanced Illumination pilot data has been imported locally.
-- `data/ioo_product_test.db` contains 2 brands, 667 products total, and 13 Advanced Illumination pilot records.
-- `python test_qa_engine.py`: passed.
-- `python test_multibrand_advanced_illumination.py`: passed.
-- `python eval_runner.py`: passed 92/92 cases.
-- Local Streamlit startup from this sandbox is still blocked by access denial on `.runtime_pkgs`, but the deployed Streamlit Cloud app should update after the GitHub repo is pushed with the new files.
-
-Current public test URL should remain whatever Streamlit Cloud assigned previously. If the hosted page does not update automatically, reboot the Streamlit app after pushing.
-
-## Edmund Optics Knowledge Update Status
-
-- Edmund Optics knowledge import tooling has been added:
-  `crawl_edmund_knowledge.py`, `import_edmund_knowledge.py`,
-  `extract_edmund_knowledge.py`, and `knowledge_quality_edmund.py`.
-- Reports generated:
-  `EDMUND_KNOWLEDGE_IMPORT_REPORT.md`, `edmund_knowledge_issues.csv`, and
-  `edmund_knowledge_inventory.csv`.
-- The local Codex runtime blocked outbound socket access while attempting to
-  crawl Edmund Optics, so this workspace did not download new full Edmund pages.
-- Current database contains 9 existing source-linked Edmund Optics knowledge
-  records and 9 generated Edmund knowledge cards.
-- To expand online, run `python crawl_edmund_knowledge.py --limit 150` from a
-  network-enabled machine, then run the import, extract, and quality scripts.
-  The crawler enforces Edmund's 10 second crawl delay.
+- `Detect scratches on reflective metal.`
+- `Inspect transparent bottle edges.`
+- `What if no product exactly matches my application?`

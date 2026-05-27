@@ -1,0 +1,70 @@
+# Deployment Result
+
+## Status
+
+Public deployment was not completed from this environment.
+
+## Reason
+
+- `git` is not installed or not available on PATH.
+- `gh` is not installed or not available on PATH.
+- GitHub connector login is available as `cxsunny525`, but no accessible
+  repositories were listed and the available connector tools do not expose a
+  create-repository action.
+- Streamlit Cloud and Render require account authorization that is not available
+  in this local Codex session.
+
+## Test URL
+
+Not available yet.
+
+## Local App Status
+
+The app is implemented and ready for local/hosted deployment:
+
+- Entrypoint: `app.py`
+- Engine: `qa_engine.py`
+- Database: `data/tms_lite_full.db`
+- Dependencies: `requirements.txt`
+
+## Required Secrets
+
+Set these in Streamlit Cloud or Render:
+
+```text
+APP_PASSWORD=choose-a-test-password
+OPENAI_API_KEY=optional
+```
+
+`OPENAI_API_KEY` is optional. Without it, the MVP runs in local fallback mode.
+
+## Fastest Path To A Public Test URL
+
+1. Create a private GitHub repo named `ioo-product-qa-mvp`.
+2. Push this folder using the steps in `GITHUB_HANDOFF.md`.
+3. Open Streamlit Cloud.
+4. Create a new app from the GitHub repo.
+5. Set app file to `app.py`.
+6. Add `APP_PASSWORD` in secrets.
+7. Deploy.
+
+Estimated time after account access is ready: 5-10 minutes.
+
+## Render Alternative
+
+Build command:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start command:
+
+```bash
+streamlit run app.py --server.port $PORT --server.address 0.0.0.0
+```
+
+## Notes
+
+The database file is about 3.3 MB, so it is safe to include directly in the repo
+for this MVP. No Git LFS or external database is required yet.

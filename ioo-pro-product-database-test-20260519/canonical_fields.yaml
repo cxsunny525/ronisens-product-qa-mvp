@@ -1,0 +1,502 @@
+brand:
+  display_name: Brand
+  data_type: string
+  unit: null
+  synonyms:
+    - brand
+    - manufacturer
+    - maker
+    - supplier
+  category_scope:
+    - all
+  description: Manufacturer or brand name.
+  examples:
+    - TMS LITE
+    - CCS
+    - OPT
+    - Keyence
+    - Smart Vision Lights
+    - Basler
+
+product_family:
+  display_name: Product Family
+  data_type: string
+  unit: null
+  synonyms:
+    - family_name
+    - product family
+    - series family
+    - page title
+    - Product Page Title
+  category_scope:
+    - all
+  description: Product family, series page, or product-page title.
+  examples:
+    - BHP Series
+    - CAS2-00 Series
+
+series:
+  display_name: Series
+  data_type: string
+  unit: null
+  synonyms:
+    - series
+    - series_code
+    - serie
+  category_scope:
+    - all
+  description: Short product series code when available.
+  examples:
+    - CAS2
+    - BHP
+    - LC-20
+
+model:
+  display_name: Model
+  data_type: string
+  unit: null
+  synonyms:
+    - model
+    - model number
+    - part number
+    - sku
+  category_scope:
+    - all
+  description: Vendor model or part number. This field must not be invented.
+  examples:
+    - CAS2-00-040-X-X
+    - BHP1010-X-X
+
+product_category:
+  display_name: Product Category
+  data_type: string
+  unit: null
+  synonyms:
+    - product_type
+    - category
+    - product category
+    - category_path
+  category_scope:
+    - all
+  description: Broad product class used for filtering and recommendations.
+  examples:
+    - illumination
+    - controller
+    - lens_or_optics
+
+light_type:
+  display_name: Light Type
+  data_type: string
+  unit: null
+  synonyms:
+    - ring light
+    - bar light
+    - backlight
+    - coaxial light
+    - dome light
+    - low angle light
+    - spot light
+    - line light
+    - direct illumination
+    - diffused illumination
+  category_scope:
+    - illumination
+  description: Machine-vision illumination geometry or lighting method inferred from family/model/page text.
+  examples:
+    - ring
+    - bar
+    - backlight
+    - coaxial
+    - dome
+    - low_angle
+
+color:
+  display_name: Color
+  data_type: string
+  unit: null
+  synonyms:
+    - Colour
+    - COLOUR
+    - Color
+    - RGBW
+    - IR
+    - UV
+    - extra_4
+    - extra_5
+    - extra_6
+    - extra_7
+  category_scope:
+    - illumination
+  description: LED color or color option. Ambiguous extra_N fields may contain colors on some TMS Lite datasheet tables and should be reviewed.
+  examples:
+    - Red
+    - Green
+    - Blue
+    - White
+    - RGB
+    - RGBW
+    - IR850
+    - UV365
+
+wavelength_nm:
+  display_name: Wavelength
+  data_type: number_or_string
+  unit: nm
+  synonyms:
+    - wavelength
+    - wavelength_nm
+    - nm
+    - IR
+    - UV
+    - UV365
+    - UV385
+    - UV395
+    - UV405
+    - IR850
+    - IR940
+  category_scope:
+    - illumination
+  description: LED wavelength when explicitly recorded or encoded in model/color fields.
+  examples:
+    - 365
+    - 850
+    - UV365
+
+voltage_v:
+  display_name: Voltage
+  data_type: number_or_string
+  unit: V
+  synonyms:
+    - Voltage (V) / Watt (W)
+    - Voltage (V)/Watt (W)
+    - Voltage (V) /Watt (W)
+    - voltage
+    - voltage_v
+  category_scope:
+    - illumination
+    - controller
+    - all
+  description: Operating voltage. If voltage and wattage share one raw field, voltage is extracted while the raw field is retained.
+  examples:
+    - 12V
+    - 24V
+
+power_w:
+  display_name: Power
+  data_type: number_or_string
+  unit: W
+  synonyms:
+    - Voltage (V) / Watt (W)
+    - Voltage (V)/Watt (W)
+    - Voltage (V) /Watt (W)
+    - watt
+    - power
+    - power_w
+  category_scope:
+    - illumination
+    - controller
+  description: Electrical power. TMS Lite often combines voltage and wattage in the same raw column.
+  examples:
+    - 3.24W
+    - 24V / 35.52W
+
+current_a:
+  display_name: Current
+  data_type: number_or_string
+  unit: A
+  synonyms:
+    - Current
+    - current
+    - current_ma
+    - mA
+  category_scope:
+    - illumination
+    - controller
+  description: Operating current. Current may be recorded in mA in the TMS Lite database and can be normalized to A later.
+  examples:
+    - 1480mA
+    - 0.48A
+
+outer_diameter_mm:
+  display_name: Outer Diameter
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - outer diameter
+    - OD
+    - ØA (mm)
+    - ØB (mm)
+    - ØC (mm)
+    - ØD (mm)
+  category_scope:
+    - illumination
+  description: Outer diameter for circular/ring lights. Diameter labels are vendor-specific and should be validated per family.
+  examples:
+    - 70
+    - 120
+
+inner_diameter_mm:
+  display_name: Inner Diameter
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - inner diameter
+    - ID
+    - ØE (mm)
+    - ØF (mm)
+    - ØI (mm)
+    - ØJ (mm)
+  category_scope:
+    - illumination
+  description: Inner diameter for ring or coaxial products when explicitly identifiable.
+  examples:
+    - 40
+    - 80
+
+length_mm:
+  display_name: Length
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - length
+    - L
+    - A (mm)
+    - B (mm)
+    - C (mm)
+  category_scope:
+    - illumination
+    - controller
+    - accessory
+  description: Physical length. TMS Lite A/B/C dimension labels are ambiguous and should be validated before strict normalization.
+  examples:
+    - 100
+    - 240
+
+width_mm:
+  display_name: Width
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - width
+    - W
+    - D (mm)
+    - E (mm)
+  category_scope:
+    - illumination
+    - controller
+    - accessory
+  description: Physical width. Vendor dimension labels require family-level mapping.
+  examples:
+    - 80
+    - 200
+
+height_mm:
+  display_name: Height
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - height
+    - H
+    - F (mm)
+    - G (mm)
+    - H (mm)
+    - I (mm)
+    - J (mm)
+    - K (mm)
+  category_scope:
+    - illumination
+    - controller
+    - accessory
+  description: Physical height or thickness. Vendor dimension labels require family-level mapping.
+  examples:
+    - 20
+    - 59
+
+working_distance_mm:
+  display_name: Working Distance
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - working distance
+    - WD
+    - object distance
+  category_scope:
+    - illumination
+    - lens_or_optics
+    - camera_solution
+  description: Distance between light/lens and object when explicitly specified.
+  examples:
+    - 100
+    - 200
+
+emitting_area_mm:
+  display_name: Emitting Area
+  data_type: string
+  unit: mm
+  synonyms:
+    - emitting area
+    - luminous area
+    - light area
+  category_scope:
+    - illumination
+  description: Physical lit area of the illumination surface.
+  examples:
+    - 100x100
+
+illumination_area_mm:
+  display_name: Illumination Area
+  data_type: string
+  unit: mm
+  synonyms:
+    - illumination area
+    - field of illumination
+    - FOV illumination
+  category_scope:
+    - illumination
+  description: Recommended or effective illuminated area.
+  examples:
+    - 200x200
+
+connector:
+  display_name: Connector
+  data_type: string
+  unit: null
+  synonyms:
+    - connector
+    - plug
+    - M8
+    - M12
+    - terminal
+  category_scope:
+    - illumination
+    - controller
+    - accessory
+  description: Electrical connector type.
+  examples:
+    - M8
+    - M12
+
+cable_length_mm:
+  display_name: Cable Length
+  data_type: number_or_string
+  unit: mm
+  synonyms:
+    - cable length
+    - cable
+    - lead length
+  category_scope:
+    - illumination
+    - controller
+    - accessory
+  description: Cable or lead length.
+  examples:
+    - 300
+    - 1000
+
+mounting:
+  display_name: Mounting
+  data_type: string
+  unit: null
+  synonyms:
+    - mounting
+    - Tap Hole (mm)
+    - TapHole (mm)
+    - Tap Hole E (mm)
+    - Tap Hole F (mm)
+  category_scope:
+    - illumination
+    - station_or_mounting
+    - accessory
+  description: Mounting information, screw/tap hole, or bracket compatibility.
+  examples:
+    - M3
+    - M4
+    - bracket mount
+
+ip_rating:
+  display_name: IP Rating
+  data_type: string
+  unit: null
+  synonyms:
+    - IP
+    - IP rating
+    - ingress protection
+    - IP54
+    - IP65
+    - IP67
+  category_scope:
+    - illumination
+    - controller
+  description: Ingress protection rating.
+  examples:
+    - IP54
+    - IP67
+
+controller_compatibility:
+  display_name: Controller Compatibility
+  data_type: string
+  unit: null
+  synonyms:
+    - controller compatibility
+    - compatible controller
+    - ANG
+    - SD
+    - ST
+    - LC
+    - DRV
+  category_scope:
+    - illumination
+    - controller
+  description: Compatible lighting controller or driver family.
+  examples:
+    - LC-20
+    - ANG-4000
+
+strobe_mode:
+  display_name: Strobe Mode
+  data_type: string
+  unit: null
+  synonyms:
+    - strobe
+    - overdrive
+    - Drive Mode
+    - trigger
+    - pulse
+  category_scope:
+    - illumination
+    - controller
+  description: Continuous, strobe, or overdrive operating mode.
+  examples:
+    - continuous
+    - overdrive
+    - strobe
+
+datasheet_url:
+  display_name: Datasheet URL
+  data_type: url
+  unit: null
+  synonyms:
+    - Datasheet
+    - DATASHEET (ID)
+    - datasheet_url
+    - data sheet
+  category_scope:
+    - all
+  description: URL to datasheet or closest recorded product PDF.
+  examples:
+    - https://1drv.ms/b/...
+
+product_url:
+  display_name: Product URL
+  data_type: url
+  unit: null
+  synonyms:
+    - source_url
+    - product_url
+    - URL
+    - product page
+  category_scope:
+    - all
+  description: Source product page URL used for traceability.
+  examples:
+    - https://www.tms-lite.com/bhp-serie.html

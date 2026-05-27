@@ -1,0 +1,15 @@
+.env
+*.env
+__pycache__/
+*.pyc
+.DS_Store
+logs/
+.streamlit/secrets.toml
+.packages/
+.runtime_pkgs/
+.pytest_cache/
+data/raw/
+data/downloads/
+data/industrial_vision.db
+data/sample_after_base_fix.db
+data/sitemap_mode_smoke.db

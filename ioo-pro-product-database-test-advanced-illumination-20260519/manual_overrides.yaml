@@ -1,0 +1,19 @@
+# Human-reviewed corrections for scraped product data.
+#
+# This file intentionally does not modify the SQLite database. qa_engine.py
+# loads these values at runtime and gives them priority over scraped fields.
+#
+# Example format:
+#
+# products:
+#   MODEL_NAME:
+#     product_category:
+#       value: "ring_light"
+#       verified: true
+#       note: "Manually verified from datasheet."
+#     voltage_v:
+#       value: "24V"
+#       verified: true
+#       note: "Verified from product datasheet."
+
+products: {}

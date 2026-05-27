@@ -1,0 +1,23 @@
+brand:
+  name: "IOO"
+  product_name: "IOO Lighting AI"
+  domain: "ioo.pro"
+  tagline: "AI-powered machine vision lighting selection for industrial inspection."
+  origin_statement: "Designed in California. Manufactured in Malaysia."
+  show_origin_statement: true
+  public_brand_only: true
+  hide_supplier_names: true
+
+openai:
+  env_var: "OPENAI_API_KEY"
+  model: "gpt-4.1-mini"
+  fallback_enabled: true
+
+gamification:
+  enabled: true
+  points_name: "IOO Insight Points"
+  question_points: 5
+  upload_points: 10
+  feedback_points: 5
+  parameter_detail_points: 5
+  followup_points: 3

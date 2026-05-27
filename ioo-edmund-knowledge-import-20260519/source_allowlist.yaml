@@ -1,0 +1,105 @@
+sources:
+  - source_name: Advanced Illumination
+    domain: advancedillumination.com
+    base_urls:
+      - https://www.advancedillumination.com/wp-content/uploads/2023/05/A-Practical-Guide-to-Machine-Vision-Lighting-Second-Edition.pdf
+      - https://www.advancedillumination.com/wp-content/uploads/2023/04/A-Practical-Guide-to-Machine-Vision-Lighting-Second-Edition.pdf
+    source_type: application_guide
+    priority: 1
+    allowed_content_types: [html, pdf]
+    crawl_strategy: seed_urls
+    max_pages: 4
+    notes: Machine vision lighting guide and application education. PDF parsing may be limited; keep source URL and extracted text.
+
+  - source_name: Smart Vision Lights
+    domain: smartvisionlights.com
+    base_urls:
+      - https://smartvisionlights.com/resources/training/training-bright-field-lighting/
+      - https://smartvisionlights.com/products/dflb-460/
+    source_type: tech_note
+    priority: 2
+    allowed_content_types: [html]
+    crawl_strategy: seed_urls
+    max_pages: 6
+    notes: Public training and lighting technology pages. Product pages can provide technique context but should not be imported as product records here.
+
+  - source_name: Edmund Optics
+    domain: edmundoptics.com
+    base_urls:
+      - https://www.edmundoptics.com/knowledge-center/
+      - https://www.edmundoptics.com/knowledge-center/application-notes/imaging/
+      - https://www.edmundoptics.com/knowledge-center/application-notes/illumination/
+      - https://www.edmundoptics.com/capabilities/imaging-optics/resources
+    source_type: knowledge_articles
+    priority: high
+    allowed_content_types:
+      - text/html
+    crawl_strategy: sitemap_plus_filtered_internal_links
+    max_pages: 150
+    crawl_delay_seconds: 10
+    respect_robots_txt: true
+    notes: Edmund Optics knowledge articles for machine vision lighting, filters, lenses, cameras, and imaging system design.
+
+  - source_name: Cognex
+    domain: cognex.com
+    base_urls:
+      - https://www.cognex.com/what-is/machine-vision/components/lighting
+      - https://www.cognex.com/en-gb/what-is/machine-vision/machine-vision-hardware-components
+      - https://www.cognex.com/en-be/what-is/vision-sensors/components
+      - https://www.cognex.com/products/machine-vision/vision-software/vision-accessories/lighting
+    source_type: vision_basics
+    priority: 2
+    allowed_content_types: [html]
+    crawl_strategy: seed_urls
+    max_pages: 6
+    notes: Public machine vision basics and lighting pages.
+
+  - source_name: Basler
+    domain: baslerweb.com
+    base_urls:
+      - https://www.baslerweb.com/en-us/learning/cmos-rolling-shutter-cameras/
+      - https://www.baslerweb.com/en-sg/learning/cmos-global-shutter-cameras/
+      - https://assets-ctf.baslerweb.com/dg51pdwahxgw/2BkfC0jfFuk9EK89GxePfa/1863802cb071fa659b1620e7f6c01a40/BAS2004_White_Paper_Lens_Selection.pdf
+    source_type: camera_basics
+    priority: 3
+    allowed_content_types: [html, pdf]
+    crawl_strategy: seed_urls
+    max_pages: 5
+    notes: Camera shutter and lens selection basics. PDFs may be recorded as source links when extraction is limited.
+
+  - source_name: LUCID Vision Labs
+    domain: thinklucid.com
+    base_urls:
+      - https://thinklucid.com/tech-briefs/understanding-image-sensors/
+      - https://thinklucid.com/tech-briefs/sony-pregius/
+    source_type: camera_basics
+    priority: 3
+    allowed_content_types: [html]
+    crawl_strategy: seed_urls
+    max_pages: 4
+    notes: Public camera sensor technology briefs.
+
+  - source_name: STEMMER IMAGING
+    domain: stemmer-imaging.com
+    base_urls:
+      - https://www.stemmer-imaging.com/en/products/illumination
+      - https://www.stemmer-imaging.com/en/products/optics/fixed-focal-lenses
+      - https://www.stemmer-imaging.com/en/products/optics/telecentric-lenses
+      - https://www.stemmer-imaging.com/our-services/learn/what-is-industrial-machine-vision
+    source_type: knowledge_base
+    priority: 3
+    allowed_content_types: [html]
+    crawl_strategy: seed_urls
+    max_pages: 6
+    notes: Public product education and machine vision basics pages.
+
+  - source_name: Vision Systems Design
+    domain: visionsystemsdesign.com
+    base_urls:
+      - https://www.vision-systems.com/
+    source_type: trade_article
+    priority: 4
+    allowed_content_types: [html]
+    crawl_strategy: manual_review_only
+    max_pages: 2
+    notes: Only crawl publicly accessible and robots-allowed pages after manual review.
