@@ -90,26 +90,25 @@ def inject_css() -> None:
         .block-container { max-width: 1040px; padding-top: 2rem; }
         h1, h2, h3 { letter-spacing: 0; color: var(--ioo-text); }
         .ioo-topbar {
-          display: flex; justify-content: space-between; align-items: flex-start;
-          gap: 18px; margin-bottom: 46px;
+          display: flex; justify-content: space-between; align-items: center;
+          gap: 18px; margin-bottom: 34px; padding-bottom: 14px;
+          border-bottom: 1px solid var(--ioo-border);
         }
-        .ioo-logo { font-size: 1.15rem; font-weight: 800; color: var(--ioo-text); }
+        .ioo-logo { font-size: 1.35rem; font-weight: 850; color: var(--ioo-text); line-height: 1; }
+        .ioo-logo-sub { font-size: 0.9rem; color: var(--ioo-muted); margin-top: 5px; }
         .ioo-tag { font-size: 0.82rem; color: var(--ioo-muted); margin-top: 2px; }
-        .ioo-origin { color: var(--ioo-muted); font-size: 0.82rem; text-align: right; }
-        .ioo-points {
-          background: var(--ioo-card); border: 1px solid var(--ioo-border);
-          border-radius: 14px; padding: 10px 14px; min-width: 210px;
-          box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        .ioo-status {
+          display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+          gap: 8px; color: var(--ioo-muted); font-size: 0.84rem;
         }
-        .ioo-points strong { color: var(--ioo-teal); font-size: 1.05rem; }
+        .ioo-status-pill {
+          border: 1px solid var(--ioo-border); background: #FFFFFF; border-radius: 999px;
+          padding: 5px 10px;
+        }
+        .ioo-status-pill strong { color: var(--ioo-teal); }
         .ioo-hero { text-align: center; margin: 0 auto 24px auto; max-width: 880px; }
         .ioo-hero h1 { font-size: 2.55rem; line-height: 1.08; margin-bottom: 12px; }
         .ioo-hero p { color: var(--ioo-muted); font-size: 1.05rem; margin: 0 auto 10px auto; max-width: 720px; }
-        .ioo-search-card {
-          background: var(--ioo-card); border: 1px solid var(--ioo-border);
-          border-radius: 22px; padding: 24px; margin: 18px auto 24px auto;
-          box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
-        }
         .ioo-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .ioo-card {
           background: var(--ioo-card); border: 1px solid var(--ioo-border);
@@ -147,8 +146,8 @@ def inject_css() -> None:
         }
         div.stButton > button { border-radius: 999px; border-color: #CBD5E1; }
         @media (max-width: 760px) {
-          .ioo-topbar { flex-direction: column; margin-bottom: 26px; }
-          .ioo-origin { text-align: left; }
+          .ioo-topbar { align-items: flex-start; flex-direction: column; margin-bottom: 26px; }
+          .ioo-status { justify-content: flex-start; }
           .ioo-hero h1 { font-size: 2rem; }
           .ioo-how { grid-template-columns: 1fr; }
         }
@@ -199,20 +198,17 @@ def write_csv_row(path: Path, row: dict[str, Any]) -> None:
 
 def render_topbar(openai_enabled: bool) -> None:
     points_name = GAMIFICATION.get("points_name", "IOO Insight Points")
-    origin = BRAND.get("origin_statement", "")
-    mode = "OpenAI enabled" if openai_enabled else "Local fallback mode"
+    mode = "OpenAI ready" if openai_enabled else "Local fallback"
     st.markdown(
         f"""
         <div class="ioo-topbar">
           <div>
-            <div class="ioo-logo">IOO <span class="ioo-tag">Lighting AI</span></div>
-            <div class="ioo-tag">{origin if BRAND.get('show_origin_statement', True) else ''}</div>
+            <div class="ioo-logo">IOO Lighting AI</div>
+            <div class="ioo-logo-sub">Machine vision lighting selection assistant</div>
           </div>
-          <div class="ioo-points">
-            <div class="ioo-muted">{points_name}</div>
-            <strong>{st.session_state.get('points', 0)}</strong>
-            <div class="ioo-tag">Session-based demo points. Potential future benefits may include sample credits, consultation priority, or pilot order support.</div>
-            <div class="ioo-tag">{mode}</div>
+          <div class="ioo-status">
+            <span class="ioo-status-pill">{mode}</span>
+            <span class="ioo-status-pill">{points_name}: <strong>{st.session_state.get('points', 0)}</strong></span>
           </div>
         </div>
         """,
@@ -288,7 +284,8 @@ def render_search_card() -> None:
     if pending is not None:
         st.session_state["question"] = pending
         st.session_state["pending_question"] = None
-    st.markdown('<div class="ioo-search-card">', unsafe_allow_html=True)
+    st.markdown("### Ask IOO")
+    st.caption("Describe an inspection problem, upload a requirement note, or start with one of the examples below.")
     st.text_area(
         "Describe your inspection problem",
         key="question",
@@ -322,8 +319,6 @@ def render_search_card() -> None:
             if st.button(label, key=f"example_{idx}", use_container_width=True):
                 st.session_state["pending_question"] = prompt
                 st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
     if ask_clicked:
         run_question()
 
@@ -539,7 +534,7 @@ def main() -> None:
     render_topbar(openai_enabled)
     render_hero()
     if not openai_enabled:
-        st.warning("AI reasoning is running in local fallback mode. Add OPENAI_API_KEY in Streamlit Secrets to enable full AI responses.")
+        st.caption("Local fallback mode is active. Add OPENAI_API_KEY in Streamlit Secrets to enable full AI responses.")
     render_search_card()
     render_answer(st.session_state.get("last_result"))
     render_history()
