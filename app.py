@@ -74,40 +74,68 @@ def inject_css() -> None:
         """
         <style>
         :root {
-          --ioo-bg: #F8FAFC;
+          --ioo-bg: #F4F7FA;
           --ioo-card: #FFFFFF;
-          --ioo-text: #111827;
-          --ioo-muted: #6B7280;
-          --ioo-border: #E5E7EB;
-          --ioo-blue: #2563EB;
-          --ioo-teal: #0F766E;
+          --ioo-text: #0B1220;
+          --ioo-muted: #5D6B7A;
+          --ioo-border: #D8E1EA;
+          --ioo-navy: #0B1F33;
+          --ioo-blue: #1D4ED8;
+          --ioo-blue-soft: #EAF2FF;
+          --ioo-teal: #0E7490;
+          --ioo-cyan: #0891B2;
           --ioo-amber-bg: #FFFBEB;
           --ioo-amber-text: #B45309;
           --ioo-green-bg: #ECFDF5;
           --ioo-green-text: #047857;
+          color-scheme: light;
         }
-        .stApp { background: var(--ioo-bg); color: var(--ioo-text); }
-        .block-container { max-width: 1040px; padding-top: 2rem; }
+        .stApp,
+        [data-testid="stAppViewContainer"] {
+          background:
+            radial-gradient(circle at top left, rgba(29, 78, 216, 0.08), transparent 30rem),
+            linear-gradient(180deg, #F8FBFF 0%, var(--ioo-bg) 42%, #F6F8FB 100%);
+          color: var(--ioo-text);
+        }
+        [data-testid="stHeader"] { background: var(--ioo-navy); }
+        .block-container {
+          max-width: 1080px;
+          padding-top: 6.4rem;
+          padding-bottom: 4rem;
+        }
         h1, h2, h3 { letter-spacing: 0; color: var(--ioo-text); }
         .ioo-topbar {
           display: flex; justify-content: space-between; align-items: center;
-          gap: 18px; margin-bottom: 34px; padding-bottom: 14px;
-          border-bottom: 1px solid var(--ioo-border);
+          gap: 20px; margin-bottom: 42px; padding: 22px 24px;
+          background: rgba(255, 255, 255, 0.92);
+          border: 1px solid var(--ioo-border);
+          border-radius: 24px;
+          box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
         }
-        .ioo-logo { font-size: 1.35rem; font-weight: 850; color: var(--ioo-text); line-height: 1; }
-        .ioo-logo-sub { font-size: 0.9rem; color: var(--ioo-muted); margin-top: 5px; }
+        .ioo-brand-lockup {
+          display: flex; align-items: center; gap: 18px;
+        }
+        .ioo-mark {
+          min-width: 82px; height: 58px; display: flex; align-items: center; justify-content: center;
+          border-radius: 18px;
+          background: linear-gradient(135deg, #071527 0%, #123C69 54%, #0E7490 100%);
+          color: #FFFFFF; font-size: 1.85rem; font-weight: 950; letter-spacing: 0.03em;
+          box-shadow: 0 12px 28px rgba(14, 116, 144, 0.22);
+        }
+        .ioo-logo { font-size: 2rem; font-weight: 900; color: var(--ioo-text); line-height: 1.02; }
+        .ioo-logo-sub { font-size: 0.95rem; color: var(--ioo-muted); margin-top: 6px; }
         .ioo-tag { font-size: 0.82rem; color: var(--ioo-muted); margin-top: 2px; }
         .ioo-status {
           display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end;
           gap: 8px; color: var(--ioo-muted); font-size: 0.84rem;
         }
         .ioo-status-pill {
-          border: 1px solid var(--ioo-border); background: #FFFFFF; border-radius: 999px;
+          border: 1px solid #CBD5E1; background: #F8FAFC; border-radius: 999px;
           padding: 5px 10px;
         }
         .ioo-status-pill strong { color: var(--ioo-teal); }
         .ioo-hero { text-align: center; margin: 0 auto 24px auto; max-width: 880px; }
-        .ioo-hero h1 { font-size: 2.55rem; line-height: 1.08; margin-bottom: 12px; }
+        .ioo-hero h1 { font-size: 2.72rem; line-height: 1.08; margin-bottom: 12px; color: #071527; }
         .ioo-hero p { color: var(--ioo-muted); font-size: 1.05rem; margin: 0 auto 10px auto; max-width: 720px; }
         .ioo-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
         .ioo-card {
@@ -141,12 +169,59 @@ def inject_css() -> None:
           background: #FFFFFF; border: 1px solid var(--ioo-border);
           border-radius: 14px; padding: 14px; color: var(--ioo-muted);
         }
-        div.stButton > button[kind="primary"] {
-          background: var(--ioo-blue); border-color: var(--ioo-blue); color: white;
+        .block-container label,
+        .block-container p,
+        .block-container span,
+        .block-container div {
+          color: inherit;
         }
-        div.stButton > button { border-radius: 999px; border-color: #CBD5E1; }
+        textarea,
+        div[data-baseweb="textarea"] textarea,
+        div[data-testid="stTextArea"] textarea {
+          background: #FFFFFF !important;
+          color: #111827 !important;
+          border: 1px solid #C9D5E1 !important;
+          border-radius: 14px !important;
+          box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+        }
+        textarea::placeholder {
+          color: #6B7280 !important;
+          opacity: 1 !important;
+        }
+        div[data-testid="stFileUploader"] section {
+          background: #FFFFFF !important;
+          border: 1px dashed #AFC0D1 !important;
+          border-radius: 14px !important;
+        }
+        div[data-testid="stFileUploader"] button,
+        div.stButton > button {
+          background: #FFFFFF !important;
+          color: #0F2742 !important;
+          border: 1px solid #B8C6D6 !important;
+          border-radius: 999px !important;
+          font-weight: 650 !important;
+        }
+        div[data-testid="stFileUploader"] button:hover,
+        div.stButton > button:hover {
+          background: #F0F6FF !important;
+          border-color: #7EA6E8 !important;
+          color: #123C69 !important;
+        }
+        div.stButton > button[kind="primary"] {
+          background: linear-gradient(135deg, #1D4ED8 0%, #0E7490 100%) !important;
+          border-color: transparent !important;
+          color: white !important;
+          box-shadow: 0 10px 24px rgba(29, 78, 216, 0.18) !important;
+        }
+        div.stButton > button[kind="primary"]:hover {
+          background: linear-gradient(135deg, #1E40AF 0%, #0F766E 100%) !important;
+          color: white !important;
+        }
         @media (max-width: 760px) {
           .ioo-topbar { align-items: flex-start; flex-direction: column; margin-bottom: 26px; }
+          .ioo-brand-lockup { align-items: flex-start; }
+          .ioo-mark { min-width: 70px; height: 52px; font-size: 1.55rem; }
+          .ioo-logo { font-size: 1.6rem; }
           .ioo-status { justify-content: flex-start; }
           .ioo-hero h1 { font-size: 2rem; }
           .ioo-how { grid-template-columns: 1fr; }
@@ -202,9 +277,12 @@ def render_topbar(openai_enabled: bool) -> None:
     st.markdown(
         f"""
         <div class="ioo-topbar">
-          <div>
-            <div class="ioo-logo">IOO Lighting AI</div>
-            <div class="ioo-logo-sub">Machine vision lighting selection assistant</div>
+          <div class="ioo-brand-lockup">
+            <div class="ioo-mark">IOO</div>
+            <div>
+              <div class="ioo-logo">Lighting AI</div>
+              <div class="ioo-logo-sub">Machine vision lighting selection assistant</div>
+            </div>
           </div>
           <div class="ioo-status">
             <span class="ioo-status-pill">{mode}</span>
@@ -533,8 +611,6 @@ def main() -> None:
         st.stop()
     render_topbar(openai_enabled)
     render_hero()
-    if not openai_enabled:
-        st.caption("Local fallback mode is active. Add OPENAI_API_KEY in Streamlit Secrets to enable full AI responses.")
     render_search_card()
     render_answer(st.session_state.get("last_result"))
     render_history()
