@@ -125,22 +125,58 @@ def inject_css() -> None:
         h1, h2, h3 { letter-spacing: -0.025em; color: var(--ioo-text-100) !important; }
         p, span, label, div { color: inherit; }
         .ioo-topbar {
-          display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
-          margin-bottom: 18px;
+          display: grid; grid-template-columns: minmax(280px, 1fr) auto; gap: 24px; align-items: center;
+          margin-bottom: 22px;
+          padding: 4px 0 8px;
         }
-        .ioo-brand-lockup { display: flex; align-items: center; gap: 12px; }
-        .ioo-mark {
-          width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center;
-          background: #FFFFFF; border: 1px solid var(--ioo-line-600);
-          box-shadow: 0 10px 30px rgba(70,94,102,0.10);
+        .ioo-brand-lockup {
+          display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center;
+          min-width: 260px;
         }
-        .ioo-mark-ring {
-          width: 29px; height: 29px; border-radius: 50%; display: grid; place-items: center;
-          border: 4px solid var(--ioo-optic-cyan);
+        .ioo-wordmark {
+          display: inline-flex; align-items: center; gap: 8px;
+          color: var(--ioo-text-100);
+          line-height: 0.86;
+          filter: drop-shadow(0 12px 24px rgba(70,94,102,0.10));
         }
-        .ioo-mark-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ioo-lamp-amber); }
-        .ioo-logo { font-size: 1.06rem; font-weight: 820; color: var(--ioo-text-100); letter-spacing: 0.01em; }
-        .ioo-logo-sub { color: var(--ioo-text-500); font-size: 0.78rem; margin-top: 1px; }
+        .ioo-wordmark-letter {
+          font-size: clamp(42px, 4.3vw, 66px);
+          font-weight: 900;
+          letter-spacing: -0.06em;
+          color: var(--ioo-text-100);
+        }
+        .ioo-wordmark-mark {
+          width: clamp(42px, 4.2vw, 62px);
+          height: clamp(42px, 4.2vw, 62px);
+          border-radius: 19px;
+          display: grid; place-items: center;
+          background: rgba(255,255,255,0.92);
+          border: 1px solid rgba(191,212,208,0.95);
+          box-shadow: inset 0 0 0 1px rgba(255,255,255,0.80), 0 16px 36px rgba(43,167,165,0.14);
+        }
+        .ioo-wordmark-ring {
+          width: 68%;
+          height: 68%;
+          border-radius: 50%;
+          display: grid;
+          place-items: center;
+          border: clamp(4px, 0.45vw, 6px) solid var(--ioo-optic-cyan);
+          background: rgba(221,246,242,0.55);
+        }
+        .ioo-wordmark-dot {
+          width: 30%;
+          height: 30%;
+          border-radius: 50%;
+          background: var(--ioo-lamp-amber);
+          box-shadow: 0 0 0 3px rgba(200,132,44,0.12);
+        }
+        .ioo-logo-sub {
+          color: var(--ioo-text-500);
+          font-size: clamp(0.82rem, 0.9vw, 0.98rem);
+          margin-top: 7px;
+          letter-spacing: 0.02em;
+          font-weight: 560;
+        }
         .ioo-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
         .ioo-credit-pill,
         .ioo-streak-pill,
@@ -248,6 +284,8 @@ def inject_css() -> None:
           border-radius: 14px; padding: 14px; color: var(--ioo-text-500);
         }
         textarea,
+        input,
+        div[data-baseweb="input"] input,
         div[data-baseweb="textarea"] textarea,
         div[data-testid="stTextArea"] textarea {
           background: rgba(255,255,255,0.94) !important;
@@ -342,9 +380,11 @@ def inject_css() -> None:
             margin-bottom: 12px;
             padding: 10px 0 4px;
           }
-          .ioo-mark { width: 42px; height: 42px; border-radius: 14px; }
-          .ioo-logo { font-size: 1.28rem; }
-          .ioo-logo-sub { display: none; }
+          .ioo-brand-lockup { min-width: 0; }
+          .ioo-wordmark { gap: 6px; }
+          .ioo-wordmark-letter { font-size: 42px; }
+          .ioo-wordmark-mark { width: 42px; height: 42px; border-radius: 14px; }
+          .ioo-logo-sub { font-size: 0.76rem; margin-top: 5px; }
           .ioo-status {
             justify-content: flex-start;
             flex-wrap: nowrap;
@@ -502,42 +542,48 @@ def product_asset_svg(light_type: str) -> str:
     return '<svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="160" height="120" rx="24" fill="#F8FCFB"/><rect x="24" y="24" width="112" height="72" rx="22" fill="#DDF6F2" stroke="#BFD4D0"/><circle cx="80" cy="60" r="18" fill="#2BA7A5" opacity="0.55"/></svg>'
 
 
-def product_cards_html(products: list[dict[str, Any]], limit: int = 4) -> str:
-    if not products:
-        return """
-        <div class="soft-product-card">
-          <div class="soft-product-image"></div>
-          <div class="soft-product-info">
-            <h3>Ask IOO first</h3>
-            <p>Product candidates will appear here after IOO understands the inspection challenge.</p>
-            <div class="spec-tags"><span>public IOO SKUs only</span></div>
-          </div>
-        </div>
-        """
-    cards: list[str] = []
-    for product in products[:limit]:
-        model = e(product.get("public_model"))
-        light_type = e(str(product.get("light_type", "")).replace("_", " ") or "lighting")
-        reason = e(product.get("why_it_may_fit") or product.get("public_description") or "Candidate IOO lighting option.")
-        key_specs = e(product.get("key_specs") or "not available")
-        fit_type = e(product.get("fit_type") or "Close fit")
-        svg = product_asset_svg(str(product.get("light_type", "")))
-        cards.append(
-            f"""
-            <article class="soft-product-card">
-              <div class="soft-product-image">{svg}</div>
-              <div class="soft-product-info">
-                <h3>{model}</h3>
-                <p>{reason}</p>
-                <div class="spec-tags"><span>{light_type}</span><span>{fit_type}</span><span>{key_specs}</span></div>
-                <div class="card-links">
-                  <span>Details</span><span>Spec sheet</span><span>Save</span><span>Compare</span>
-                </div>
-              </div>
-            </article>
-            """
-        )
-    return "\n".join(cards)
+def product_asset_path(light_type: str) -> Path | None:
+    asset_dir = Path("docs/design/ioo-softlight/ioo_redesign_package_softlight/assets")
+    normalized = (light_type or "").lower()
+    if any(token in normalized for token in ["bar", "line", "dark"]):
+        name = "product-light-bar.svg"
+    elif any(token in normalized for token in ["coaxial", "coax"]):
+        name = "product-coaxial.svg"
+    else:
+        name = "product-dome.svg"
+    path = asset_dir / name
+    return path if path.exists() else None
+
+
+def product_links(model: str) -> tuple[str, str]:
+    slug = (model or "ioo-product").lower()
+    return (f"https://ioo.pro/products/{slug}", f"https://ioo.pro/specs/{slug}.pdf")
+
+
+def placeholder_products() -> list[dict[str, Any]]:
+    return [
+        {
+            "public_model": "IOO-BAR-0001",
+            "light_type": "bar_light",
+            "fit_type": "Sandbox sample",
+            "why_it_may_fit": "General IOO bar light candidate for angle-based contrast experiments.",
+            "key_specs": "24V, multiple color options, length to be confirmed",
+        },
+        {
+            "public_model": "IOO-RL-0001",
+            "light_type": "ring_light",
+            "fit_type": "Sandbox sample",
+            "why_it_may_fit": "General IOO ring light candidate for area-camera inspection trials.",
+            "key_specs": "24V, white/red/blue options, size to be confirmed",
+        },
+        {
+            "public_model": "IOO-CL-0001",
+            "light_type": "coaxial_light",
+            "fit_type": "Sandbox sample",
+            "why_it_may_fit": "General IOO coaxial candidate for flat reflective surface evaluation.",
+            "key_specs": "24V, compact geometry, datasheet pending",
+        },
+    ]
 
 
 def render_topbar(openai_enabled: bool) -> None:
@@ -546,11 +592,12 @@ def render_topbar(openai_enabled: bool) -> None:
         f"""
         <div class="ioo-topbar">
           <div class="ioo-brand-lockup">
-            <div class="ioo-mark"><div class="ioo-mark-ring"><div class="ioo-mark-dot"></div></div></div>
-            <div>
-              <div class="ioo-logo">IOO</div>
-              <div class="ioo-logo-sub">Industrial Optics Online</div>
+            <div class="ioo-wordmark" aria-label="IOO">
+              <span class="ioo-wordmark-letter">I</span>
+              <span class="ioo-wordmark-mark"><span class="ioo-wordmark-ring"><span class="ioo-wordmark-dot"></span></span></span>
+              <span class="ioo-wordmark-letter">O</span>
             </div>
+            <div class="ioo-logo-sub">Industrial Optics Online</div>
           </div>
           <div class="ioo-status">
             <span class="ioo-credit-pill"><span>Credits</span><strong>{st.session_state.get('points', 0):,}</strong></span>
@@ -632,45 +679,62 @@ def render_search_card() -> None:
     if pending is not None:
         st.session_state["question"] = pending
         st.session_state["pending_question"] = None
-    st.markdown("### Ask IOO")
-    st.text_area(
-        "Describe your inspection problem",
-        key="question",
-        height=128,
-        placeholder="Example: Inspect faint scratches on reflective metal. FOV 80 mm, working distance 120 mm, top camera.",
-        label_visibility="collapsed",
+    in_conversation = bool(st.session_state.get("last_result"))
+    heading = "Continue this IOO conversation" if in_conversation else "Ask IOO"
+    placeholder = (
+        "Follow up with material, defect size, working distance, FOV, speed, or lighting constraints..."
+        if in_conversation
+        else "Type a question and press Enter. Example: red light source for scratch inspection, FOV 80 mm, WD 120 mm."
     )
-    uploaded_file = st.file_uploader(
-        "Upload image, sketch, or requirement note",
-        type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
-        help="Upload a sample image, sketch, or requirement note. Text notes are used immediately.",
-    )
-    st.caption("Upload image, sketch, PDF, or requirement note. Text notes are used immediately; image reasoning requires a vision model.")
-    upload_context = process_upload(uploaded_file)
-    render_upload_context(upload_context, uploaded_file)
-    ask_col, clear_col = st.columns([3, 1])
-    with ask_col:
-        ask_clicked = st.button("Ask IOO", type="primary", use_container_width=True)
-    with clear_col:
-        if st.button("Clear", use_container_width=True):
+    st.markdown(f"### {heading}")
+    with st.form("ask_ioo_form", clear_on_submit=False):
+        st.text_input(
+            "Question",
+            key="question",
+            placeholder=placeholder,
+            label_visibility="collapsed",
+        )
+        submitted = st.form_submit_button("Send", type="secondary", use_container_width=False)
+    if submitted:
+        run_question()
+        st.rerun()
+    if in_conversation:
+        with st.expander("Add image, PDF, or requirement note", expanded=False):
+            uploaded_file = st.file_uploader(
+                "Upload image, sketch, or requirement note",
+                type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
+                help="Text notes are used immediately; image reasoning requires a vision model.",
+            )
+            upload_context = process_upload(uploaded_file)
+            render_upload_context(upload_context, uploaded_file)
+        if st.button("Clear conversation", use_container_width=True):
             st.session_state["conversation"] = []
             st.session_state["last_result"] = None
             st.session_state["last_question"] = ""
             st.session_state["pending_question"] = ""
             st.session_state["uploaded_context"] = None
             st.rerun()
-    chip_cols = st.columns(2)
-    for idx, (label, prompt) in enumerate(EXAMPLE_PROMPTS):
-        with chip_cols[idx % 2]:
-            if st.button(label, key=f"example_{idx}", use_container_width=True):
-                st.session_state["pending_question"] = prompt
-                st.rerun()
-    if ask_clicked:
-        run_question()
+    else:
+        with st.expander("Upload image, sketch, PDF, or requirement note", expanded=False):
+            uploaded_file = st.file_uploader(
+                "Upload image, sketch, or requirement note",
+                type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
+                help="Text notes are used immediately; image reasoning requires a vision model.",
+            )
+            upload_context = process_upload(uploaded_file)
+            render_upload_context(upload_context, uploaded_file)
+        st.caption("Try a preset or type your own question and press Enter.")
+        chip_cols = st.columns(2)
+        for idx, (label, prompt) in enumerate(EXAMPLE_PROMPTS):
+            with chip_cols[idx % 2]:
+                if st.button(label, key=f"example_{idx}", use_container_width=True):
+                    st.session_state["pending_question"] = prompt
+                    run_question(prompt)
+                    st.rerun()
 
 
-def run_question() -> None:
-    question = str(st.session_state.get("question") or "").strip()
+def run_question(question_override: str | None = None) -> None:
+    question = str(question_override if question_override is not None else st.session_state.get("question") or "").strip()
     uploaded_context = st.session_state.get("uploaded_context")
     if not question and not uploaded_context:
         st.info("Describe an inspection challenge or upload a requirement note first.")
@@ -852,6 +916,33 @@ def render_product_options(products: list[dict[str, Any]]) -> None:
         )
 
 
+def render_product_card_native(product: dict[str, Any], key_prefix: str) -> None:
+    model = str(product.get("public_model") or "IOO-SANDBOX")
+    light_type = str(product.get("light_type", "")).replace("_", " ") or "lighting"
+    reason = product.get("why_it_may_fit") or product.get("public_description") or "Candidate IOO lighting option."
+    key_specs = product.get("key_specs") or "not available"
+    fit_type = product.get("fit_type") or "Sandbox candidate"
+    details_url, spec_url = product_links(model)
+    with st.container(border=True):
+        img_col, text_col = st.columns([0.34, 0.66], vertical_alignment="center")
+        with img_col:
+            asset = product_asset_path(str(product.get("light_type", "")))
+            if asset:
+                st.image(str(asset), use_container_width=True)
+            else:
+                st.caption("IOO")
+        with text_col:
+            st.markdown(f"**{model}**")
+            st.caption(str(reason))
+        st.caption(f"{light_type} | {fit_type} | {key_specs}")
+        st.markdown(f"[Details]({details_url}) &nbsp; [Spec sheet]({spec_url})", unsafe_allow_html=True)
+        save_col, compare_col = st.columns(2)
+        with save_col:
+            st.button("Save", key=f"{key_prefix}_save_{model}", use_container_width=True)
+        with compare_col:
+            st.button("Compare", key=f"{key_prefix}_compare_{model}", use_container_width=True)
+
+
 def current_recommended_products() -> list[dict[str, Any]]:
     result = st.session_state.get("last_result") or {}
     products = result.get("closest_ioo_products") or []
@@ -862,26 +953,24 @@ def current_recommended_products() -> list[dict[str, Any]]:
 
 def render_product_rail() -> None:
     products = current_recommended_products()
-    count = len(products)
     subtitle = (
         "Persistent, reachable, and non-intrusive. Recommendations update after each IOO answer."
         if products
         else "Ask IOO about a defect, material, or inspection setup to generate public IOO product candidates."
     )
     progress = reward_progress_percent()
+    st.markdown("### Recommended products")
+    st.caption(subtitle)
+    for idx, product in enumerate((products or placeholder_products())[:4]):
+        render_product_card_native(product, f"rail_{idx}")
     st.markdown(
         f"""
-        <aside class="soft-panel product-rail-soft">
-          <div class="product-rail-title">Recommended products</div>
-          <div class="product-rail-sub">{e(subtitle)}</div>
-          {product_cards_html(products, limit=4)}
-          <section class="reward-card-soft">
-            <h3>Reward progress</h3>
-            <p>{st.session_state.get('points', 0):,} / {reward_target():,} credits toward application review, sample support, or priority quote assistance.</p>
-            <div class="reward-meter"><span style="width: {progress}%"></span></div>
-            <p style="margin-top:10px;">Earn credits by asking structured questions, saving products, comparing models, and submitting inspection parameters.</p>
-          </section>
-        </aside>
+        <div class="reward-card-soft">
+          <h3>Reward progress</h3>
+          <p>{st.session_state.get('points', 0):,} / {reward_target():,} credits toward application review, sample support, or priority quote assistance.</p>
+          <div class="reward-meter"><span style="width: {progress}%"></span></div>
+          <p style="margin-top:10px;">Earn credits by asking structured questions, saving products, comparing models, and submitting inspection parameters.</p>
+        </div>
         """,
         unsafe_allow_html=True,
     )
@@ -906,16 +995,11 @@ def render_mobile_product_drawer() -> None:
     products = current_recommended_products()
     count = len(products)
     title = f"{count} recommended products" if count else "Recommended products"
-    st.markdown(
-        f"""
-        <section id="ioo-mobile-products" class="soft-panel mobile-product-drawer">
-          <div class="product-rail-title">{e(title)}</div>
-          <div class="product-rail-sub">Mobile product drawer for quick field review. Public IOO models only.</div>
-          {product_cards_html(products, limit=4)}
-        </section>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div id="ioo-mobile-products"></div>', unsafe_allow_html=True)
+    st.markdown(f"### {title}")
+    st.caption("Mobile product drawer for quick field review. Public IOO models only.")
+    for idx, product in enumerate((products or placeholder_products())[:4]):
+        render_product_card_native(product, f"mobile_{idx}")
 
 
 def render_sources(result: dict[str, Any]) -> None:
@@ -998,10 +1082,11 @@ def main() -> None:
     with left_col:
         render_left_rail()
     with center_col:
-        render_hero()
+        if not st.session_state.get("last_result"):
+            render_hero()
         render_search_card()
-        render_mobile_product_drawer()
         render_answer(st.session_state.get("last_result"))
+        render_mobile_product_drawer()
     with right_col:
         render_product_rail()
     render_mobile_product_tab()
