@@ -745,7 +745,7 @@ def load_thread(thread_id: str) -> None:
             st.session_state["last_result"] = thread.get("last_result")
             st.session_state["last_question"] = thread.get("last_question", "")
             st.session_state["language"] = thread.get("language", st.session_state.get("language", "en"))
-            st.session_state["question"] = ""
+            st.session_state["pending_question"] = ""
             return
 
 
@@ -755,7 +755,7 @@ def start_new_thread() -> None:
         st.session_state["conversation"] = []
         st.session_state["last_result"] = None
         st.session_state["last_question"] = ""
-        st.session_state["question"] = ""
+        st.session_state["pending_question"] = ""
         st.session_state["uploaded_context"] = None
         return
     thread = make_thread()
@@ -764,7 +764,7 @@ def start_new_thread() -> None:
     st.session_state["conversation"] = []
     st.session_state["last_result"] = None
     st.session_state["last_question"] = ""
-    st.session_state["question"] = ""
+    st.session_state["pending_question"] = ""
     st.session_state["uploaded_context"] = None
 
 

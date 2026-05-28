@@ -94,3 +94,15 @@ The app still works in local fallback mode if `OPENAI_API_KEY` is not set.
 - `Do you have IOO-CAS2-00-010-X-X?`
 - `Do you have a fake product called IOO-FAKE-123?`
 - `Inspect transparent bottle edges.`
+
+## 2026-05-27 New Conversation Fix
+
+The Streamlit `New conversation` button fix is included in `app.py`.
+
+Files to upload for this hotfix:
+
+- `app.py`
+- `TEST_REPORT.md`
+- `NEW_CONVERSATION_FIX_REPORT.md`
+
+After uploading, reboot the Streamlit app and click `New conversation` after an answered question. It should open a fresh thread without clearing the browser-session history and without raising a Streamlit state error.

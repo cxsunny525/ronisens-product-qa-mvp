@@ -298,3 +298,14 @@ Date: 2026-05-27
 - Tests:
   - `test_public_brand_safety.py`: passed, 2/2.
   - `test_qa_engine.py`: passed, 23/23.
+
+## New Conversation Button Fix
+
+- Fixed a Streamlit state error triggered by clicking `New conversation` after the question input had already been rendered.
+- Root cause: the button callback path was writing directly to the `question` widget key during the same render pass. Streamlit blocks that pattern and raises `StreamlitAPIException`.
+- Fix: `load_thread()` and `start_new_thread()` now write to `pending_question`; `render_search_card()` applies that pending value before the input widget is created on the next rerun.
+- Existing browser-session conversation history is preserved. `New conversation` starts a fresh active thread but does not delete older thread entries from the left rail.
+- Verification on 2026-05-27:
+  - Python compile check for `app.py`, `answer_engine.py`, and `product_search.py`: passed.
+  - `test_public_brand_safety.py`: passed, 2/2.
+  - `test_qa_engine.py`: passed, 23/23.
