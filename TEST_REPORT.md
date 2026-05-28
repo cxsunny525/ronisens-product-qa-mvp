@@ -235,3 +235,18 @@ Date: 2026-05-27
 - Verified list/availability searches still work:
   - `Which IOO products are red lights?`: `list_search`, 413 matches, showing first 20.
   - `Do you have purple lights?`: `attribute_search`, 33 matches, showing first 20.
+
+## Semantic Router And Off-Topic Handling Update
+
+- Added a semantic routing layer in `answer_engine.py`.
+- If `OPENAI_API_KEY` is available, IOO first asks OpenAI to classify the current user turn as product availability search, product list search, model lookup, comparison, lighting selection, knowledge explanation, identification help, or off-topic.
+- If OpenAI is unavailable, local fallback rules perform the same routing.
+- Current-turn product retrieval now prioritizes the user's latest question; prior conversation context is only merged for ambiguous follow-ups or uploaded text notes. This prevents a previous product search, such as `有没有绿色光源`, from trapping the next turn in product-search mode.
+- Regression test:
+  - First question: `有没有绿色光源` -> `attribute_search`, 375 matches.
+  - Second question: `which light I should consider if I want to detect the scratch on the metal ?` -> `recommendation`, 5 IOO dark-field candidates.
+- Off-topic tests:
+  - `今天天气怎么样？` -> `off_topic`, no product recommendation.
+  - `Can you recommend a good pizza recipe?` -> `off_topic`, no product recommendation.
+- Knowledge test:
+  - `What is global shutter in machine vision?` -> `knowledge_explanation`.

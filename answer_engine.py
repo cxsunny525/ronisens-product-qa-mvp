@@ -54,6 +54,92 @@ def detect_user_language(text: str | None) -> str:
     return "zh" if re.search(r"[\u4e00-\u9fff]", text or "") else "en"
 
 
+INTENT_ALIASES = {
+    "product_availability_search": "attribute_search",
+    "attribute_search": "attribute_search",
+    "product_list_search": "list_search",
+    "list_search": "list_search",
+    "model_lookup": "model_lookup",
+    "product_comparison": "comparison",
+    "comparison": "comparison",
+    "lighting_selection": "recommendation",
+    "recommendation": "recommendation",
+    "knowledge_explanation": "knowledge_explanation",
+    "identification_help": "identification_help",
+    "off_topic": "off_topic",
+}
+
+
+def classify_question_semantically(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    openai_result = classify_intent_with_openai(question, conversation_context)
+    if openai_result:
+        return openai_result
+    intent = classify_intent(question)
+    return {
+        "intent": intent,
+        "used_openai": False,
+        "reason": "local fallback semantic rules",
+    }
+
+
+def classify_intent_with_openai(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None = None,
+) -> dict[str, Any] | None:
+    cfg = brand_config.openai_config()
+    api_key = os.getenv(str(cfg.get("env_var") or "OPENAI_API_KEY"))
+    if not api_key or not question.strip():
+        return None
+    try:
+        from openai import OpenAI  # type: ignore
+
+        recent = []
+        for item in (conversation_context or [])[:4]:
+            text = str(item.get("question") or item.get("user_question") or "").strip()
+            if text:
+                recent.append(text)
+        payload = {
+            "current_question": question,
+            "recent_questions": recent,
+            "allowed_intents": list(INTENT_ALIASES.keys()),
+        }
+        system = (
+            "Classify the user's current question for an IOO machine vision lighting assistant. "
+            "Prioritize the current question over previous context. Previous context is only for ambiguous follow-ups. "
+            "Return strict JSON with keys: intent, confidence, reason. "
+            "Use product_availability_search for 'do you have red/green/UV/24V/ring lights' availability questions. "
+            "Use lighting_selection for application questions such as detecting scratches, inspecting metal, transparent edges, PCB defects, or choosing lighting geometry. "
+            "Use knowledge_explanation for machine-vision concepts that do not require product lookup. "
+            "Use off_topic only for questions clearly unrelated to machine vision, lighting, cameras, lenses, inspection, or IOO products."
+        )
+        client = OpenAI(api_key=api_key)
+        response = client.chat.completions.create(
+            model=str(cfg.get("model") or "gpt-4.1-mini"),
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": json.dumps(payload, ensure_ascii=False)},
+            ],
+            temperature=0,
+            response_format={"type": "json_object"},
+        )
+        raw = response.choices[0].message.content or "{}"
+        parsed = json.loads(raw)
+        normalized = INTENT_ALIASES.get(str(parsed.get("intent", "")).strip(), None)
+        if not normalized:
+            return None
+        return {
+            "intent": normalized,
+            "used_openai": True,
+            "confidence": parsed.get("confidence", "medium"),
+            "reason": sanitize_public_text(parsed.get("reason", "OpenAI semantic classification")),
+        }
+    except Exception:
+        return None
+
+
 def answer_question(
     question: str,
     brand_filter: str | None = None,
@@ -62,35 +148,46 @@ def answer_question(
     uploaded_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     del brand_filter, mode
-    language = detect_user_language(question)
-    full_question = _merge_context(question, conversation_context, uploaded_context)
-    intent = classify_intent(question or full_question)
-    knowledge = retrieve_public_knowledge(full_question, limit=5) if should_retrieve_knowledge(full_question, intent) else {"sources": [], "basis": []}
-    missing = missing_information(full_question) if needs_practical_guidance(full_question) else []
-    completeness = solution_profile_completeness(full_question)
+    current_question = (question or "").strip()
+    language = detect_user_language(current_question)
+    contextual_question = _merge_context(current_question, conversation_context, uploaded_context)
+    classification = classify_question_semantically(current_question or contextual_question, conversation_context)
+    intent = classification["intent"]
+    # Product retrieval is based on the current user turn. Recent session context is only
+    # used for ambiguous follow-ups or uploaded text notes, so a prior color search cannot
+    # trap the next turn in "product search mode."
+    working_question = contextual_question if should_use_context_for_current_turn(current_question, uploaded_context) else (current_question or contextual_question)
+    knowledge = retrieve_public_knowledge(working_question, limit=5) if should_retrieve_knowledge(working_question, intent) else {"sources": [], "basis": []}
+    missing = missing_information(working_question) if needs_practical_guidance(working_question) else []
+    completeness = solution_profile_completeness(working_question)
 
-    if intent == "identification_help":
-        result = answer_identification_help(full_question, knowledge, missing, completeness, language)
+    if intent == "off_topic":
+        result = answer_off_topic(current_question or contextual_question, language, classification.get("used_openai", False))
+    elif intent == "knowledge_explanation":
+        result = answer_knowledge_explanation(working_question, knowledge, missing, completeness, language)
+    elif intent == "identification_help":
+        result = answer_identification_help(working_question, knowledge, missing, completeness, language)
     elif intent == "comparison":
-        result = answer_comparison(full_question, knowledge, missing, completeness, language)
+        result = answer_comparison(working_question, knowledge, missing, completeness, language)
     elif intent == "model_lookup":
-        result = answer_model_lookup(full_question, knowledge, missing, completeness, language)
+        result = answer_model_lookup(working_question, knowledge, missing, completeness, language)
     elif intent in {"list_search", "attribute_search"}:
-        result = answer_list_search(full_question, knowledge, missing, completeness, language, intent)
+        result = answer_list_search(working_question, knowledge, missing, completeness, language, intent)
     else:
-        result = answer_recommendation(full_question, knowledge, missing, completeness, language)
+        result = answer_recommendation(working_question, knowledge, missing, completeness, language)
 
     result["language"] = language
     result["answer"] = sanitize_public_text(result.get("answer", ""))
     result["direct_recommendation"] = sanitize_public_text(result.get("direct_recommendation", ""))
     result["lighting_strategy"] = sanitize_public_text(result.get("lighting_strategy", ""))
     result["warnings"] = [sanitize_public_text(warning) for warning in result.get("warnings", [])]
-    result["product_sources"] = [{"type": "product_database", "title": "IOO product database", "url": None}]
+    result["product_sources"] = [{"type": "product_database", "title": "IOO product database", "url": None}] if result.get("closest_ioo_products") or result.get("product_results") else []
     result["sources"] = result.get("knowledge_sources", []) + result["product_sources"]
-    result["query_interpretation"] = interpret_question(full_question, intent, language)
+    result["query_interpretation"] = interpret_question(working_question, intent, language)
+    result["semantic_classification"] = classification
     result["evidence"] = product_evidence(result.get("closest_ioo_products", []) or result.get("product_results", []))
     result["match_reason"] = product_match_reasons(result.get("closest_ioo_products", []) or result.get("product_results", []), language)
-    result["mode"] = "openai" if result.get("used_openai") else "local fallback"
+    result["mode"] = "openai" if result.get("used_openai") or classification.get("used_openai") else "local fallback"
     return result
 
 
@@ -129,6 +226,95 @@ def classify_intent(question: str) -> str:
     if filters and not needs_practical_guidance(question):
         return "attribute_search"
     return "recommendation"
+
+
+def classify_intent(question: str) -> str:
+    text = (question or "").lower()
+    filters = product_search.infer_filters(question)
+    availability_tokens = [
+        "do you have",
+        "have any",
+        "are there",
+        "available",
+        "how many",
+        "count",
+        "number of",
+        "total",
+        "有没有",
+        "有吗",
+        "有多少",
+        "多少个",
+    ]
+    list_tokens = ["list", "show all", "which", "what products", "有哪些", "哪些", "列出", "所有"]
+    if is_obvious_off_topic(question):
+        return "off_topic"
+    if any(token in text for token in ["what is this light", "what type of light is this", "identify this light", "这是什么光源", "这是什么灯", "这是什么"]):
+        return "identification_help"
+    if any(token in text for token in ["compare", "比较", "对比"]):
+        return "comparison"
+    if product_search.model_mentions(question):
+        return "model_lookup"
+    if filters and any(token in text for token in availability_tokens):
+        return "attribute_search"
+    if filters and detect_user_language(question) == "zh" and ("吗" in text or "有没有" in text):
+        return "attribute_search"
+    if needs_practical_guidance(question):
+        return "recommendation"
+    if is_machine_vision_knowledge_question(question):
+        return "knowledge_explanation"
+    if any(token in text for token in availability_tokens + list_tokens):
+        return "list_search"
+    if filters and not needs_practical_guidance(question):
+        return "attribute_search"
+    return "recommendation"
+
+
+def answer_off_topic(question: str, language: str, used_openai: bool = False) -> dict[str, Any]:
+    if language == "zh":
+        direct = (
+            "这个问题有点跑出 IOO 的光源实验台了。"
+            "我可以努力装作很懂，但那样对你的检测方案不负责。"
+        )
+        strategy = (
+            "如果你把问题换成检测对象、材料、缺陷、相机、镜头、工作距离或打光目标，"
+            "我就能认真帮你做机器视觉光源选型。"
+        )
+        followups = ["告诉我你要检测什么缺陷。", "上传样品图或需求说明。", "描述材料、视野和工作距离。"]
+    else:
+        direct = (
+            "That one wandered outside IOO's lighting workbench. "
+            "I could improvise, but your inspection project deserves better than theatrical confidence."
+        )
+        strategy = (
+            "Ask me about the object, material, defect, camera setup, working distance, field of view, "
+            "or lighting goal, and I will turn it into a practical machine-vision lighting path."
+        )
+        followups = ["Describe the defect you need to see.", "Upload a sample image or requirement note.", "Share material, field of view, and working distance."]
+    answer = f"{direct}\n\n{strategy}"
+    return base_result(question, "off_topic", answer, direct, strategy, [], [], 0, {"sources": [], "basis": []}, [], "Basic", "high", [], [], followups, used_openai)
+
+
+def answer_knowledge_explanation(
+    question: str,
+    knowledge: dict[str, Any],
+    missing: list[str],
+    completeness: str,
+    language: str,
+) -> dict[str, Any]:
+    basis = knowledge.get("basis") or []
+    if basis:
+        first = basis[0]
+        summary = first.get("summary") or first.get("topic") or ""
+    else:
+        summary = ""
+    if language == "zh":
+        direct = summary or "这是一个机器视觉知识问题，我会先从原理层面解释，而不是直接推产品。"
+        strategy = "如果你愿意补充具体应用、材料、缺陷和相机约束，我可以继续把这个知识点转换成 IOO 光源选型建议。"
+    else:
+        direct = summary or "This is a machine-vision knowledge question, so I will answer from the principle first rather than forcing a product recommendation."
+        strategy = "If you add the application, material, defect, and camera constraints, I can turn this principle into an IOO lighting selection suggestion."
+    answer = f"{direct}\n\n{strategy}"
+    return base_result(question, "knowledge_explanation", answer, direct, strategy, [], [], 0, knowledge, missing, completeness, "medium" if basis else "low", [], [], follow_up_suggestions(missing, language), False)
 
 
 def answer_identification_help(
@@ -387,6 +573,51 @@ def retrieve_public_knowledge(question: str, limit: int = 5) -> dict[str, Any]:
     return {"sources": filtered, "basis": basis}
 
 
+def should_use_context_for_current_turn(question: str, uploaded_context: dict[str, Any] | None = None) -> bool:
+    if uploaded_context and uploaded_context.get("text"):
+        return True
+    text = (question or "").strip().lower()
+    if not text:
+        return True
+    ambiguous_followups = ["what about", "how about", "that one", "this one", "same", "it", "它", "这个", "那个", "同样", "继续", "上一"]
+    return len(text.split()) <= 4 and any(token in text for token in ambiguous_followups)
+
+
+def is_obvious_off_topic(question: str) -> bool:
+    text = (question or "").lower()
+    if not text.strip():
+        return False
+    domain_terms = [
+        "light", "lighting", "illumination", "vision", "camera", "lens", "filter", "inspection",
+        "defect", "scratch", "metal", "glass", "plastic", "pcb", "edge", "barcode", "ocr",
+        "fov", "working distance", "wavelength", "voltage", "product", "ioo",
+        "光", "光源", "打光", "照明", "视觉", "相机", "镜头", "滤光", "检测", "缺陷",
+        "划痕", "金属", "玻璃", "塑料", "边缘", "波长", "电压", "产品",
+    ]
+    if any(term in text for term in domain_terms):
+        return False
+    off_topic_terms = [
+        "weather", "stock", "bitcoin", "football", "basketball", "recipe", "cook", "movie",
+        "song", "poem", "dating", "homework", "astrology", "lottery", "politics",
+        "天气", "股票", "比特币", "足球", "篮球", "菜谱", "做饭", "电影", "歌曲",
+        "写诗", "恋爱", "作业", "星座", "彩票", "政治",
+    ]
+    return any(term in text for term in off_topic_terms)
+
+
+def is_machine_vision_knowledge_question(question: str) -> bool:
+    text = (question or "").lower()
+    knowledge_terms = [
+        "what is", "why", "difference between", "explain", "how does", "principle",
+        "global shutter", "rolling shutter", "depth of field", "focal length",
+        "telecentric", "bandpass", "polarization", "filter",
+        "是什么", "为什么", "区别", "解释", "原理", "全局快门", "卷帘快门",
+        "景深", "焦距", "远心", "滤光片", "偏振",
+    ]
+    domain_terms = ["machine vision", "lighting", "camera", "lens", "illumination", "inspection", "机器视觉", "光源", "照明", "相机", "镜头", "检测"]
+    return any(term in text for term in knowledge_terms) and any(term in text for term in domain_terms)
+
+
 def needs_practical_guidance(question: str) -> bool:
     text = (question or "").lower()
     guidance_terms = [
@@ -426,6 +657,8 @@ def needs_practical_guidance(question: str) -> bool:
 
 
 def should_retrieve_knowledge(question: str, intent: str) -> bool:
+    if intent == "knowledge_explanation":
+        return True
     if intent in {"model_lookup", "comparison", "identification_help", "list_search", "attribute_search"}:
         return False
     return needs_practical_guidance(question)
