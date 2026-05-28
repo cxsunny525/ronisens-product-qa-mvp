@@ -124,6 +124,37 @@ def inject_css() -> None:
         }
         h1, h2, h3 { letter-spacing: -0.025em; color: var(--ioo-text-100) !important; }
         p, span, label, div { color: inherit; }
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4,
+        [data-testid="stMarkdownContainer"] strong {
+          color: var(--ioo-text-100) !important;
+        }
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stMarkdownContainer"] span,
+        [data-testid="stMarkdownContainer"] em {
+          color: var(--ioo-text-300) !important;
+        }
+        [data-testid="stCaptionContainer"],
+        [data-testid="stCaptionContainer"] * {
+          color: #506A72 !important;
+          opacity: 1 !important;
+        }
+        div[data-testid="stExpander"] {
+          border-radius: 16px !important;
+          background: rgba(255,255,255,0.64) !important;
+        }
+        div[data-testid="stExpander"] summary,
+        div[data-testid="stExpander"] summary * {
+          color: var(--ioo-text-100) !important;
+          font-weight: 760 !important;
+        }
+        div[data-testid="stAlert"],
+        div[data-testid="stAlert"] * {
+          color: var(--ioo-text-100) !important;
+        }
         .ioo-topbar {
           display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
           margin-bottom: 18px;
@@ -198,23 +229,35 @@ def inject_css() -> None:
         .shortcut-soft b { display: block; color: var(--ioo-text-100); margin-bottom: 7px; }
         .chat-panel-soft { min-height: auto; }
         .compact-intro {
-          margin: 0 0 12px;
-          padding: 14px 16px;
-          border-radius: 22px;
+          margin: 0 0 16px;
+          padding: 18px 20px;
+          border-radius: 24px;
           border: 1px solid rgba(213,229,226,0.92);
-          background: rgba(255,255,255,0.74);
+          background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248,252,251,0.82));
+          box-shadow: 0 14px 42px rgba(70,94,102,0.08);
+        }
+        .compact-intro .intro-kicker {
+          display: block;
+          color: var(--ioo-optic-cyan);
+          font-size: 0.72rem;
+          font-weight: 820;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          margin-bottom: 8px;
         }
         .compact-intro h1 {
-          font-size: clamp(22px, 2.5vw, 30px);
+          font-size: clamp(25px, 3vw, 38px);
           line-height: 1.12;
-          margin: 0 0 5px;
+          margin: 0 0 8px;
           letter-spacing: -0.035em;
+          max-width: 720px;
         }
         .compact-intro p {
           color: var(--ioo-text-500);
           margin: 0;
-          font-size: 0.94rem;
-          line-height: 1.45;
+          font-size: 0.98rem;
+          line-height: 1.55;
+          max-width: 720px;
         }
         .ioo-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
         .ioo-card {
@@ -270,32 +313,45 @@ def inject_css() -> None:
         }
         div[data-testid="stFileUploader"] * { color: var(--ioo-text-300) !important; }
         div[data-testid="stFileUploader"] button,
-        div.stButton > button {
-          background: #FFFFFF !important;
-          color: var(--ioo-text-300) !important;
+        div.stButton > button,
+        div[data-testid="stFormSubmitButton"] button {
+          background: rgba(255,255,255,0.96) !important;
+          color: var(--ioo-ink-900) !important;
           border: 1px solid var(--ioo-line-600) !important;
           border-radius: 999px !important;
           font-weight: 650 !important;
           min-height: 40px !important;
         }
         div[data-testid="stFileUploader"] button:hover,
-        div.stButton > button:hover {
+        div.stButton > button:hover,
+        div[data-testid="stFormSubmitButton"] button:hover {
           background: var(--ioo-optic-cyan-soft) !important;
           border-color: var(--ioo-optic-cyan) !important;
           color: var(--ioo-ink-900) !important;
         }
-        div.stButton > button[kind="primary"] {
+        div.stButton > button[kind="primary"],
+        div[data-testid="stFormSubmitButton"] button[kind="primary"] {
           background: linear-gradient(135deg, #2BA7A5, #4F8EA3) !important;
           border-color: transparent !important;
           color: white !important;
           box-shadow: 0 12px 26px rgba(43,167,165,0.20) !important;
         }
-        div.stButton > button[kind="primary"]:hover {
+        div.stButton > button[kind="primary"]:hover,
+        div[data-testid="stFormSubmitButton"] button[kind="primary"]:hover {
           background: linear-gradient(135deg, #268F8E, #477F93) !important;
           color: white !important;
         }
-        .product-rail-title { font-size: 1.15rem; font-weight: 820; color: var(--ioo-text-100); margin-bottom: 4px; }
-        .product-rail-sub { color: var(--ioo-text-500); font-size: 0.86rem; line-height: 1.45; margin-bottom: 12px; }
+        .product-rail-title { font-size: 0.98rem; font-weight: 820; color: var(--ioo-text-100); margin: 0 0 4px; }
+        .product-rail-kicker {
+          color: var(--ioo-optic-cyan); font-size: 0.68rem; font-weight: 820;
+          letter-spacing: 0.13em; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .product-rail-sub { color: var(--ioo-text-500); font-size: 0.78rem; line-height: 1.45; margin-bottom: 12px; }
+        .product-empty-soft {
+          padding: 14px; border-radius: 18px; border: 1px dashed var(--ioo-line-500);
+          background: rgba(255,255,255,0.66); color: var(--ioo-text-500);
+          font-size: 0.82rem; line-height: 1.48;
+        }
         .soft-product-card {
           border-radius: 22px; border: 1px solid var(--ioo-line-600); background: rgba(255,255,255,0.80);
           padding: 12px; display: grid; grid-template-columns: 82px 1fr; gap: 12px; margin-bottom: 12px;
@@ -369,10 +425,10 @@ def inject_css() -> None:
           }
           .compact-intro {
             margin-bottom: 10px;
-            padding: 13px 14px;
+            padding: 15px 15px;
             border-radius: 20px;
           }
-          .compact-intro h1 { font-size: 1.35rem; }
+          .compact-intro h1 { font-size: 1.52rem; }
           .compact-intro p { font-size: 0.88rem; }
           div[data-testid="stTextArea"] textarea {
             min-height: 116px !important;
@@ -382,7 +438,8 @@ def inject_css() -> None:
             min-height: 74px !important;
           }
           div.stButton > button,
-          div[data-testid="stFileUploader"] button {
+          div[data-testid="stFileUploader"] button,
+          div[data-testid="stFormSubmitButton"] button {
             min-height: 44px !important;
           }
           .ioo-how { grid-template-columns: 1fr; }
@@ -576,8 +633,9 @@ def render_hero() -> None:
     st.markdown(
         """
         <div class="compact-intro">
-          <h1>Find a practical machine vision lighting setup.</h1>
-          <p>Tell IOO what you need to inspect. Add material, defect, field of view, working distance, speed, or a sample image if available.</p>
+          <span class="intro-kicker">IOO Lighting AI</span>
+          <h1>Turn an inspection problem into a lighting test plan.</h1>
+          <p>Describe the material, defect, field of view, working distance, or image context. IOO returns a practical lighting approach and candidate IOO configurations to try first.</p>
         </div>
         """,
         unsafe_allow_html=True,
@@ -645,17 +703,20 @@ def render_search_card() -> None:
     placeholder = (
         "Follow up with material, defect size, working distance, FOV, speed, or lighting constraints..."
         if in_conversation
-        else "Type a question and press Enter. Example: red light source for scratch inspection, FOV 80 mm, WD 120 mm."
+        else "Ask about a defect, material, field of view, working distance, or lighting challenge..."
     )
     st.markdown(f"### {heading}")
     with st.form("ask_ioo_form", clear_on_submit=False):
-        st.text_input(
-            "Question",
-            key="question",
-            placeholder=placeholder,
-            label_visibility="collapsed",
-        )
-        submitted = st.form_submit_button("Send", type="secondary", use_container_width=False)
+        question_col, send_col = st.columns([0.82, 0.18], vertical_alignment="bottom")
+        with question_col:
+            st.text_input(
+                "Question",
+                key="question",
+                placeholder=placeholder,
+                label_visibility="collapsed",
+            )
+        with send_col:
+            submitted = st.form_submit_button("Ask IOO", type="primary", use_container_width=True)
     if submitted:
         run_question()
         st.rerun()
@@ -854,7 +915,6 @@ def render_answer(result: dict[str, Any] | None) -> None:
                 "knowledge_basis": result.get("knowledge_basis", []),
             }
         )
-    render_feedback(result)
     st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -914,27 +974,28 @@ def current_recommended_products() -> list[dict[str, Any]]:
 
 def render_product_rail() -> None:
     products = current_recommended_products()
-    subtitle = (
-        "Persistent, reachable, and non-intrusive. Recommendations update after each IOO answer."
-        if products
-        else "Ask IOO about a defect, material, or inspection setup to generate public IOO product candidates."
-    )
-    progress = reward_progress_percent()
-    st.markdown("### Recommended products")
-    st.caption(subtitle)
-    for idx, product in enumerate((products or placeholder_products())[:4]):
-        render_product_card_native(product, f"rail_{idx}")
+    has_answer = bool(st.session_state.get("last_result"))
+    display_products = products or (placeholder_products() if has_answer else [])
     st.markdown(
-        f"""
-        <div class="reward-card-soft">
-          <h3>Reward progress</h3>
-          <p>{st.session_state.get('points', 0):,} / {reward_target():,} credits toward application review, sample support, or priority quote assistance.</p>
-          <div class="reward-meter"><span style="width: {progress}%"></span></div>
-          <p style="margin-top:10px;">Earn credits by asking structured questions, saving products, comparing models, and submitting inspection parameters.</p>
-        </div>
+        """
+        <div class="product-rail-kicker">After IOO answers</div>
+        <div class="product-rail-title">Product shortlist</div>
+        <div class="product-rail-sub">Candidate public IOO models stay here quietly, without interrupting the conversation.</div>
         """,
         unsafe_allow_html=True,
     )
+    if not display_products:
+        st.markdown(
+            """
+            <div class="product-empty-soft">
+              Ask about a defect, material, or setup. IOO will place candidate models, key specs, and sandbox detail links here after the first answer.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        return
+    for idx, product in enumerate(display_products[:4]):
+        render_product_card_native(product, f"rail_{idx}")
 
 
 def render_mobile_product_tab() -> None:
@@ -955,7 +1016,7 @@ def render_mobile_product_tab() -> None:
 def render_mobile_product_drawer() -> None:
     products = current_recommended_products()
     count = len(products)
-    title = f"{count} recommended products" if count else "Recommended products"
+    title = f"{count} product candidates" if count else "Product shortlist"
     st.markdown('<div id="ioo-mobile-products"></div>', unsafe_allow_html=True)
     st.markdown(f"### {title}")
     st.caption("Mobile product drawer for quick field review. Public IOO models only.")
@@ -976,28 +1037,6 @@ def render_sources(result: dict[str, Any]) -> None:
         st.caption("No public knowledge source URL is available for this question yet.")
     st.markdown("**IOO product database basis**")
     st.caption("IOO product database. Private traceability URLs are not shown in the public demo.")
-
-
-def render_feedback(result: dict[str, Any]) -> None:
-    st.markdown("### Was this useful?")
-    rating = st.radio("Rate this answer", ["Helpful", "Partially helpful", "Not helpful"], horizontal=True, label_visibility="collapsed")
-    issue = st.selectbox("What should be improved?", ["Other", "Wrong product", "Missing product", "Too vague", "Bad recommendation"])
-    feedback = st.text_area("Feedback", height=82, placeholder="Tell IOO what would make this recommendation more useful.")
-    if st.button("Save feedback"):
-        award_points(int(GAMIFICATION.get("feedback_points", 5)), "feedback")
-        row = {
-            "timestamp": datetime.now().isoformat(timespec="seconds"),
-            "session_id": st.session_state["session_id"],
-            "question": st.session_state.get("last_question", ""),
-            "answer_summary": str(result.get("answer", ""))[:260],
-            "rating": rating,
-            "issue_type": issue,
-            "feedback": feedback,
-            "recommended_public_models": ", ".join(p.get("public_model", "") for p in result.get("closest_ioo_products", [])),
-        }
-        write_csv_row(FEEDBACK_LOG, row)
-        log_conversation(st.session_state.get("last_question", ""), result, int(GAMIFICATION.get("feedback_points", 5)), feedback)
-        st.success("Thanks. Your feedback helps improve IOO recommendations.")
 
 
 def render_history() -> None:
@@ -1039,17 +1078,24 @@ def main() -> None:
     if not check_password():
         st.stop()
     render_topbar(openai_enabled)
-    left_col, center_col, right_col = st.columns([0.23, 0.51, 0.26], gap="large")
-    with left_col:
-        render_left_rail()
-    with center_col:
-        if not st.session_state.get("last_result"):
+    in_conversation = bool(st.session_state.get("last_result"))
+    if in_conversation:
+        left_col, center_col, right_col = st.columns([0.20, 0.58, 0.22], gap="large")
+        with left_col:
+            render_left_rail()
+        with center_col:
+            render_search_card()
+            render_answer(st.session_state.get("last_result"))
+            render_mobile_product_drawer()
+        with right_col:
+            render_product_rail()
+    else:
+        spacer_col, center_col, right_col = st.columns([0.08, 0.68, 0.24], gap="large")
+        with center_col:
             render_hero()
-        render_search_card()
-        render_answer(st.session_state.get("last_result"))
-        render_mobile_product_drawer()
-    with right_col:
-        render_product_rail()
+            render_search_card()
+        with right_col:
+            render_product_rail()
     render_mobile_product_tab()
     # Keep the public catalog fresh in case the CSVs were not uploaded.
     if not Path("public_products.csv").exists():
