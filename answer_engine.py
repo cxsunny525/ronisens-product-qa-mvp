@@ -587,12 +587,22 @@ def answer_model_lookup(
             missing_models.append(mention)
     if products:
         models = ", ".join(p["public_model"] for p in products)
-        direct = f"当前 IOO 产品库中有这些型号：{models}。" if language == "zh" else f"The current IOO product database includes: {models}."
+        if asks_light_type_question(question):
+            direct = model_light_type_answer(question, products, language)
+            strategy = (
+                "判断依据是 IOO 产品数据库中的 light_type / product_category 字段，而不是根据型号外观猜测。"
+                if language == "zh"
+                else "This is based on the IOO product database light_type / product_category fields, not a guess from the model name."
+            )
+        else:
+            direct = f"当前 IOO 产品库中有这些型号：{models}。" if language == "zh" else f"The current IOO product database includes: {models}."
+            strategy = ""
     else:
         requested = ", ".join(missing_models) if missing_models else ("该型号" if language == "zh" else "the requested model")
         direct = f"当前 IOO 产品库中没有明确匹配：{requested}。" if language == "zh" else f"No exact IOO product match was found for: {requested}."
-    answer = compose_plain_answer(direct, "", products, [], missing_models, language)
-    return base_result(question, "model_lookup", answer, direct, "", products, products, len(products), knowledge, missing, completeness, "high", [f"No exact IOO match for {m}." for m in missing_models], [], follow_up_suggestions([], language), False)
+        strategy = ""
+    answer = compose_plain_answer(direct, strategy, products, [], missing_models, language)
+    return base_result(question, "model_lookup", answer, direct, strategy, products, products, len(products), knowledge, missing, completeness, "high", [f"No exact IOO match for {m}." for m in missing_models], [], follow_up_suggestions([], language), False)
 
 
 def answer_comparison(
@@ -614,6 +624,86 @@ def answer_comparison(
     if comparison["missing"]:
         lines.append(("未找到：" if language == "zh" else "Missing exact matches: ") + ", ".join(comparison["missing"]))
     return base_result(question, "comparison", "\n".join(lines), direct, "", products[:5], products, len(products), knowledge, missing, completeness, "high" if products else "medium", [f"No exact IOO match for {m}." for m in comparison["missing"]], [], follow_up_suggestions([], language), False)
+
+
+def asks_light_type_question(question: str) -> bool:
+    text = (question or "").lower()
+    tokens = [
+        "light type",
+        "what type",
+        "bar light",
+        "coaxial",
+        "ring light",
+        "backlight",
+        "dome",
+        "dark field",
+        "line scan",
+        "is it",
+        "or",
+        "光源",
+        "什么光",
+        "哪种光",
+        "条形",
+        "同轴",
+        "环形",
+        "背光",
+        "穹顶",
+        "暗场",
+        "线扫",
+        "还是",
+    ]
+    return any(token in text for token in tokens)
+
+
+def public_light_type_label(light_type: Any, language: str) -> str:
+    normalized = str(light_type or "").strip().lower().replace("-", "_").replace(" ", "_")
+    labels = {
+        "bar_light": ("bar light", "条形光源"),
+        "coaxial_light": ("coaxial light", "同轴光源"),
+        "ring_light": ("ring light", "环形光源"),
+        "backlight": ("backlight", "背光源"),
+        "dome_light": ("dome / diffuse light", "穹顶光 / 漫射光源"),
+        "dark_field": ("dark-field light", "暗场光源"),
+        "line_scan_light": ("line-scan light", "线扫光源"),
+        "spot_light": ("spot light", "点光源"),
+        "lighting": ("lighting product", "光源产品"),
+        "illumination": ("illumination product", "照明产品"),
+    }
+    en, zh = labels.get(normalized, (str(light_type or "not available").replace("_", " "), "暂无明确分类"))
+    return zh if language == "zh" else en
+
+
+def model_light_type_answer(question: str, products: list[dict[str, Any]], language: str) -> str:
+    text = (question or "").lower()
+    mentions_bar = any(token in text for token in ["bar", "条形", "条光"])
+    mentions_coaxial = any(token in text for token in ["coaxial", "同轴"])
+    lines = []
+    for product in products:
+        model = product.get("public_model")
+        light_type = str(product.get("light_type") or "")
+        label = public_light_type_label(light_type, language)
+        normalized = light_type.lower()
+        if language == "zh":
+            if mentions_bar and mentions_coaxial:
+                if normalized == "coaxial_light":
+                    lines.append(f"{model} 是同轴光源，不是条形光源。")
+                elif normalized == "bar_light":
+                    lines.append(f"{model} 是条形光源，不是同轴光源。")
+                else:
+                    lines.append(f"{model} 在 IOO 产品库中标记为：{label}。")
+            else:
+                lines.append(f"{model} 在 IOO 产品库中标记为：{label}。")
+        else:
+            if mentions_bar and mentions_coaxial:
+                if normalized == "coaxial_light":
+                    lines.append(f"{model} is a coaxial light, not a bar light.")
+                elif normalized == "bar_light":
+                    lines.append(f"{model} is a bar light, not a coaxial light.")
+                else:
+                    lines.append(f"{model} is marked as: {label}.")
+            else:
+                lines.append(f"{model} is marked as: {label}.")
+    return " ".join(lines)
 
 
 def answer_list_search(

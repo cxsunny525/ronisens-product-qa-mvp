@@ -104,11 +104,12 @@ def get_product(public_model: str) -> dict[str, Any] | None:
 
 def model_mentions(text: str) -> list[str]:
     raw = text or ""
-    candidates = re.findall(r"\bIOO-[A-Z0-9][A-Z0-9_.-]*\b", raw.upper())
-    candidates.extend(re.findall(r"\b[A-Z]{2,}[A-Z0-9]*-[A-Z0-9][A-Z0-9_.-]*\b", raw.upper()))
+    upper = raw.upper()
+    candidates = re.findall(r"(?<![A-Z0-9])IOO-[A-Z0-9][A-Z0-9_.-]*[A-Z0-9](?![A-Z0-9])", upper)
+    candidates.extend(re.findall(r"(?<![A-Z0-9])[A-Z]{2,}[A-Z0-9]*-[A-Z0-9][A-Z0-9_.-]*[A-Z0-9](?![A-Z0-9])", upper))
     seen = []
     for candidate in candidates:
-        candidate = candidate.strip(".,;:()[]{}")
+        candidate = candidate.strip(".,;:()[]{}!?，。？、")
         if candidate not in seen:
             seen.append(candidate)
     return seen

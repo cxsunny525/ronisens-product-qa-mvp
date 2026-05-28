@@ -284,3 +284,17 @@ Date: 2026-05-27
   - Generated quote request includes `inquiry@ioo.pro` and the previous IOO candidate models.
   - `test_public_brand_safety.py`: passed, 2/2.
   - `test_qa_engine.py`: passed, 23/23.
+
+## Model Type Clarification Fix
+
+- Fixed model classification questions such as `IOO-CAS2-00-020-X-X是条形光还是同轴光源?`.
+- The answer now directly states the product's public light type instead of only saying the model exists.
+- Fixed model extraction when Chinese text is attached immediately after the model number; the final character is no longer dropped.
+- Verification:
+  - `IOO-CAS2-00-020-X-X是条形光还是同轴光源?` -> `IOO-CAS2-00-020-X-X 是同轴光源，不是条形光源。`
+  - `Is IOO-CAS2-00-020-X-X a bar light or coaxial light?` -> `IOO-CAS2-00-020-X-X is a coaxial light, not a bar light.`
+  - `Do you have IOO-CAS2-00-020-X-X?` still resolves as model lookup.
+  - Product comparison still resolves multiple models correctly.
+- Tests:
+  - `test_public_brand_safety.py`: passed, 2/2.
+  - `test_qa_engine.py`: passed, 23/23.
