@@ -66,6 +66,8 @@ INTENT_ALIASES = {
     "recommendation": "recommendation",
     "knowledge_explanation": "knowledge_explanation",
     "identification_help": "identification_help",
+    "pricing_followup": "pricing_followup",
+    "product_detail_followup": "product_detail_followup",
     "off_topic": "off_topic",
 }
 
@@ -113,6 +115,8 @@ def classify_intent_with_openai(
             "Use product_availability_search for 'do you have red/green/UV/24V/ring lights' availability questions. "
             "Use lighting_selection for application questions such as detecting scratches, inspecting metal, transparent edges, PCB defects, or choosing lighting geometry. "
             "Use knowledge_explanation for machine-vision concepts that do not require product lookup. "
+            "Use pricing_followup for pricing, quote, cost, or how-much questions about a previously recommended model. "
+            "Use product_detail_followup for follow-up questions about specs, voltage, power, size, datasheet, or details of a previously recommended model. "
             "Use off_topic only for questions clearly unrelated to machine vision, lighting, cameras, lenses, inspection, or IOO products."
         )
         client = OpenAI(api_key=api_key)
@@ -153,6 +157,14 @@ def answer_question(
     contextual_question = _merge_context(current_question, conversation_context, uploaded_context)
     classification = classify_question_semantically(current_question or contextual_question, conversation_context)
     intent = classification["intent"]
+    contextual_intent = classify_contextual_product_followup(current_question, conversation_context)
+    if contextual_intent:
+        intent = contextual_intent
+        classification = {
+            **classification,
+            "intent": intent,
+            "reason": "contextual follow-up about previously recommended IOO model",
+        }
     # Product retrieval is based on the current user turn. Recent session context is only
     # used for ambiguous follow-ups or uploaded text notes, so a prior color search cannot
     # trap the next turn in "product search mode."
@@ -161,7 +173,11 @@ def answer_question(
     missing = missing_information(working_question) if needs_practical_guidance(working_question) else []
     completeness = solution_profile_completeness(working_question)
 
-    if intent == "off_topic":
+    if intent == "pricing_followup":
+        result = answer_pricing_followup(current_question or contextual_question, conversation_context, language, classification.get("used_openai", False))
+    elif intent == "product_detail_followup":
+        result = answer_product_detail_followup(current_question or contextual_question, conversation_context, language, classification.get("used_openai", False))
+    elif intent == "off_topic":
         result = answer_off_topic(current_question or contextual_question, language, classification.get("used_openai", False))
     elif intent == "knowledge_explanation":
         result = answer_knowledge_explanation(working_question, knowledge, missing, completeness, language)
@@ -267,6 +283,167 @@ def classify_intent(question: str) -> str:
     if filters and not needs_practical_guidance(question):
         return "attribute_search"
     return "recommendation"
+
+
+def classify_contextual_product_followup(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None = None,
+) -> str | None:
+    text = (question or "").lower()
+    if not text.strip():
+        return None
+    has_context_model = bool(resolve_context_products(question, conversation_context))
+    if not has_context_model:
+        return None
+    price_terms = [
+        "price",
+        "pricing",
+        "quote",
+        "quotation",
+        "cost",
+        "how much",
+        "多少钱",
+        "价格",
+        "报价",
+        "费用",
+    ]
+    detail_terms = [
+        "spec",
+        "specification",
+        "datasheet",
+        "data sheet",
+        "detail",
+        "voltage",
+        "power",
+        "current",
+        "dimension",
+        "size",
+        "wavelength",
+        "color",
+        "参数",
+        "规格",
+        "资料",
+        "电压",
+        "功率",
+        "电流",
+        "尺寸",
+        "波长",
+        "颜色",
+    ]
+    pronoun_terms = ["this", "that", "it", "model", "one", "这个", "那个", "它", "型号", "这款", "上一个"]
+    if any(term in text for term in price_terms):
+        return "pricing_followup"
+    if any(term in text for term in detail_terms) and (
+        any(term in text for term in pronoun_terms)
+        or product_search.model_mentions(question)
+        or len(text.split()) <= 5
+    ):
+        return "product_detail_followup"
+    return None
+
+
+def resolve_context_products(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None = None,
+    limit: int = 5,
+) -> list[dict[str, Any]]:
+    models: list[str] = []
+    for mention in product_search.model_mentions(question):
+        models.append(mention)
+    for item in conversation_context or []:
+        fields = [
+            item.get("recommended_public_models", ""),
+            item.get("answer", ""),
+            item.get("question", ""),
+        ]
+        for field in fields:
+            for model in re.findall(r"\bIOO-[A-Z0-9][A-Z0-9_.-]*\b", str(field).upper()):
+                models.append(model)
+        if models:
+            break
+    seen = []
+    products = []
+    for model in models:
+        if model in seen:
+            continue
+        seen.append(model)
+        product = product_search.resolve_model(model)
+        if product:
+            product = dict(product)
+            product.setdefault("fit_type", "Close fit")
+            product.setdefault("why_it_may_fit", "previously recommended IOO candidate")
+            products.append(product)
+        if len(products) >= limit:
+            break
+    return products
+
+
+def answer_pricing_followup(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None,
+    language: str,
+    used_openai: bool = False,
+) -> dict[str, Any]:
+    products = resolve_context_products(question, conversation_context, limit=5)
+    if language == "zh":
+        if products:
+            models = "、".join(product["public_model"] for product in products[:3])
+            direct = f"我能接上上一轮候选型号：{models}。但当前 IOO 产品库还没有公开价格字段，所以我不能编一个价格。"
+            strategy = "更稳妥的下一步是把这个型号、数量、交期、是否需要样品测试、安装/线缆要求发给销售或工程团队做报价。"
+        else:
+            direct = "我还没有足够上下文判断你问的是哪一个 IOO 型号，因此不能给价格。"
+            strategy = "请点选或输入具体 IOO 型号，我可以先整理它的关键参数，再说明报价需要哪些信息。"
+        followups = ["告诉我目标数量。", "需要样品还是批量？", "是否需要线缆、安装或定制波长？"]
+        warning = "当前公开产品库没有价格字段；价格需要报价流程确认。"
+    else:
+        if products:
+            models = ", ".join(product["public_model"] for product in products[:3])
+            direct = f"I can connect this to the previous candidate model(s): {models}. Pricing is not available in the current IOO product database, so I should not invent a price."
+            strategy = "The practical next step is to request a quote with model, quantity, timing, sample-test needs, mounting, cable, and any customization constraints."
+        else:
+            direct = "I do not yet have enough context to know which IOO model you mean, so I cannot answer pricing."
+            strategy = "Send the IOO model number and I can summarize the key specs and quote inputs."
+        followups = ["Share the target quantity.", "Is this for sample testing or production?", "Any cable, mounting, or wavelength customization needed?"]
+        warning = "Pricing is not stored in the current public product database; quote confirmation is required."
+    answer = f"{direct}\n\n{strategy}"
+    return base_result(question, "pricing_followup", answer, direct, strategy, products, products, len(products), {"sources": [], "basis": []}, [], "Basic", "high" if products else "medium", [warning], [], followups, used_openai)
+
+
+def answer_product_detail_followup(
+    question: str,
+    conversation_context: list[dict[str, Any]] | None,
+    language: str,
+    used_openai: bool = False,
+) -> dict[str, Any]:
+    products = resolve_context_products(question, conversation_context, limit=5)
+    if language == "zh":
+        if products:
+            direct = f"可以，下面是上一轮候选 IOO 型号的公开参数摘要：{products[0]['public_model']}。"
+            strategy = "这些参数来自 IOO 产品数据库；如果字段显示暂无数据，表示当前公开库尚未标准化该字段。"
+            followups = ["要不要我只看电压和功率？", "要不要对比前 3 个候选型号？", "告诉我你的视野和工作距离。"]
+        else:
+            direct = "我还不知道你指的是哪一个 IOO 型号。"
+            strategy = "请提供具体型号，或者先让我重新推荐一组候选产品。"
+            followups = ["输入 IOO 型号。", "重新描述检测需求。", "上传需求说明。"]
+    else:
+        if products:
+            direct = f"Yes. Here is the public spec summary for the previous IOO candidate: {products[0]['public_model']}."
+            strategy = "These fields come from the IOO product database. If a value is marked not available, that field is not yet normalized in the public catalog."
+            followups = ["Should I focus only on voltage and power?", "Compare the top 3 candidates?", "Share field of view and working distance."]
+        else:
+            direct = "I am not sure which IOO model you mean yet."
+            strategy = "Send the exact IOO model number, or ask me to shortlist candidates again."
+            followups = ["Enter the IOO model.", "Describe the inspection need again.", "Upload a requirement note."]
+    lines = []
+    for product in products[:5]:
+        lines.append(
+            f"- {product.get('public_model')}: {product.get('light_type') or 'not available'}; "
+            f"voltage={product.get('voltage_v') or 'not available'}; "
+            f"power={product.get('power_w') or 'not available'}; "
+            f"dimensions={product.get('dimensions') or 'not available'}"
+        )
+    answer = "\n".join([direct, strategy, *lines]).strip()
+    return base_result(question, "product_detail_followup", answer, direct, strategy, products, products, len(products), {"sources": [], "basis": []}, [], "Basic", "high" if products else "medium", [], [], followups, used_openai)
 
 
 def answer_off_topic(question: str, language: str, used_openai: bool = False) -> dict[str, Any]:

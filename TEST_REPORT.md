@@ -250,3 +250,19 @@ Date: 2026-05-27
   - `Can you recommend a good pizza recipe?` -> `off_topic`, no product recommendation.
 - Knowledge test:
   - `What is global shutter in machine vision?` -> `knowledge_explanation`.
+
+## Contextual Product Follow-Up Update
+
+- Added support for follow-up questions that refer to the previous IOO shortlist with phrases such as `this model`, `that one`, `这个型号`, or short questions such as `what voltage?`.
+- Pricing follow-ups now connect to the previously recommended IOO model(s), but clearly state that pricing is not stored in the current IOO product database and must go through quote confirmation.
+- Spec/detail follow-ups now return public database details for the previous candidate models instead of treating `this model` as a missing model.
+- Regression sequence:
+  - First question: `Inspect transparent bottle edges.` -> recommendation with IOO candidates.
+  - Follow-up: `how much is this model ?` -> `pricing_followup`, uses previous candidates, no invented price.
+  - Follow-up: `what voltage?` -> `product_detail_followup`, uses previous candidates.
+  - Follow-up: `what are the specs of this model?` -> `product_detail_followup`.
+  - Follow-up: `datasheet for this model?` -> `product_detail_followup`.
+- Verification:
+  - `test_public_brand_safety.py`: passed, 2/2.
+  - `test_qa_engine.py`: passed, 23/23.
+  - Python compile check passed for `answer_engine.py`, `app.py`, and `product_search.py`.
