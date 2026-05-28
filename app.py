@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import html
 import io
+import json
 import os
 import uuid
 from datetime import datetime
@@ -34,6 +35,136 @@ EXAMPLE_PROMPTS = [
     ("Choose lighting for line scan", "I need lighting for line scan inspection."),
     ("Compare lighting approaches", "Compare dark-field, coaxial, and backlight approaches for my inspection."),
 ]
+
+UI_TEXT = {
+    "en": {
+        "ask_ioo": "Ask IOO",
+        "continue": "Continue this IOO conversation",
+        "question": "Question",
+        "followup_placeholder": "Follow up with material, defect size, working distance, FOV, speed, or lighting constraints...",
+        "first_placeholder": "Ask about a defect, material, field of view, working distance, or lighting challenge...",
+        "add_material": "Add image, PDF, or requirement note",
+        "upload_material": "Upload image, sketch, or requirement note",
+        "upload_help": "Text notes are used immediately; image reasoning requires a vision model.",
+        "clear": "Clear conversation",
+        "direct": "Direct recommendation",
+        "strategy": "Lighting strategy",
+        "closest_products": "Closest IOO product options",
+        "test_plan": "Practical test plan",
+        "missing": "Missing information",
+        "sources": "Sources / Basis",
+        "product_results": "IOO product results",
+        "product_shortlist": "Product shortlist",
+        "confidence": "Confidence",
+        "solution_profile": "Solution profile",
+        "guest": "Guest Engineer",
+        "apply_account": "Apply for an engineering account",
+        "dialog_history": "Dialog history",
+        "field_shortcuts": "Field shortcuts",
+        "ask_by_defect": "Ask by defect",
+        "upload_image": "Upload image",
+        "compare_lights": "Compare lights",
+        "earn_credits": "Earn credits",
+        "sign_in": "Sign in / Apply",
+        "details": "Details",
+        "spec_sheet": "Spec sheet",
+        "save": "Save",
+        "compare": "Compare",
+        "not_available": "not available",
+        "general_candidate": "general IOO lighting candidate",
+        "category": "category",
+        "knowledge_basis": "Knowledge base basis",
+        "product_basis": "IOO product database basis",
+        "showing": "Showing first {shown} of {total} matching IOO products.",
+        "no_match": "No exact IOO product match was found in the current product database.",
+        "shortlist_sub": "Candidate public IOO models stay here quietly, without interrupting the conversation.",
+        "empty_shortlist": "Ask about a defect, material, or setup. IOO will place candidate models, key specs, and sandbox detail links here after the first answer.",
+        "try_preset": "Try a preset or type your own question and press Enter.",
+        "new_conversation": "New conversation",
+        "download_history": "Download history",
+        "resume": "Resume",
+        "no_history": "No saved session conversation yet",
+        "active": "Active",
+    },
+    "zh": {
+        "ask_ioo": "询问 IOO",
+        "continue": "继续本次 IOO 对话",
+        "question": "问题",
+        "followup_placeholder": "继续补充材料、缺陷尺寸、工作距离、视野、速度或打光限制...",
+        "first_placeholder": "描述缺陷、材料、视野、工作距离或打光问题...",
+        "add_material": "添加图片、PDF 或需求说明",
+        "upload_material": "上传图片、草图或需求说明",
+        "upload_help": "文本说明会立即用于分析；图片理解需要视觉模型支持。",
+        "clear": "清空对话",
+        "direct": "直接建议",
+        "strategy": "打光策略",
+        "closest_products": "最接近的 IOO 产品选项",
+        "test_plan": "建议测试步骤",
+        "missing": "还需要补充的信息",
+        "sources": "依据来源",
+        "product_results": "IOO 产品结果",
+        "product_shortlist": "产品候选",
+        "confidence": "置信度",
+        "solution_profile": "方案完整度",
+        "guest": "访客工程师",
+        "apply_account": "申请工程师账号",
+        "dialog_history": "对话历史",
+        "field_shortcuts": "快捷入口",
+        "ask_by_defect": "按缺陷提问",
+        "upload_image": "上传图片",
+        "compare_lights": "对比光源",
+        "earn_credits": "获取积分",
+        "sign_in": "登录 / 申请",
+        "details": "详情",
+        "spec_sheet": "规格书",
+        "save": "保存",
+        "compare": "对比",
+        "not_available": "暂无数据",
+        "general_candidate": "IOO 通用光源候选",
+        "category": "类别",
+        "knowledge_basis": "知识库依据",
+        "product_basis": "IOO 产品数据库依据",
+        "showing": "显示前 {shown} 个，共 {total} 个匹配 IOO 产品。",
+        "no_match": "当前 IOO 产品库中没有明确匹配的产品。",
+        "shortlist_sub": "候选 IOO 型号会在这里保留，不打断对话。",
+        "empty_shortlist": "请描述缺陷、材料或应用场景。IOO 回答后会在这里显示候选型号、关键参数和测试链接。",
+        "try_preset": "可以点击示例，也可以直接输入问题并按 Enter。",
+        "new_conversation": "新建对话",
+        "download_history": "导出历史",
+        "resume": "继续",
+        "no_history": "当前浏览器会话还没有历史对话",
+        "active": "当前",
+    },
+}
+
+LIGHT_TYPE_LABELS = {
+    "zh": {
+        "bar_light": "条形光源",
+        "ring_light": "环形光源",
+        "backlight": "背光源",
+        "coaxial_light": "同轴光源",
+        "dome_light": "穹顶光 / 漫射光源",
+        "dark_field": "暗场光源",
+        "line_scan_light": "线扫光源",
+        "spot_light": "点光源",
+        "uv_light": "紫外光源",
+        "ir_light": "红外光源",
+        "machine_vision_light": "机器视觉光源",
+    },
+    "en": {},
+}
+
+FIT_TYPE_LABELS = {
+    "zh": {
+        "Exact fit": "精确匹配",
+        "Close fit": "接近匹配",
+        "Workaround fit": "替代方案匹配",
+        "Needs custom / manual review": "需要定制或人工确认",
+        "Database sample": "数据库样例",
+        "Sandbox candidate": "沙盒候选",
+    },
+    "en": {},
+}
 
 
 def get_secret(name: str) -> str | None:
@@ -309,12 +440,40 @@ def inject_css() -> None:
         input,
         div[data-baseweb="input"] input,
         div[data-baseweb="textarea"] textarea,
+        div[data-testid="stTextInput"] input,
         div[data-testid="stTextArea"] textarea {
           background: rgba(255,255,255,0.94) !important;
           color: var(--ioo-text-100) !important;
           border: 1px solid rgba(43,167,165,0.24) !important;
           border-radius: 20px !important;
           box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03) !important;
+          caret-color: #111827 !important;
+          user-select: text !important;
+          -webkit-user-select: text !important;
+          pointer-events: auto !important;
+          opacity: 1 !important;
+          position: relative !important;
+          z-index: 2 !important;
+        }
+        div[data-testid="stTextInput"],
+        div[data-testid="stTextInput"] *,
+        div[data-testid="stTextArea"],
+        div[data-testid="stTextArea"] * {
+          pointer-events: auto !important;
+          user-select: text !important;
+          -webkit-user-select: text !important;
+        }
+        div[data-testid="stTextInput"] input:focus,
+        div[data-testid="stTextArea"] textarea:focus {
+          outline: 2px solid rgba(43,167,165,0.42) !important;
+          outline-offset: 2px !important;
+          border-color: var(--ioo-optic-cyan) !important;
+          box-shadow: 0 0 0 3px rgba(43,167,165,0.12) !important;
+        }
+        textarea::selection,
+        input::selection {
+          background: rgba(43,167,165,0.22) !important;
+          color: #111827 !important;
         }
         textarea::placeholder,
         input::placeholder {
@@ -527,6 +686,167 @@ def init_state() -> None:
     st.session_state.setdefault("last_upload_key", None)
     st.session_state.setdefault("points", 0)
     st.session_state.setdefault("points_events", [])
+    st.session_state.setdefault("language", "en")
+    st.session_state.setdefault("threads", [])
+    st.session_state.setdefault("active_thread_id", None)
+    ensure_active_thread()
+
+
+def now_iso() -> str:
+    return datetime.now().isoformat(timespec="seconds")
+
+
+def make_thread(title: str | None = None) -> dict[str, Any]:
+    timestamp = now_iso()
+    return {
+        "id": str(uuid.uuid4()),
+        "title": title or ("新对话" if current_language() == "zh" else "New conversation"),
+        "created_at": timestamp,
+        "updated_at": timestamp,
+        "language": current_language(),
+        "messages": [],
+        "last_result": None,
+        "last_question": "",
+    }
+
+
+def ensure_active_thread() -> dict[str, Any]:
+    threads = st.session_state.setdefault("threads", [])
+    active_id = st.session_state.get("active_thread_id")
+    for thread in threads:
+        if thread.get("id") == active_id:
+            return thread
+    thread = make_thread()
+    threads.insert(0, thread)
+    st.session_state["active_thread_id"] = thread["id"]
+    return thread
+
+
+def active_thread() -> dict[str, Any]:
+    return ensure_active_thread()
+
+
+def thread_title_from_question(question: str) -> str:
+    cleaned = " ".join(str(question or "").split())
+    if not cleaned:
+        return "Uploaded material review"
+    return cleaned[:42] + ("..." if len(cleaned) > 42 else "")
+
+
+def load_thread(thread_id: str) -> None:
+    for thread in st.session_state.get("threads", []):
+        if thread.get("id") == thread_id:
+            st.session_state["active_thread_id"] = thread_id
+            st.session_state["conversation"] = list(thread.get("messages") or [])
+            st.session_state["last_result"] = thread.get("last_result")
+            st.session_state["last_question"] = thread.get("last_question", "")
+            st.session_state["language"] = thread.get("language", st.session_state.get("language", "en"))
+            st.session_state["question"] = ""
+            return
+
+
+def start_new_thread() -> None:
+    current = active_thread()
+    if not current.get("messages") and not current.get("last_result"):
+        st.session_state["conversation"] = []
+        st.session_state["last_result"] = None
+        st.session_state["last_question"] = ""
+        st.session_state["question"] = ""
+        st.session_state["uploaded_context"] = None
+        return
+    thread = make_thread()
+    st.session_state["threads"].insert(0, thread)
+    st.session_state["active_thread_id"] = thread["id"]
+    st.session_state["conversation"] = []
+    st.session_state["last_result"] = None
+    st.session_state["last_question"] = ""
+    st.session_state["question"] = ""
+    st.session_state["uploaded_context"] = None
+
+
+def update_active_thread(question: str, result: dict[str, Any], item: dict[str, Any]) -> None:
+    thread = active_thread()
+    if not thread.get("messages"):
+        thread["title"] = thread_title_from_question(question)
+    thread["messages"] = [item] + list(thread.get("messages") or [])[:19]
+    thread["last_result"] = result
+    thread["last_question"] = question
+    thread["language"] = result.get("language") or st.session_state.get("language") or "en"
+    thread["updated_at"] = now_iso()
+    # Keep recently used threads at the top, like common LLM chat sidebars.
+    threads = [t for t in st.session_state.get("threads", []) if t.get("id") != thread.get("id")]
+    st.session_state["threads"] = [thread] + threads[:39]
+
+
+def export_thread_payload(thread: dict[str, Any]) -> str:
+    payload = {
+        "title": thread.get("title"),
+        "created_at": thread.get("created_at"),
+        "updated_at": thread.get("updated_at"),
+        "language": thread.get("language"),
+        "messages": thread.get("messages") or [],
+    }
+    return json.dumps(payload, ensure_ascii=False, indent=2)
+
+
+def detect_user_language(text: str | None) -> str:
+    return answer_engine.detect_user_language(text or "")
+
+
+def current_language() -> str:
+    result = st.session_state.get("last_result") or {}
+    language = result.get("language") or st.session_state.get("language") or "en"
+    return "zh" if language == "zh" else "en"
+
+
+def ui_text(key: str, **kwargs: Any) -> str:
+    language = current_language()
+    value = UI_TEXT.get(language, UI_TEXT["en"]).get(key, UI_TEXT["en"].get(key, key))
+    return value.format(**kwargs) if kwargs else value
+
+
+def localize_value(value: Any, key: str | None = None) -> str:
+    language = current_language()
+    text = str(value or "").strip()
+    if not text or text.lower() == "not available":
+        return ui_text("not_available")
+    normalized = text.replace("-", "_").lower()
+    if key == "light_type" or normalized in LIGHT_TYPE_LABELS["zh"]:
+        if language == "zh":
+            return LIGHT_TYPE_LABELS["zh"].get(normalized, text.replace("_", " "))
+        return text.replace("_", " ")
+    if key == "fit_type" or text in FIT_TYPE_LABELS["zh"]:
+        if language == "zh":
+            return FIT_TYPE_LABELS["zh"].get(text, text)
+        return text
+    if language == "zh" and text == "general IOO lighting candidate":
+        return ui_text("general_candidate")
+    return text.replace("_", " ")
+
+
+def localize_reason(value: Any) -> str:
+    text = str(value or "").strip()
+    if current_language() != "zh" or not text:
+        return text
+    replacements = {
+        "matches red light": "匹配红光",
+        "red light evidence": "有红光证据",
+        "matches green light": "匹配绿光",
+        "matches blue light": "匹配蓝光",
+        "24V evidence": "有 24V 参数",
+        "ring light geometry": "环形光几何结构匹配",
+        "backlight geometry": "背光几何结构匹配",
+        "coaxial geometry": "同轴光几何结构匹配",
+        "surface defect lighting approach": "适合表面缺陷打光思路",
+        "edge/silhouette lighting approach": "适合边缘 / 轮廓打光思路",
+        "reflective surface lighting approach": "适合反光表面打光思路",
+        "general IOO lighting candidate": "IOO 通用光源候选",
+        "closest searchable IOO product; more inspection details are needed": "当前可检索到的接近 IOO 产品；需要更多检测参数",
+        "model exactly matched in the IOO product database": "型号在 IOO 产品库中精确匹配",
+    }
+    for source, target in replacements.items():
+        text = text.replace(source, target)
+    return text
 
 
 def award_points(amount: int, reason: str) -> None:
@@ -620,7 +940,14 @@ def placeholder_products() -> list[dict[str, Any]]:
 
 
 def render_topbar(openai_enabled: bool) -> None:
-    mode = "AI ready" if openai_enabled else "Local mode"
+    if current_language() == "zh":
+        mode = "AI 已就绪" if openai_enabled else "本地模式"
+        streak = "8 天工程师连续使用"
+        credits = "积分"
+    else:
+        mode = "AI ready" if openai_enabled else "Local mode"
+        streak = "8-day engineer streak"
+        credits = "Credits"
     st.markdown(
         f"""
         <div class="ioo-topbar">
@@ -632,9 +959,9 @@ def render_topbar(openai_enabled: bool) -> None:
             </div>
           </div>
           <div class="ioo-status">
-            <span class="ioo-credit-pill"><span>Credits</span><strong>{st.session_state.get('points', 0):,}</strong></span>
-            <span class="ioo-streak-pill">8-day engineer streak</span>
-            <span class="ioo-auth-button">Sign in / Apply</span>
+            <span class="ioo-credit-pill"><span>{credits}</span><strong>{st.session_state.get('points', 0):,}</strong></span>
+            <span class="ioo-streak-pill">{streak}</span>
+            <span class="ioo-auth-button">{ui_text("sign_in")}</span>
             <span class="ioo-streak-pill">{mode}</span>
           </div>
         </div>
@@ -713,53 +1040,49 @@ def render_search_card() -> None:
         st.session_state["question"] = pending
         st.session_state["pending_question"] = None
     in_conversation = bool(st.session_state.get("last_result"))
-    heading = "Continue this IOO conversation" if in_conversation else "Ask IOO"
+    heading = ui_text("continue") if in_conversation else ui_text("ask_ioo")
     placeholder = (
-        "Follow up with material, defect size, working distance, FOV, speed, or lighting constraints..."
+        ui_text("followup_placeholder")
         if in_conversation
-        else "Ask about a defect, material, field of view, working distance, or lighting challenge..."
+        else ui_text("first_placeholder")
     )
     st.markdown(f"### {heading}")
     with st.form("ask_ioo_form", clear_on_submit=False):
         question_col, send_col = st.columns([0.82, 0.18], vertical_alignment="bottom")
         with question_col:
             st.text_input(
-                "Question",
+                ui_text("question"),
                 key="question",
                 placeholder=placeholder,
                 label_visibility="collapsed",
             )
         with send_col:
-            submitted = st.form_submit_button("Ask IOO", type="primary", use_container_width=True)
+            submitted = st.form_submit_button(ui_text("ask_ioo"), type="primary", use_container_width=True)
     if submitted:
         run_question()
         st.rerun()
     if in_conversation:
-        with st.expander("Add image, PDF, or requirement note", expanded=False):
+        with st.expander(ui_text("add_material"), expanded=False):
             uploaded_file = st.file_uploader(
-                "Upload image, sketch, or requirement note",
+                ui_text("upload_material"),
                 type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
-                help="Text notes are used immediately; image reasoning requires a vision model.",
+                help=ui_text("upload_help"),
             )
             upload_context = process_upload(uploaded_file)
             render_upload_context(upload_context, uploaded_file)
-        if st.button("Clear conversation", use_container_width=True):
-            st.session_state["conversation"] = []
-            st.session_state["last_result"] = None
-            st.session_state["last_question"] = ""
-            st.session_state["pending_question"] = ""
-            st.session_state["uploaded_context"] = None
+        if st.button(ui_text("new_conversation"), use_container_width=True):
+            start_new_thread()
             st.rerun()
     else:
-        with st.expander("Upload image, sketch, PDF, or requirement note", expanded=False):
+        with st.expander(ui_text("add_material"), expanded=False):
             uploaded_file = st.file_uploader(
-                "Upload image, sketch, or requirement note",
+                ui_text("upload_material"),
                 type=["png", "jpg", "jpeg", "pdf", "txt", "md"],
-                help="Text notes are used immediately; image reasoning requires a vision model.",
+                help=ui_text("upload_help"),
             )
             upload_context = process_upload(uploaded_file)
             render_upload_context(upload_context, uploaded_file)
-        st.caption("Try a preset or type your own question and press Enter.")
+        st.caption(ui_text("try_preset"))
         chip_cols = st.columns(2)
         for idx, (label, prompt) in enumerate(EXAMPLE_PROMPTS):
             with chip_cols[idx % 2]:
@@ -771,9 +1094,11 @@ def render_search_card() -> None:
 
 def run_question(question_override: str | None = None) -> None:
     question = str(question_override if question_override is not None else st.session_state.get("question") or "").strip()
+    if question:
+        st.session_state["language"] = detect_user_language(question)
     uploaded_context = st.session_state.get("uploaded_context")
     if not question and not uploaded_context:
-        st.info("Describe an inspection challenge or upload a requirement note first.")
+        st.info("请先描述检测问题，或上传需求说明。" if current_language() == "zh" else "Describe an inspection challenge or upload a requirement note first.")
         return
     points = int(GAMIFICATION.get("question_points", 5))
     if st.session_state.get("conversation"):
@@ -809,10 +1134,11 @@ def add_conversation(question: str, result: dict[str, Any], points_awarded: int)
         "points_awarded": points_awarded,
         "used_openai": result.get("used_openai", False),
     }
-    st.session_state["conversation"] = [item] + list(st.session_state.get("conversation") or [])[:7]
+    st.session_state["conversation"] = [item] + list(st.session_state.get("conversation") or [])[:19]
+    update_active_thread(question, result, item)
 
 
-def render_left_rail() -> None:
+def _render_left_rail_legacy() -> None:
     history = st.session_state.get("conversation") or []
     today = points_today()
     remaining = max(0, reward_target() - int(st.session_state.get("points", 0)))
@@ -827,8 +1153,10 @@ def render_left_rail() -> None:
     else:
         history_html = (
             '<div class="history-item-soft active">'
-            'Start a lighting case'
-            '<small>Ask by defect, material, or setup</small>'
+            + ("开始一个打光问题" if current_language() == "zh" else "Start a lighting case")
+            + '<small>'
+            + ("按缺陷、材料或应用场景提问" if current_language() == "zh" else "Ask by defect, material, or setup")
+            + '</small>'
             '</div>'
         )
     left_html = (
@@ -836,26 +1164,91 @@ def render_left_rail() -> None:
         '<section class="profile-card-soft">'
         '<div class="avatar-row">'
         '<span class="avatar-soft">IOO</span>'
-        '<span><span class="profile-name">Guest Engineer</span>'
-        '<span class="profile-meta">Apply for an engineering account</span></span>'
+        f'<span><span class="profile-name">{ui_text("guest")}</span>'
+        f'<span class="profile-meta">{ui_text("apply_account")}</span></span>'
         '</div>'
         '<div class="points-row">'
         f'<span class="mini-metric"><strong>+{today}</strong><span>today</span></span>'
         f'<span class="mini-metric"><strong>{remaining}</strong><span>to next reward</span></span>'
         '</div>'
         '</section>'
-        f'<div class="section-title-soft"><span>Dialog history</span><span>{len(history)}</span></div>'
+        f'<div class="section-title-soft"><span>{ui_text("dialog_history")}</span><span>{len(history)}</span></div>'
         f'<div class="history-list-soft">{history_html}</div>'
-        '<div class="section-title-soft"><span>Field shortcuts</span><span>tap</span></div>'
+        f'<div class="section-title-soft"><span>{ui_text("field_shortcuts")}</span><span>tap</span></div>'
         '<div class="shortcut-grid-soft">'
-        '<div class="shortcut-soft"><b>Ask by defect</b>Scratch, dent, stain, burr</div>'
-        '<div class="shortcut-soft"><b>Upload image</b>Attach sample or sketch</div>'
-        '<div class="shortcut-soft"><b>Compare lights</b>Bar, coaxial, dome</div>'
-        '<div class="shortcut-soft"><b>Earn credits</b>Questions and follow-ups</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("ask_by_defect")}</b>{"划痕、凹痕、污渍、毛刺" if current_language() == "zh" else "Scratch, dent, stain, burr"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("upload_image")}</b>{"附上样品图或草图" if current_language() == "zh" else "Attach sample or sketch"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("compare_lights")}</b>{"条形、同轴、穹顶" if current_language() == "zh" else "Bar, coaxial, dome"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("earn_credits")}</b>{"提问和追问" if current_language() == "zh" else "Questions and follow-ups"}</div>'
         '</div>'
         '</aside>'
     )
     st.markdown(left_html, unsafe_allow_html=True)
+
+
+def render_left_rail() -> None:
+    threads = [
+        thread
+        for thread in st.session_state.get("threads", [])
+        if thread.get("messages") or thread.get("last_result")
+    ]
+    today = points_today()
+    remaining = max(0, reward_target() - int(st.session_state.get("points", 0)))
+    profile_html = (
+        '<div class="soft-panel left-rail-soft">'
+        '<section class="profile-card-soft">'
+        '<div class="avatar-row">'
+        '<span class="avatar-soft">IOO</span>'
+        f'<span><span class="profile-name">{ui_text("guest")}</span>'
+        f'<span class="profile-meta">{ui_text("apply_account")}</span></span>'
+        '</div>'
+        '<div class="points-row">'
+        f'<span class="mini-metric"><strong>+{today}</strong><span>today</span></span>'
+        f'<span class="mini-metric"><strong>{remaining}</strong><span>to next reward</span></span>'
+        '</div>'
+        '</section>'
+        f'<div class="section-title-soft"><span>{ui_text("dialog_history")}</span><span>{len(threads)}</span></div>'
+        '</div>'
+    )
+    st.markdown(profile_html, unsafe_allow_html=True)
+
+    if st.button(ui_text("new_conversation"), key="left_new_conversation", use_container_width=True):
+        start_new_thread()
+        st.rerun()
+
+    if threads:
+        active_id = st.session_state.get("active_thread_id")
+        for idx, thread in enumerate(threads[:10]):
+            title = str(thread.get("title") or thread.get("last_question") or "Lighting case")
+            title = title[:54] + ("..." if len(title) > 54 else "")
+            prefix = "● " if thread.get("id") == active_id else ""
+            if st.button(prefix + title, key=f"history_thread_{thread.get('id', idx)}", use_container_width=True):
+                load_thread(str(thread.get("id")))
+                st.rerun()
+        current = active_thread()
+        if current.get("messages") or current.get("last_result"):
+            st.download_button(
+                ui_text("download_history"),
+                data=export_thread_payload(current).encode("utf-8-sig"),
+                file_name=f"ioo-conversation-{current.get('id', 'history')}.json",
+                mime="application/json",
+                use_container_width=True,
+            )
+    else:
+        st.caption(ui_text("no_history"))
+
+    shortcuts_html = (
+        '<div class="soft-panel left-rail-soft shortcuts-only">'
+        f'<div class="section-title-soft"><span>{ui_text("field_shortcuts")}</span><span>tap</span></div>'
+        '<div class="shortcut-grid-soft">'
+        f'<div class="shortcut-soft"><b>{ui_text("ask_by_defect")}</b>{"Scratch, dent, stain, burr" if current_language() != "zh" else "缺陷、材料、应用"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("upload_image")}</b>{"Attach sample or sketch" if current_language() != "zh" else "上传样品图或草图"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("compare_lights")}</b>{"Bar, coaxial, dome" if current_language() != "zh" else "条形、同轴、穹顶"}</div>'
+        f'<div class="shortcut-soft"><b>{ui_text("earn_credits")}</b>{"Questions and follow-ups" if current_language() != "zh" else "提问和追问"}</div>'
+        '</div>'
+        '</div>'
+    )
+    st.markdown(shortcuts_html, unsafe_allow_html=True)
 
 
 def log_conversation(question: str, result: dict[str, Any], points_awarded: int, feedback: str = "") -> None:
@@ -882,35 +1275,37 @@ def render_answer(result: dict[str, Any] | None) -> None:
         render_how_it_works()
         return
     st.markdown('<div class="ioo-card">', unsafe_allow_html=True)
-    st.markdown('<div class="ioo-card-title">IOO recommendation</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="ioo-card-title">{"IOO 建议" if current_language() == "zh" else "IOO recommendation"}</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <span class="ioo-pill ioo-pill-blue">Confidence: {str(result.get('confidence', 'low')).upper()}</span>
-        <span class="ioo-pill ioo-pill-teal">{result.get('fit_type', 'Close fit')}</span>
-        <span class="ioo-pill ioo-pill-amber">Solution profile: {result.get('solution_profile_completeness', 'Low')}</span>
+        <span class="ioo-pill ioo-pill-blue">{ui_text("confidence")}: {str(result.get('confidence', 'low')).upper()}</span>
+        <span class="ioo-pill ioo-pill-teal">{localize_value(result.get('fit_type', 'Close fit'), 'fit_type')}</span>
+        <span class="ioo-pill ioo-pill-amber">{ui_text("solution_profile")}: {result.get('solution_profile_completeness', 'Low')}</span>
         """,
         unsafe_allow_html=True,
     )
-    st.subheader("Direct recommendation")
+    st.subheader(ui_text("direct"))
     st.write(result.get("direct_recommendation", ""))
-    st.subheader("Lighting strategy")
-    st.write(result.get("lighting_strategy", ""))
-    if result.get("intent") in {"list_search", "model_lookup", "comparison"}:
+    if result.get("lighting_strategy"):
+        st.subheader(ui_text("strategy"))
+        st.write(result.get("lighting_strategy", ""))
+    if result.get("intent") in {"list_search", "attribute_search", "model_lookup", "comparison"}:
         render_product_results(result)
     else:
-        st.subheader("Closest IOO product options")
+        st.subheader(ui_text("closest_products"))
         render_product_options(result.get("closest_ioo_products", []))
     test_plan = result.get("practical_test_plan", []) or []
     if test_plan:
-        st.subheader("Practical test plan")
+        st.subheader(ui_text("test_plan"))
         for item in test_plan:
             st.markdown(f"- {item}")
     missing = result.get("missing_information", []) or []
     if missing and result.get("intent") == "recommendation":
-        st.subheader("Missing information")
-        st.info("To make this recommendation stronger: " + ", ".join(missing[:6]))
+        st.subheader(ui_text("missing"))
+        prefix = "为了让建议更准确，请补充：" if current_language() == "zh" else "To make this recommendation stronger: "
+        st.info(prefix + ", ".join(missing[:6]))
     if should_show_sources(result):
-        st.subheader("Sources / Basis")
+        st.subheader(ui_text("sources"))
         render_sources(result)
     st.subheader("Continue the conversation")
     cols = st.columns(3)
@@ -936,13 +1331,13 @@ def render_product_results(result: dict[str, Any]) -> None:
     products = result.get("product_results", []) or []
     total = int(result.get("total_matched") or len(products))
     showing = len(products)
-    st.subheader("IOO product results")
+    st.subheader(ui_text("product_results"))
     if total:
-        st.caption(f"Showing first {showing} of {total} matching IOO products.")
+        st.caption(ui_text("showing", shown=showing, total=total))
     else:
-        st.info("No exact IOO product match was found in the current product database.")
+        st.info(ui_text("no_match"))
         return
-    rows = product_search.product_table_rows(products, limit=20)
+    rows = localize_product_rows(product_search.product_table_rows(products, limit=20))
     st.dataframe(rows, use_container_width=True, hide_index=True)
     buffer = io.StringIO()
     if rows:
@@ -950,7 +1345,7 @@ def render_product_results(result: dict[str, Any]) -> None:
         writer.writeheader()
         writer.writerows(rows)
         st.download_button(
-            "Download shown results CSV",
+            "下载当前结果 CSV" if current_language() == "zh" else "Download shown results CSV",
             data=buffer.getvalue().encode("utf-8-sig"),
             file_name="ioo_product_results.csv",
             mime="text/csv",
@@ -958,19 +1353,57 @@ def render_product_results(result: dict[str, Any]) -> None:
         )
 
 
+def localize_product_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if current_language() != "zh":
+        return rows
+    column_labels = {
+        "public_model": "型号",
+        "light_type": "光源类型",
+        "product_category": "产品类别",
+        "product_family": "产品系列",
+        "color": "颜色",
+        "wavelength_nm": "波长",
+        "voltage_v": "电压",
+        "power_w": "功率",
+        "current_a": "电流",
+        "dimensions": "尺寸",
+        "fit_type": "匹配类型",
+        "why_it_may_fit": "匹配原因",
+    }
+    localized = []
+    for row in rows:
+        new_row = {}
+        for key, value in row.items():
+            label = column_labels.get(key, key)
+            if key == "light_type":
+                new_row[label] = localize_value(value, "light_type")
+            elif key == "fit_type":
+                new_row[label] = localize_value(value, "fit_type")
+            elif key == "why_it_may_fit":
+                new_row[label] = localize_reason(value)
+            else:
+                new_row[label] = localize_value(value)
+        localized.append(new_row)
+    return localized
+
+
 def render_product_options(products: list[dict[str, Any]]) -> None:
     if not products:
-        st.info("This may be a custom lighting case. IOO can start with the closest standard geometry and adapt wavelength, mounting, or diffusion.")
+        st.info("这可能是定制打光场景。IOO 可以先从最接近的标准几何结构开始，再调整波长、安装或扩散方式。" if current_language() == "zh" else "This may be a custom lighting case. IOO can start with the closest standard geometry and adapt wavelength, mounting, or diffusion.")
         return
     for product in products[:5]:
+        light_type = localize_value(product.get("light_type", ""), "light_type")
+        fit_type = localize_value(product.get("fit_type"), "fit_type")
+        key_specs = localize_value(product.get("key_specs"))
+        note = "这可以作为初步测试起点；最终选型需要用样品图验证。" if current_language() == "zh" else "This may be a strong starting point; final selection should be verified with sample images."
         st.markdown(
             f"""
             <div class="ioo-product-card">
               <div class="ioo-product-title">{product.get('public_model')}</div>
-              <div class="ioo-muted">{product.get('light_type', '').replace('_', ' ')} | {product.get('fit_type')}</div>
-              <p>{product.get('why_it_may_fit')}</p>
-              <div class="ioo-muted">Key specs: {product.get('key_specs') or 'not available'}</div>
-              <div class="ioo-muted">Note: This may be a strong starting point; final selection should be verified with sample images.</div>
+              <div class="ioo-muted">{light_type} | {fit_type}</div>
+              <p>{localize_reason(product.get('why_it_may_fit'))}</p>
+              <div class="ioo-muted">{"关键参数" if current_language() == "zh" else "Key specs"}: {key_specs}</div>
+              <div class="ioo-muted">{"备注" if current_language() == "zh" else "Note"}: {note}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -979,10 +1412,10 @@ def render_product_options(products: list[dict[str, Any]]) -> None:
 
 def render_product_card_native(product: dict[str, Any], key_prefix: str) -> None:
     model = str(product.get("public_model") or "IOO-SANDBOX")
-    light_type = str(product.get("light_type", "")).replace("_", " ") or "lighting"
-    reason = product.get("why_it_may_fit") or product.get("public_description") or "Candidate IOO lighting option."
-    key_specs = product.get("key_specs") or "not available"
-    fit_type = product.get("fit_type") or "Sandbox candidate"
+    light_type = localize_value(product.get("light_type", "") or "lighting", "light_type")
+    reason = localize_reason(product.get("why_it_may_fit") or product.get("public_description") or ui_text("general_candidate"))
+    key_specs = localize_value(product.get("key_specs") or "not available")
+    fit_type = localize_value(product.get("fit_type") or "Sandbox candidate", "fit_type")
     details_url, spec_url = product_links(model)
     with st.container(border=True):
         img_col, text_col = st.columns([0.34, 0.66], vertical_alignment="center")
@@ -998,23 +1431,23 @@ def render_product_card_native(product: dict[str, Any], key_prefix: str) -> None
         st.caption(f"{light_type} | {fit_type} | {key_specs}")
         details = []
         for label, field in [
-            ("category", "product_category"),
-            ("color", "color"),
-            ("wavelength", "wavelength_nm"),
-            ("voltage", "voltage_v"),
-            ("power", "power_w"),
+            (ui_text("category"), "product_category"),
+            ("颜色" if current_language() == "zh" else "color", "color"),
+            ("波长" if current_language() == "zh" else "wavelength", "wavelength_nm"),
+            ("电压" if current_language() == "zh" else "voltage", "voltage_v"),
+            ("功率" if current_language() == "zh" else "power", "power_w"),
         ]:
             value = product.get(field)
             if value and str(value).lower() != "not available":
-                details.append(f"{label}: {value}")
+                details.append(f"{label}: {localize_value(value, field)}")
         if details:
             st.caption(" | ".join(details[:5]))
-        st.markdown(f"[Details]({details_url}) &nbsp; [Spec sheet]({spec_url})", unsafe_allow_html=True)
+        st.markdown(f"[{ui_text('details')}]({details_url}) &nbsp; [{ui_text('spec_sheet')}]({spec_url})", unsafe_allow_html=True)
         save_col, compare_col = st.columns(2)
         with save_col:
-            st.button("Save", key=f"{key_prefix}_save_{model}", use_container_width=True)
+            st.button(ui_text("save"), key=f"{key_prefix}_save_{model}", use_container_width=True)
         with compare_col:
-            st.button("Compare", key=f"{key_prefix}_compare_{model}", use_container_width=True)
+            st.button(ui_text("compare"), key=f"{key_prefix}_compare_{model}", use_container_width=True)
 
 
 def current_recommended_products() -> list[dict[str, Any]]:
@@ -1030,21 +1463,20 @@ def current_recommended_products() -> list[dict[str, Any]]:
 
 def render_product_rail() -> None:
     products = current_recommended_products()
-    has_answer = bool(st.session_state.get("last_result"))
-    display_products = products or (placeholder_products() if has_answer else [])
+    display_products = products
     st.markdown(
-        """
-        <div class="product-rail-kicker">After IOO answers</div>
-        <div class="product-rail-title">Product shortlist</div>
-        <div class="product-rail-sub">Candidate public IOO models stay here quietly, without interrupting the conversation.</div>
+        f"""
+        <div class="product-rail-kicker">{"IOO 回答后" if current_language() == "zh" else "After IOO answers"}</div>
+        <div class="product-rail-title">{ui_text("product_shortlist")}</div>
+        <div class="product-rail-sub">{ui_text("shortlist_sub")}</div>
         """,
         unsafe_allow_html=True,
     )
     if not display_products:
         st.markdown(
-            """
+            f"""
             <div class="product-empty-soft">
-              Ask about a defect, material, or setup. IOO will place candidate models, key specs, and sandbox detail links here after the first answer.
+              {ui_text("empty_shortlist")}
             </div>
             """,
             unsafe_allow_html=True,
@@ -1057,12 +1489,12 @@ def render_product_rail() -> None:
 def render_mobile_product_tab() -> None:
     products = current_recommended_products()
     count = len(products)
-    label = f"{count} products recommended" if count else "Products will appear here"
+    label = f"{count} 个产品候选" if current_language() == "zh" and count else f"{count} products recommended" if count else ("产品会显示在这里" if current_language() == "zh" else "Products will appear here")
     st.markdown(
         f"""
         <div class="mobile-product-tab">
           <span><b>{e(label)}</b><br><span>Models, images, spec links, save and compare actions</span></span>
-          <a class="open-pill" href="#ioo-mobile-products">Open</a>
+          <a class="open-pill" href="#ioo-mobile-products">{"打开" if current_language() == "zh" else "Open"}</a>
         </div>
         """,
         unsafe_allow_html=True,
@@ -1072,18 +1504,18 @@ def render_mobile_product_tab() -> None:
 def render_mobile_product_drawer() -> None:
     products = current_recommended_products()
     count = len(products)
-    title = f"{count} product candidates" if count else "Product shortlist"
+    title = f"{count} 个产品候选" if current_language() == "zh" and count else f"{count} product candidates" if count else ui_text("product_shortlist")
     st.markdown('<div id="ioo-mobile-products"></div>', unsafe_allow_html=True)
     st.markdown(f"### {title}")
-    st.caption("Mobile product drawer for quick field review. Public IOO models only.")
-    for idx, product in enumerate((products or placeholder_products())[:4]):
+    st.caption("移动端产品候选区，仅显示公开 IOO 型号。" if current_language() == "zh" else "Mobile product drawer for quick field review. Public IOO models only.")
+    for idx, product in enumerate(products[:4]):
         render_product_card_native(product, f"mobile_{idx}")
 
 
 def render_sources(result: dict[str, Any]) -> None:
     sources = result.get("knowledge_sources", [])
     if sources:
-        st.markdown("**Knowledge base basis**")
+        st.markdown(f"**{ui_text('knowledge_basis')}**")
         for source in sources[:5]:
             title = source.get("title") or "Knowledge source"
             url = source.get("url")
@@ -1093,8 +1525,8 @@ def render_sources(result: dict[str, Any]) -> None:
             else:
                 st.markdown(f"- {source_name}: {title}")
     if result.get("product_results") or result.get("closest_ioo_products"):
-        st.markdown("**IOO product database basis**")
-        st.caption("Product matches are from the IOO public product database. Private traceability URLs are not shown.")
+        st.markdown(f"**{ui_text('product_basis')}**")
+        st.caption("产品匹配来自 IOO 公开产品数据库；私有追溯链接不会在公开页面显示。" if current_language() == "zh" else "Product matches are from the IOO public product database. Private traceability URLs are not shown.")
 
 
 def should_show_sources(result: dict[str, Any]) -> bool:
@@ -1142,14 +1574,23 @@ def main() -> None:
     if not check_password():
         st.stop()
     render_topbar(openai_enabled)
-    in_conversation = bool(st.session_state.get("last_result"))
+    has_saved_threads = any(
+        thread.get("messages") or thread.get("last_result")
+        for thread in st.session_state.get("threads", [])
+    )
+    in_conversation = bool(st.session_state.get("last_result")) or has_saved_threads
     if in_conversation:
         left_col, center_col, right_col = st.columns([0.20, 0.58, 0.22], gap="large")
         with left_col:
             render_left_rail()
         with center_col:
+            if not st.session_state.get("last_result"):
+                render_hero()
             render_search_card()
-            render_answer(st.session_state.get("last_result"))
+            if st.session_state.get("last_result"):
+                render_answer(st.session_state.get("last_result"))
+            else:
+                render_how_it_works()
             render_mobile_product_drawer()
         with right_col:
             render_product_rail()

@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import re
 import sqlite3
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -42,7 +43,56 @@ def db_rows(sql: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
 
 
 def all_products() -> list[dict[str, Any]]:
-    return db_rows("SELECT * FROM products ORDER BY public_model")
+    return db_rows(
+        """
+        SELECT *
+        FROM products
+        WHERE lower(coalesce(product_category, '')) != 'demo_kit'
+        ORDER BY public_model
+        """
+    )
+
+
+@lru_cache(maxsize=1)
+def spec_haystack_by_model() -> dict[str, str]:
+    rows = db_rows(
+        """
+        SELECT public_model, canonical_field, raw_field, raw_value, normalized_value, unit
+        FROM product_specs
+        """
+    )
+    grouped: dict[str, list[str]] = {}
+    for row in rows:
+        model = str(row.get("public_model") or "").upper()
+        if not model:
+            continue
+        grouped.setdefault(model, []).append(
+            " ".join(
+                str(row.get(field) or "")
+                for field in ["canonical_field", "raw_field", "raw_value", "normalized_value", "unit"]
+            )
+        )
+    return {model: " ".join(parts).lower() for model, parts in grouped.items()}
+
+
+@lru_cache(maxsize=1)
+def color_haystack_by_model() -> dict[str, str]:
+    rows = db_rows(
+        """
+        SELECT public_model, canonical_field, raw_field, raw_value, normalized_value, unit
+        FROM product_specs
+        """
+    )
+    grouped: dict[str, list[str]] = {}
+    color_words = re.compile(r"\b(red|green|blue|white|uv|ultraviolet|ir|infrared|rgb|rgbw)\b", re.I)
+    for row in rows:
+        model = str(row.get("public_model") or "").upper()
+        field_text = " ".join(str(row.get(field) or "") for field in ["canonical_field", "raw_field"]).lower()
+        value_text = " ".join(str(row.get(field) or "") for field in ["raw_value", "normalized_value", "unit"]).lower()
+        field_is_color_related = any(token in field_text for token in ["color", "colour", "wavelength", "wave length", "led"])
+        if field_is_color_related or color_words.search(value_text):
+            grouped.setdefault(model, []).append(field_text + " " + value_text)
+    return {model: " ".join(parts).lower() for model, parts in grouped.items()}
 
 
 def get_product(public_model: str) -> dict[str, Any] | None:
@@ -78,21 +128,31 @@ def resolve_model(model: str) -> dict[str, Any] | None:
 
 def infer_filters(query: str) -> dict[str, str]:
     text = (query or "").lower()
+    compact = text.replace(" ", "")
     filters: dict[str, str] = {}
-    if any(token in text for token in ["red light", "red", "红光", "红色"]):
-        filters["color"] = "red"
-    if any(token in text for token in ["green light", "green", "绿光", "绿色"]):
-        filters["color"] = "green"
-    if any(token in text for token in ["blue light", "blue", "蓝光", "蓝色"]):
-        filters["color"] = "blue"
-    if any(token in text for token in ["white light", "white", "白光", "白色"]):
-        filters["color"] = "white"
-    if any(token in text for token in ["uv", "紫外"]):
+
+    nm_match = re.search(r"\b(365|375|385|395|400|405|410|420|450|470|525|625|850|940)\s*nm\b", text)
+    if nm_match:
+        filters["wavelength_nm"] = nm_match.group(1)
+
+    if any(token in text for token in ["purple", "violet", "purple light", "violet light", "紫光", "紫色光", "紫色"]):
+        filters["color"] = "violet_uv"
+    elif any(token in text for token in ["uv", "ultraviolet", "紫外", "紫外光"]):
         filters["color"] = "uv"
-    if any(token in text for token in ["ir", "infrared", "红外"]):
+    elif any(token in text for token in ["red light", "red", "红光", "红色"]):
+        filters["color"] = "red"
+    elif any(token in text for token in ["green light", "green", "绿光", "绿色"]):
+        filters["color"] = "green"
+    elif any(token in text for token in ["blue light", "blue", "蓝光", "蓝色"]):
+        filters["color"] = "blue"
+    elif any(token in text for token in ["white light", "white", "白光", "白色"]):
+        filters["color"] = "white"
+    elif any(token in text for token in ["ir", "infrared", "红外", "红外光"]):
         filters["color"] = "ir"
-    if any(token in text.replace(" ", "") for token in ["24v", "dc24v", "24伏"]):
+
+    if any(token in compact for token in ["24v", "dc24v", "24伏"]):
         filters["voltage_v"] = "24v"
+
     light_type_rules = [
         ("ring_light", ["ring light", "ring", "环形", "环光"]),
         ("backlight", ["backlight", "back light", "背光"]),
@@ -109,27 +169,68 @@ def infer_filters(query: str) -> dict[str, str]:
     return filters
 
 
+def product_haystack(product: dict[str, Any]) -> str:
+    model = str(product.get("public_model") or "").upper()
+    public_text = " ".join(
+        str(product.get(field) or "")
+        for field in [
+            "public_model",
+            "light_type",
+            "product_category",
+            "product_family",
+            "series",
+            "color",
+            "wavelength_nm",
+            "voltage_v",
+            "power_w",
+            "dimensions",
+            "public_description",
+            "recommendation_tags",
+            "key_specs",
+        ]
+    )
+    return (public_text + " " + spec_haystack_by_model().get(model, "")).lower()
+
+
 def matches_filters(product: dict[str, Any], filters: dict[str, str]) -> bool:
+    full_hay = product_haystack(product)
+    color_hay = str(product.get("color") or "").lower()
+    wavelength_hay = str(product.get("wavelength_nm") or "").lower()
+    spec_hay = color_haystack_by_model().get(str(product.get("public_model") or "").upper(), "")
+    model_hay = str(product.get("public_model") or "").lower()
+    color_signal = " ".join([color_hay, wavelength_hay, spec_hay, model_hay if "uv" in model_hay else ""]).lower()
+    ir_signal = " ".join([color_signal, model_hay if "ir" in model_hay else ""]).lower()
+    voltage_hay = str(product.get("voltage_v") or "").lower().replace(" ", "")
     for field, value in filters.items():
-        hay = str(product.get(field) or "").lower()
+        value = str(value).lower()
         if field == "color":
-            if value == "red" and not any(token in hay for token in ["red", "rgb", "625"]):
+            if value == "red" and not (re.search(r"\bred\b", color_signal) or "rgb" in color_signal or "625" in color_signal):
                 return False
-            if value == "green" and not any(token in hay for token in ["green", "rgb", "525"]):
+            if value == "green" and not (re.search(r"\bgreen\b", color_signal) or "rgb" in color_signal or "525" in color_signal):
                 return False
-            if value == "blue" and not any(token in hay for token in ["blue", "rgb", "470"]):
+            if value == "blue" and not (re.search(r"\bblue\b", color_signal) or "rgb" in color_signal or "470" in color_signal):
                 return False
-            if value == "white" and not any(token in hay for token in ["white", "rgbw"]):
+            if value == "white" and not (re.search(r"\bwhite\b", color_signal) or "rgbw" in color_signal):
                 return False
-            if value == "uv" and "uv" not in hay and "365" not in hay:
+            if value == "uv" and not any(token in color_signal for token in ["uv", "ultraviolet", "365", "375", "385", "395"]):
                 return False
-            if value == "ir" and "ir" not in hay and "850" not in hay:
+            if value == "violet_uv" and not any(
+                token in color_signal
+                for token in ["violet", "purple", "uv", "ultraviolet", "365", "375", "385", "395", "400", "405", "410", "420"]
+            ):
+                return False
+            if value == "ir" and not any(token in ir_signal for token in ["ir", "infrared", "850", "940"]):
+                return False
+            if value not in {"red", "green", "blue", "white", "uv", "violet_uv", "ir"} and value not in color_hay:
+                return False
+        elif field == "wavelength_nm":
+            if value not in color_signal:
                 return False
         elif field == "voltage_v":
-            if value.replace(" ", "") not in hay.replace(" ", "").lower():
+            if value.replace(" ", "") not in voltage_hay:
                 return False
         else:
-            if value.lower() != hay:
+            if value != str(product.get(field) or "").lower():
                 return False
     return True
 
@@ -143,7 +244,7 @@ def search_products(query: str, filters: dict[str, str] | None = None, limit: in
         terms = [token for token in sku_mapping.tokenize(query) if token not in {"ioo", "products", "product"}]
         matched = []
         for product in products:
-            hay = " ".join(str(product.get(field) or "") for field in DISPLAY_FIELDS + ["public_description", "recommendation_tags"]).lower()
+            hay = product_haystack(product)
             if not terms or all(term.lower() in hay for term in terms[:3]):
                 matched.append(product)
     total = len(matched)
@@ -156,8 +257,24 @@ def list_products_by_attribute(attribute: str, value: str, limit: int = 20) -> d
 
 
 def recommend_products(question: str, limit: int = 5) -> list[dict[str, Any]]:
-    candidates = sku_mapping.search_public_products(question, limit=limit)
-    return sku_mapping.validate_public_products(candidates)
+    scored = []
+    for product in all_products():
+        score, reasons = sku_mapping.score_product(question, product)
+        if score > 0:
+            item = dict(product)
+            item["score"] = round(score, 2)
+            item["fit_type"] = "Exact fit" if score >= 22 else "Close fit" if score >= 10 else "Workaround fit"
+            item["why_it_may_fit"] = "; ".join(reasons) if reasons else "closest available IOO lighting configuration"
+            scored.append(item)
+    scored.sort(key=lambda row: (-float(row["score"]), str(row.get("public_model", ""))))
+    if not scored:
+        for product in all_products()[:limit]:
+            item = dict(product)
+            item["score"] = 0.1
+            item["fit_type"] = "Workaround fit"
+            item["why_it_may_fit"] = "closest searchable IOO product; more inspection details are needed"
+            scored.append(item)
+    return sku_mapping.validate_public_products(scored[:limit])
 
 
 def compare_products(models: list[str]) -> dict[str, Any]:
