@@ -406,7 +406,63 @@ def answer_pricing_followup(
         followups = ["Share the target quantity.", "Is this for sample testing or production?", "Any cable, mounting, or wavelength customization needed?"]
         warning = "Pricing is not stored in the current public product database; quote confirmation is required."
     answer = f"{direct}\n\n{strategy}"
-    return base_result(question, "pricing_followup", answer, direct, strategy, products, products, len(products), {"sources": [], "basis": []}, [], "Basic", "high" if products else "medium", [warning], [], followups, used_openai)
+    result = base_result(question, "pricing_followup", answer, direct, strategy, products, products, len(products), {"sources": [], "basis": []}, [], "Basic", "high" if products else "medium", [warning], [], followups, used_openai)
+    result["quote_request"] = build_quote_request(question, products, language)
+    return result
+
+
+def build_quote_request(question: str, products: list[dict[str, Any]], language: str) -> dict[str, Any]:
+    models = [str(product.get("public_model") or "").strip() for product in products if product.get("public_model")]
+    models = models[:5]
+    subject = "IOO quote request" + (f" - {', '.join(models[:2])}" if models else "")
+    if language == "zh":
+        body = "\n".join(
+            [
+                "Hello IOO team,",
+                "",
+                "I would like to request pricing / quotation support for the following IOO product(s):",
+                ", ".join(models) if models else "[Please help identify the correct IOO model]",
+                "",
+                "Application / inspection need:",
+                question or "[Please describe the inspection application]",
+                "",
+                "Estimated quantity:",
+                "[Please fill in]",
+                "",
+                "Timeline:",
+                "[Please fill in]",
+                "",
+                "Additional notes:",
+                "[Mounting, cable, wavelength, sample test, or customization needs]",
+            ]
+        )
+    else:
+        body = "\n".join(
+            [
+                "Hello IOO team,",
+                "",
+                "I would like to request pricing / quotation support for the following IOO product(s):",
+                ", ".join(models) if models else "[Please help identify the correct IOO model]",
+                "",
+                "Application / inspection need:",
+                question or "[Please describe the inspection application]",
+                "",
+                "Estimated quantity:",
+                "[Please fill in]",
+                "",
+                "Timeline:",
+                "[Please fill in]",
+                "",
+                "Additional notes:",
+                "[Mounting, cable, wavelength, sample test, or customization needs]",
+            ]
+        )
+    return {
+        "email": "inquiry@ioo.pro",
+        "subject": subject,
+        "body": body,
+        "models": models,
+    }
 
 
 def answer_product_detail_followup(

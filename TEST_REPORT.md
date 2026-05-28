@@ -266,3 +266,21 @@ Date: 2026-05-27
   - `test_public_brand_safety.py`: passed, 2/2.
   - `test_qa_engine.py`: passed, 23/23.
   - Python compile check passed for `answer_engine.py`, `app.py`, and `product_search.py`.
+
+## Quote Request UI Update
+
+- Pricing follow-up answers now include a quote request payload with:
+  - `email`: `inquiry@ioo.pro`
+  - prefilled subject
+  - prefilled email body
+  - interested IOO public models from the previous recommendation
+- Streamlit now renders a quote request panel for `pricing_followup` answers.
+- If the visitor is not registered in the current demo session, clicking the quote action opens a sign-in / apply panel first.
+- After the visitor enters contact details, the page shows a `mailto:inquiry@ioo.pro` send button with the interested IOO models already included in the email draft.
+- No pricing is invented on-page; the quote email asks the IOO team to confirm pricing based on quantity, timing, and configuration.
+- Verification:
+  - `Inspect transparent bottle edges.` -> recommendation with IOO candidates.
+  - `how much is this model ?` -> `pricing_followup`.
+  - Generated quote request includes `inquiry@ioo.pro` and the previous IOO candidate models.
+  - `test_public_brand_safety.py`: passed, 2/2.
+  - `test_qa_engine.py`: passed, 23/23.

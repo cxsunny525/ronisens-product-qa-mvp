@@ -5,6 +5,7 @@ import html
 import io
 import json
 import os
+import urllib.parse
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -689,6 +690,9 @@ def init_state() -> None:
     st.session_state.setdefault("language", "en")
     st.session_state.setdefault("threads", [])
     st.session_state.setdefault("active_thread_id", None)
+    st.session_state.setdefault("registered_for_quotes", False)
+    st.session_state.setdefault("show_quote_auth", False)
+    st.session_state.setdefault("quote_contact", {})
     ensure_active_thread()
 
 
@@ -1270,6 +1274,89 @@ def log_conversation(question: str, result: dict[str, Any], points_awarded: int,
     write_csv_row(CONVERSATION_LOG, row)
 
 
+def quote_mailto_url(email: str, subject: str, body: str) -> str:
+    return (
+        f"mailto:{email}"
+        f"?subject={urllib.parse.quote(subject or 'IOO quote request')}"
+        f"&body={urllib.parse.quote(body or '')}"
+    )
+
+
+def render_quote_auth_panel() -> None:
+    if not st.session_state.get("show_quote_auth"):
+        return
+    with st.container(border=True):
+        if current_language() == "zh":
+            st.subheader("登录 / 注册后发送报价请求")
+            st.caption("请留下基本联系方式。当前 MVP 会在本浏览器会话中记住你，方便继续发送报价邮件。")
+            name_label, email_label, company_label = "姓名", "邮箱", "公司 / 团队"
+            submit_label = "继续发送报价请求"
+        else:
+            st.subheader("Sign in / apply before sending a quote request")
+            st.caption("Leave basic contact details. This MVP remembers you for this browser session so the quote email can be sent.")
+            name_label, email_label, company_label = "Name", "Email", "Company / team"
+            submit_label = "Continue to quote request"
+        with st.form("quote_auth_form"):
+            name = st.text_input(name_label, value=st.session_state.get("quote_contact", {}).get("name", ""))
+            email = st.text_input(email_label, value=st.session_state.get("quote_contact", {}).get("email", ""))
+            company = st.text_input(company_label, value=st.session_state.get("quote_contact", {}).get("company", ""))
+            submitted = st.form_submit_button(submit_label, type="primary", use_container_width=True)
+        if submitted:
+            st.session_state["quote_contact"] = {"name": name, "email": email, "company": company}
+            st.session_state["registered_for_quotes"] = True
+            st.session_state["show_quote_auth"] = False
+            award_points(int(GAMIFICATION.get("feedback_points", 5)), "quote_contact_added")
+            st.rerun()
+
+
+def render_quote_request(result: dict[str, Any]) -> None:
+    quote = result.get("quote_request") or {}
+    if not quote:
+        return
+    models = quote.get("models") or [p.get("public_model") for p in result.get("closest_ioo_products", []) if p.get("public_model")]
+    email = quote.get("email") or "inquiry@ioo.pro"
+    subject = quote.get("subject") or "IOO quote request"
+    body = quote.get("body") or ""
+    contact = st.session_state.get("quote_contact") or {}
+    if contact:
+        contact_block = "\n".join(
+            part
+            for part in [
+                f"Contact name: {contact.get('name')}" if contact.get("name") else "",
+                f"Contact email: {contact.get('email')}" if contact.get("email") else "",
+                f"Company / team: {contact.get('company')}" if contact.get("company") else "",
+            ]
+            if part
+        )
+        if contact_block and "Contact name:" not in body:
+            body = body + "\n\n" + contact_block
+    with st.container(border=True):
+        if current_language() == "zh":
+            st.subheader("请求 IOO 报价")
+            st.write("我已经把你感兴趣的型号放进邮件草稿里。价格不会在网页上编造，需要由 IOO 团队根据数量、交期和配置确认。")
+            st.caption("感兴趣的型号：" + (", ".join(models) if models else "请在邮件中补充具体型号或应用"))
+            body_label = "邮件草稿"
+            send_label = "发送报价邮件"
+            login_label = "登录 / 注册后发送报价请求"
+        else:
+            st.subheader("Request an IOO quote")
+            st.write("The interested model(s) have been added to the email draft. Pricing is not invented on the page; IOO should confirm it based on quantity, timing, and configuration.")
+            st.caption("Interested model(s): " + (", ".join(models) if models else "Please add model or application details in the email"))
+            body_label = "Email draft"
+            send_label = "Send quote email"
+            login_label = "Sign in / Apply before sending"
+        key_suffix = "_".join(models[:3]) or "general"
+        body_value = st.text_area(body_label, value=body, height=230, key=f"quote_body_{key_suffix}")
+        if st.session_state.get("registered_for_quotes"):
+            st.link_button(send_label, quote_mailto_url(email, subject, body_value), type="primary", use_container_width=True)
+            st.caption(f"To: {email}")
+        else:
+            if st.button(login_label, key=f"quote_login_{key_suffix}", type="primary", use_container_width=True):
+                st.session_state["show_quote_auth"] = True
+                st.rerun()
+            render_quote_auth_panel()
+
+
 def render_answer(result: dict[str, Any] | None) -> None:
     if not result:
         render_how_it_works()
@@ -1289,6 +1376,8 @@ def render_answer(result: dict[str, Any] | None) -> None:
     if result.get("lighting_strategy"):
         st.subheader(ui_text("strategy"))
         st.write(result.get("lighting_strategy", ""))
+    if result.get("intent") == "pricing_followup":
+        render_quote_request(result)
     if result.get("intent") in {"list_search", "attribute_search", "model_lookup", "comparison"}:
         render_product_results(result)
     else:
