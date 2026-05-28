@@ -144,12 +144,20 @@ def inject_css() -> None:
         }
         div[data-testid="stExpander"] {
           border-radius: 16px !important;
-          background: rgba(255,255,255,0.64) !important;
+          background: rgba(255,255,255,0.92) !important;
+          border: 1px solid var(--ioo-line-600) !important;
+          overflow: hidden !important;
         }
         div[data-testid="stExpander"] summary,
         div[data-testid="stExpander"] summary * {
           color: var(--ioo-text-100) !important;
           font-weight: 760 !important;
+          background: rgba(255,255,255,0.92) !important;
+        }
+        div[data-testid="stExpander"] details,
+        div[data-testid="stExpander"] div[role="button"] {
+          background: rgba(255,255,255,0.92) !important;
+          color: var(--ioo-text-100) !important;
         }
         div[data-testid="stAlert"],
         div[data-testid="stAlert"] * {
@@ -307,11 +315,25 @@ def inject_css() -> None:
           opacity: 1 !important;
         }
         div[data-testid="stFileUploader"] section {
-          background: rgba(255,255,255,0.84) !important;
+          background: rgba(255,255,255,0.96) !important;
           border: 1px dashed var(--ioo-line-500) !important;
           border-radius: 20px !important;
         }
-        div[data-testid="stFileUploader"] * { color: var(--ioo-text-300) !important; }
+        div[data-testid="stFileUploader"] *,
+        div[data-testid="stFileUploader"] small,
+        div[data-testid="stFileUploader"] span,
+        div[data-testid="stFileUploader"] p {
+          color: var(--ioo-text-300) !important;
+          opacity: 1 !important;
+        }
+        div[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] {
+          background: rgba(255,255,255,0.96) !important;
+          border: 1px solid var(--ioo-line-600) !important;
+          color: var(--ioo-text-100) !important;
+        }
+        div[data-testid="stFileUploader"] [data-testid="stFileUploaderFile"] * {
+          color: var(--ioo-text-100) !important;
+        }
         div[data-testid="stFileUploader"] button,
         div.stButton > button,
         div[data-testid="stFormSubmitButton"] button {
@@ -802,21 +824,6 @@ def render_left_rail() -> None:
     history = st.session_state.get("conversation") or []
     today = points_today()
     remaining = max(0, reward_target() - int(st.session_state.get("points", 0)))
-    if history:
-        history_items = "\n".join(
-            f"""
-            <div class="history-item-soft{' active' if idx == 0 else ''}">
-              {e(item.get('question'))[:72]}
-              <small>{e(item.get('recommended_public_models') or 'Lighting case')}</small>
-            </div>
-            """
-            for idx, item in enumerate(history[:4])
-        )
-    else:
-        history_items = """
-        <div class="history-item-soft active">Start a lighting case<small>Ask by defect, material, or setup</small></div>
-        <div class="history-item-soft">Saved answers<small>Appears after feedback or save</small></div>
-        """
     st.markdown(
         f"""
         <aside class="soft-panel left-rail-soft">
@@ -834,13 +841,37 @@ def render_left_rail() -> None:
             </div>
           </section>
           <div class="section-title-soft"><span>Dialog history</span><span>{len(history)}</span></div>
-          <div class="history-mobile-row">{history_items}</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if history:
+        for idx, item in enumerate(history[:4]):
+            active_class = " active" if idx == 0 else ""
+            st.markdown(
+                f"""
+                <div class="history-item-soft{active_class}">
+                  {e(str(item.get('question') or 'Lighting case'))[:72]}
+                  <small>{e(str(item.get('recommended_public_models') or 'Lighting case'))[:96]}</small>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+    else:
+        st.markdown(
+            """
+            <div class="history-item-soft active">Start a lighting case<small>Ask by defect, material, or setup</small></div>
+            <div class="history-item-soft">Saved answers<small>Appears after save or comparison</small></div>
+            """,
+            unsafe_allow_html=True,
+        )
+    st.markdown(
+        """
           <div class="section-title-soft"><span>Field shortcuts</span><span>tap</span></div>
           <div class="shortcut-grid-soft">
             <div class="shortcut-soft"><b>Ask by defect</b>Scratch, dent, stain, burr</div>
             <div class="shortcut-soft"><b>Upload image</b>Attach sample or sketch</div>
             <div class="shortcut-soft"><b>Compare lights</b>Bar, coaxial, dome</div>
-            <div class="shortcut-soft"><b>Earn credits</b>Questions and feedback</div>
+            <div class="shortcut-soft"><b>Earn credits</b>Questions and follow-ups</div>
           </div>
         </aside>
         """,

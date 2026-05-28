@@ -38,6 +38,22 @@ deployment logic.
 - Added placeholder Details / Spec sheet / Save / Compare actions.
 - Changed the question input to an Enter-to-submit form so engineers do not
   need to click the Ask button for normal use.
+- Reworked the first-screen hierarchy so the home view focuses on one clear
+  inspection-question entry point instead of competing hero, history, product,
+  and reward blocks.
+- Replaced the opening headline with "Turn an inspection problem into a
+  lighting test plan." and reduced the right rail to a quiet product shortlist.
+- Restyled the submit control as a soft teal `Ask IOO` button inside the input
+  row instead of a dark `Send` button.
+- Strengthened answer-page typography contrast for headings, body text,
+  captions, alerts, and advanced-detail expanders so text remains legible on
+  the soft light background.
+- Removed the visible "Was this useful?" feedback/rating block from the answer
+  area to reduce clutter.
+- Fixed the left dialog-history rail so conversation items render as safe UI
+  cards instead of occasionally leaking raw HTML/code.
+- Forced the upload expander and uploaded-file chip back to a light, readable
+  style after an answer is shown.
 - Added a conversation state: after the first question, the large welcome hero
   is hidden, example prompts are removed from the main path, upload moves into
   a collapsed control, and the latest answer appears directly below the input.
