@@ -15,22 +15,25 @@ Designed in California. Manufactured in Malaysia.
 - Public app name: IOO Lighting AI
 - Public website/domain reference: ioo.pro
 - Public product recommendations use IOO public SKUs only.
-- Supplier and original source details are private/internal and are not shown in
-  the public UI.
+- OEM traceability details are private/internal and are not shown in the public UI.
 
 The current public catalog is generated from internal product records into:
 
 - `public_products.csv`
 - `ioo_sku_mapping.csv`
-- `SKU_MAPPING_REPORT.md`
+- `data/ioo_products.db`
+- `IOO_PRODUCT_DATABASE_REPORT.md`
 
 Public SKU examples:
 
-- `IOO-RL-0001`: ring light candidate
-- `IOO-BL-0001`: backlight candidate
-- `IOO-CL-0001`: coaxial / in-line candidate
-- `IOO-BAR-0001`: bar light candidate
-- `IOO-DF-0001`: dark-field / low-angle candidate
+- `IOO-CAS2-00-010-X-X`
+- `IOO-BHP1010-X-X`
+- `IOO-DLC2-00-070-1-RGBW`
+
+Public models are converted deterministically from internal OEM model records:
+if an internal model already contains an old private-label token, that token is
+replaced with `IOO`; otherwise the original model is prefixed with `IOO-`.
+Duplicate converted models receive stable `-2`, `-3` suffixes.
 
 ## How Answers Work
 
@@ -38,7 +41,7 @@ The answer flow is:
 
 1. Understand the inspection challenge.
 2. Search the source-linked lighting knowledge base.
-3. Retrieve the closest IOO product configurations.
+3. Retrieve real IOO product records from `data/ioo_products.db`.
 4. Compose a grounded recommendation.
 5. Ask for missing information such as material, defect size, field of view, and
    working distance.
@@ -80,7 +83,7 @@ openai:
 
 ```powershell
 pip install -r requirements.txt
-python sku_mapping.py
+python generate_ioo_product_db.py
 streamlit run app.py
 ```
 
@@ -116,17 +119,19 @@ sample credits, consultation priority, or pilot order support.
 2. Run:
 
 ```powershell
-python sku_mapping.py
+python generate_ioo_product_db.py
 ```
 
 3. Review:
 
 - `public_products.csv`
 - `ioo_sku_mapping.csv`
-- `SKU_MAPPING_REPORT.md`
+- `data/ioo_products.db`
+- `DATA_SOURCE_AUDIT.md`
+- `IOO_PRODUCT_DATABASE_REPORT.md`
+- `IOO_REBRAND_DATABASE_MIGRATION_REPORT.md`
 
-4. Confirm public SKUs and descriptions do not expose private supplier/source
-   details.
+4. Confirm public SKUs and descriptions do not expose private OEM/source details.
 
 ## Current Limitations
 
@@ -134,7 +139,7 @@ python sku_mapping.py
 - Uploaded images are displayed as context only.
 - Product recommendations are closest-fit suggestions, not guaranteed matches.
 - Final selection should be verified with sample images and physical testing.
-- Supplier/internal source information is private.
+- OEM/internal source information is private.
 - Some product specifications are not available in the current catalog and are
   shown as `not available`.
 

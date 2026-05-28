@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import html
+import io
 import os
 import uuid
 from datetime import datetime
@@ -12,6 +13,7 @@ import streamlit as st
 
 import answer_engine
 import brand_config
+import product_search
 import sku_mapping
 
 
@@ -602,29 +604,14 @@ def product_links(model: str) -> tuple[str, str]:
 
 
 def placeholder_products() -> list[dict[str, Any]]:
-    return [
-        {
-            "public_model": "IOO-BAR-0001",
-            "light_type": "bar_light",
-            "fit_type": "Sandbox sample",
-            "why_it_may_fit": "General IOO bar light candidate for angle-based contrast experiments.",
-            "key_specs": "24V, multiple color options, length to be confirmed",
-        },
-        {
-            "public_model": "IOO-RL-0001",
-            "light_type": "ring_light",
-            "fit_type": "Sandbox sample",
-            "why_it_may_fit": "General IOO ring light candidate for area-camera inspection trials.",
-            "key_specs": "24V, white/red/blue options, size to be confirmed",
-        },
-        {
-            "public_model": "IOO-CL-0001",
-            "light_type": "coaxial_light",
-            "fit_type": "Sandbox sample",
-            "why_it_may_fit": "General IOO coaxial candidate for flat reflective surface evaluation.",
-            "key_specs": "24V, compact geometry, datasheet pending",
-        },
-    ]
+    try:
+        rows = product_search.search_products("", limit=3)["products"]
+    except Exception:
+        rows = []
+    for row in rows:
+        row.setdefault("fit_type", "Database sample")
+        row.setdefault("why_it_may_fit", "Public IOO product database sample.")
+    return rows
 
 
 def render_topbar(openai_enabled: bool) -> None:
@@ -916,8 +903,11 @@ def render_answer(result: dict[str, Any] | None) -> None:
     st.write(result.get("direct_recommendation", ""))
     st.subheader("Lighting strategy")
     st.write(result.get("lighting_strategy", ""))
-    st.subheader("Closest IOO product options")
-    render_product_options(result.get("closest_ioo_products", []))
+    if result.get("intent") in {"list_search", "model_lookup", "comparison"}:
+        render_product_results(result)
+    else:
+        st.subheader("Closest IOO product options")
+        render_product_options(result.get("closest_ioo_products", []))
     st.subheader("Practical test plan")
     for item in result.get("practical_test_plan", []):
         st.markdown(f"- {item}")
@@ -947,6 +937,32 @@ def render_answer(result: dict[str, Any] | None) -> None:
             }
         )
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def render_product_results(result: dict[str, Any]) -> None:
+    products = result.get("product_results", []) or []
+    total = int(result.get("total_matched") or len(products))
+    showing = len(products)
+    st.subheader("IOO product results")
+    if total:
+        st.caption(f"Showing first {showing} of {total} matching IOO products.")
+    else:
+        st.info("No exact IOO product match was found in the current product database.")
+        return
+    rows = product_search.product_table_rows(products, limit=20)
+    st.dataframe(rows, use_container_width=True, hide_index=True)
+    buffer = io.StringIO()
+    if rows:
+        writer = csv.DictWriter(buffer, fieldnames=list(rows[0].keys()))
+        writer.writeheader()
+        writer.writerows(rows)
+        st.download_button(
+            "Download shown results CSV",
+            data=buffer.getvalue().encode("utf-8-sig"),
+            file_name="ioo_product_results.csv",
+            mime="text/csv",
+            use_container_width=True,
+        )
 
 
 def render_product_options(products: list[dict[str, Any]]) -> None:
@@ -987,6 +1003,19 @@ def render_product_card_native(product: dict[str, Any], key_prefix: str) -> None
             st.markdown(f"**{model}**")
             st.caption(str(reason))
         st.caption(f"{light_type} | {fit_type} | {key_specs}")
+        details = []
+        for label, field in [
+            ("category", "product_category"),
+            ("color", "color"),
+            ("wavelength", "wavelength_nm"),
+            ("voltage", "voltage_v"),
+            ("power", "power_w"),
+        ]:
+            value = product.get(field)
+            if value and str(value).lower() != "not available":
+                details.append(f"{label}: {value}")
+        if details:
+            st.caption(" | ".join(details[:5]))
         st.markdown(f"[Details]({details_url}) &nbsp; [Spec sheet]({spec_url})", unsafe_allow_html=True)
         save_col, compare_col = st.columns(2)
         with save_col:
@@ -1000,6 +1029,9 @@ def current_recommended_products() -> list[dict[str, Any]]:
     products = result.get("closest_ioo_products") or []
     if products:
         return products
+    products = result.get("product_results") or []
+    if products:
+        return products[:5]
     return []
 
 
@@ -1128,8 +1160,8 @@ def main() -> None:
         with right_col:
             render_product_rail()
     render_mobile_product_tab()
-    # Keep the public catalog fresh in case the CSVs were not uploaded.
-    if not Path("public_products.csv").exists():
+    # Keep the public catalog fresh in case generated product files were not uploaded.
+    if not Path("public_products.csv").exists() or not Path("data/ioo_products.db").exists():
         sku_mapping.generate_files()
 
 
