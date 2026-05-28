@@ -122,6 +122,8 @@ def classify_intent(question: str) -> str:
         return "attribute_search"
     if filters and detect_user_language(question) == "zh" and ("吗" in text or "有没有" in text):
         return "attribute_search"
+    if needs_practical_guidance(question):
+        return "recommendation"
     if any(token in text for token in availability_tokens + list_tokens):
         return "list_search"
     if filters and not needs_practical_guidance(question):

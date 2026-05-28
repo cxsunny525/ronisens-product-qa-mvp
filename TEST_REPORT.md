@@ -224,3 +224,14 @@ Date: 2026-05-27
   - `app.py` compile check: passed
   - `test_public_brand_safety.py`: passed, 2/2
   - `test_qa_engine.py`: passed, 23/23
+
+## Intent Routing Fix For English Selection Questions
+
+- Fixed an intent-routing bug where English questions beginning with `which` could be treated as list searches even when the user was asking for lighting selection guidance.
+- Regression example: `which light I should consider if I want to detect the scratch on the metal ?`
+  - Before: `list_search`, no matched products.
+  - After: `recommendation`, returns IOO dark-field candidates from the product database.
+  - Example candidates: `IOO-F-DLC3-00-070-DIFFUSER`, `IOO-F-DLC3-00-100-DIFFUSER`, `IOO-F-DLC3-00-120-DIFFUSER`.
+- Verified list/availability searches still work:
+  - `Which IOO products are red lights?`: `list_search`, 413 matches, showing first 20.
+  - `Do you have purple lights?`: `attribute_search`, 33 matches, showing first 20.
