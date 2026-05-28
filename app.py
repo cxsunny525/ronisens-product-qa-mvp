@@ -817,53 +817,45 @@ def render_left_rail() -> None:
     today = points_today()
     remaining = max(0, reward_target() - int(st.session_state.get("points", 0)))
     if history:
-        history_html = "\n".join(
-            f"""
-            <div class="history-item-soft{' active' if idx == 0 else ''}">
-              {e(str(item.get('question') or 'Lighting case'))[:72]}
-              <small>{e(str(item.get('recommended_public_models') or 'IOO recommendation'))[:96]}</small>
-            </div>
-            """
+        history_html = "".join(
+            f'<div class="history-item-soft{" active" if idx == 0 else ""}">'
+            f'{e(str(item.get("question") or "Lighting case"))[:72]}'
+            f'<small>{e(str(item.get("recommended_public_models") or "IOO recommendation"))[:96]}</small>'
+            f'</div>'
             for idx, item in enumerate(history[:4])
         )
     else:
-        history_html = """
-            <div class="history-item-soft active">
-              Start a lighting case
-              <small>Ask by defect, material, or setup</small>
-            </div>
-        """
-    st.markdown(
-        f"""
-        <aside class="soft-panel left-rail-soft">
-          <section class="profile-card-soft">
-            <div class="avatar-row">
-              <span class="avatar-soft">IOO</span>
-              <span>
-                <span class="profile-name">Guest Engineer</span>
-                <span class="profile-meta">Apply for an engineering account</span>
-              </span>
-            </div>
-            <div class="points-row">
-              <span class="mini-metric"><strong>+{today}</strong><span>today</span></span>
-              <span class="mini-metric"><strong>{remaining}</strong><span>to next reward</span></span>
-            </div>
-          </section>
-          <div class="section-title-soft"><span>Dialog history</span><span>{len(history)}</span></div>
-          <div class="history-list-soft">
-            {history_html}
-          </div>
-          <div class="section-title-soft"><span>Field shortcuts</span><span>tap</span></div>
-          <div class="shortcut-grid-soft">
-            <div class="shortcut-soft"><b>Ask by defect</b>Scratch, dent, stain, burr</div>
-            <div class="shortcut-soft"><b>Upload image</b>Attach sample or sketch</div>
-            <div class="shortcut-soft"><b>Compare lights</b>Bar, coaxial, dome</div>
-            <div class="shortcut-soft"><b>Earn credits</b>Questions and follow-ups</div>
-          </div>
-        </aside>
-        """,
-        unsafe_allow_html=True,
+        history_html = (
+            '<div class="history-item-soft active">'
+            'Start a lighting case'
+            '<small>Ask by defect, material, or setup</small>'
+            '</div>'
+        )
+    left_html = (
+        '<aside class="soft-panel left-rail-soft">'
+        '<section class="profile-card-soft">'
+        '<div class="avatar-row">'
+        '<span class="avatar-soft">IOO</span>'
+        '<span><span class="profile-name">Guest Engineer</span>'
+        '<span class="profile-meta">Apply for an engineering account</span></span>'
+        '</div>'
+        '<div class="points-row">'
+        f'<span class="mini-metric"><strong>+{today}</strong><span>today</span></span>'
+        f'<span class="mini-metric"><strong>{remaining}</strong><span>to next reward</span></span>'
+        '</div>'
+        '</section>'
+        f'<div class="section-title-soft"><span>Dialog history</span><span>{len(history)}</span></div>'
+        f'<div class="history-list-soft">{history_html}</div>'
+        '<div class="section-title-soft"><span>Field shortcuts</span><span>tap</span></div>'
+        '<div class="shortcut-grid-soft">'
+        '<div class="shortcut-soft"><b>Ask by defect</b>Scratch, dent, stain, burr</div>'
+        '<div class="shortcut-soft"><b>Upload image</b>Attach sample or sketch</div>'
+        '<div class="shortcut-soft"><b>Compare lights</b>Bar, coaxial, dome</div>'
+        '<div class="shortcut-soft"><b>Earn credits</b>Questions and follow-ups</div>'
+        '</div>'
+        '</aside>'
     )
+    st.markdown(left_html, unsafe_allow_html=True)
 
 
 def log_conversation(question: str, result: dict[str, Any], points_awarded: int, feedback: str = "") -> None:
