@@ -199,8 +199,12 @@ def inject_css() -> None:
           box-shadow: var(--ioo-shadow-panel); border-radius: var(--ioo-radius-xl);
           overflow: hidden; backdrop-filter: blur(22px);
         }
-        .left-rail-soft, .product-rail-soft { padding: 16px; min-height: calc(100vh - 128px); }
-        .left-rail-soft { display: flex; flex-direction: column; gap: 14px; }
+        .left-rail-soft, .product-rail-soft { padding: 16px; }
+        .product-rail-soft { min-height: calc(100vh - 128px); }
+        .left-rail-soft {
+          display: flex; flex-direction: column; gap: 14px;
+          min-height: 0; height: auto; position: sticky; top: 88px;
+        }
         .profile-card-soft {
           padding: 16px; border-radius: 24px; border: 1px solid rgba(43,167,165,0.18);
           background: linear-gradient(180deg, rgba(221,246,242,0.72), rgba(255,255,255,0.76));
@@ -224,9 +228,10 @@ def inject_css() -> None:
           display: flex; justify-content: space-between; align-items: center; color: var(--ioo-text-500);
           font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; margin: 2px 2px 0;
         }
+        .history-list-soft { display: flex; flex-direction: column; gap: 8px; }
         .history-item-soft {
           padding: 11px 12px; border-radius: 16px; border: 1px solid transparent;
-          background: rgba(248,252,251,0.76); color: var(--ioo-text-300); margin-bottom: 8px;
+          background: rgba(248,252,251,0.76); color: var(--ioo-text-300);
         }
         .history-item-soft.active { border-color: rgba(43,167,165,0.25); background: rgba(221,246,242,0.82); }
         .history-item-soft small { display: block; margin-top: 4px; color: var(--ioo-text-650); }
@@ -811,6 +816,23 @@ def render_left_rail() -> None:
     history = st.session_state.get("conversation") or []
     today = points_today()
     remaining = max(0, reward_target() - int(st.session_state.get("points", 0)))
+    if history:
+        history_html = "\n".join(
+            f"""
+            <div class="history-item-soft{' active' if idx == 0 else ''}">
+              {e(str(item.get('question') or 'Lighting case'))[:72]}
+              <small>{e(str(item.get('recommended_public_models') or 'IOO recommendation'))[:96]}</small>
+            </div>
+            """
+            for idx, item in enumerate(history[:4])
+        )
+    else:
+        history_html = """
+            <div class="history-item-soft active">
+              Start a lighting case
+              <small>Ask by defect, material, or setup</small>
+            </div>
+        """
     st.markdown(
         f"""
         <aside class="soft-panel left-rail-soft">
@@ -828,31 +850,9 @@ def render_left_rail() -> None:
             </div>
           </section>
           <div class="section-title-soft"><span>Dialog history</span><span>{len(history)}</span></div>
-        """,
-        unsafe_allow_html=True,
-    )
-    if history:
-        for idx, item in enumerate(history[:4]):
-            active_class = " active" if idx == 0 else ""
-            st.markdown(
-                f"""
-                <div class="history-item-soft{active_class}">
-                  {e(str(item.get('question') or 'Lighting case'))[:72]}
-                  <small>{e(str(item.get('recommended_public_models') or 'Lighting case'))[:96]}</small>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-    else:
-        st.markdown(
-            """
-            <div class="history-item-soft active">Start a lighting case<small>Ask by defect, material, or setup</small></div>
-            <div class="history-item-soft">Saved answers<small>Appears after save or comparison</small></div>
-            """,
-            unsafe_allow_html=True,
-        )
-    st.markdown(
-        """
+          <div class="history-list-soft">
+            {history_html}
+          </div>
           <div class="section-title-soft"><span>Field shortcuts</span><span>tap</span></div>
           <div class="shortcut-grid-soft">
             <div class="shortcut-soft"><b>Ask by defect</b>Scratch, dent, stain, burr</div>
@@ -908,17 +908,18 @@ def render_answer(result: dict[str, Any] | None) -> None:
     else:
         st.subheader("Closest IOO product options")
         render_product_options(result.get("closest_ioo_products", []))
-    st.subheader("Practical test plan")
-    for item in result.get("practical_test_plan", []):
-        st.markdown(f"- {item}")
-    st.subheader("Missing information")
-    missing = result.get("missing_information", [])
-    if missing:
-        st.info("Great, one more detail will make the recommendation stronger: " + ", ".join(missing[:6]))
-    else:
-        st.success("The current information is enough for a first-pass recommendation.")
-    st.subheader("Sources / Basis")
-    render_sources(result)
+    test_plan = result.get("practical_test_plan", []) or []
+    if test_plan:
+        st.subheader("Practical test plan")
+        for item in test_plan:
+            st.markdown(f"- {item}")
+    missing = result.get("missing_information", []) or []
+    if missing and result.get("intent") == "recommendation":
+        st.subheader("Missing information")
+        st.info("To make this recommendation stronger: " + ", ".join(missing[:6]))
+    if should_show_sources(result):
+        st.subheader("Sources / Basis")
+        render_sources(result)
     st.subheader("Continue the conversation")
     cols = st.columns(3)
     for idx, prompt in enumerate(result.get("follow_up_suggestions", [])[:3]):
@@ -1089,17 +1090,25 @@ def render_mobile_product_drawer() -> None:
 
 def render_sources(result: dict[str, Any]) -> None:
     sources = result.get("knowledge_sources", [])
-    st.markdown("**Knowledge base basis**")
     if sources:
+        st.markdown("**Knowledge base basis**")
         for source in sources[:5]:
             title = source.get("title") or "Knowledge source"
             url = source.get("url")
             source_name = source.get("source_name") or "Knowledge source"
-            st.markdown(f"- {source_name}: [{title}]({url})")
-    else:
-        st.caption("No public knowledge source URL is available for this question yet.")
-    st.markdown("**IOO product database basis**")
-    st.caption("IOO product database. Private traceability URLs are not shown in the public demo.")
+            if url:
+                st.markdown(f"- {source_name}: [{title}]({url})")
+            else:
+                st.markdown(f"- {source_name}: {title}")
+    if result.get("product_results") or result.get("closest_ioo_products"):
+        st.markdown("**IOO product database basis**")
+        st.caption("Product matches are from the IOO public product database. Private traceability URLs are not shown.")
+
+
+def should_show_sources(result: dict[str, Any]) -> bool:
+    if result.get("knowledge_sources"):
+        return True
+    return bool(result.get("product_results") or result.get("closest_ioo_products"))
 
 
 def render_history() -> None:

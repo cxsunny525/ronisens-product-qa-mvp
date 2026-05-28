@@ -45,11 +45,17 @@ def answer_question(
     del brand_filter, mode
     full_question = _merge_context(question, conversation_context, uploaded_context)
     intent = classify_intent(full_question)
-    knowledge = retrieve_public_knowledge(full_question, limit=5)
-    missing = missing_information(full_question)
+    knowledge = (
+        retrieve_public_knowledge(full_question, limit=5)
+        if should_retrieve_knowledge(full_question, intent)
+        else {"sources": [], "basis": []}
+    )
+    missing = missing_information(full_question) if needs_practical_guidance(full_question) else []
     completeness = solution_profile_completeness(full_question)
 
-    if intent == "comparison":
+    if intent == "identification_help":
+        result = answer_identification_help(full_question, knowledge, missing, completeness)
+    elif intent == "comparison":
         result = answer_comparison(full_question, knowledge, missing, completeness)
     elif intent == "model_lookup":
         result = answer_model_lookup(full_question, knowledge, missing, completeness)
@@ -73,6 +79,8 @@ def answer_question(
 
 def classify_intent(question: str) -> str:
     text = (question or "").lower()
+    if any(token in text for token in ["what is this light", "what type of light is this", "identify this light", "这是什么光源", "这是什么灯", "这是什么"]):
+        return "identification_help"
     if any(token in text for token in ["compare", "比较", "对比"]):
         return "comparison"
     if product_search.model_mentions(question):
@@ -81,6 +89,13 @@ def classify_intent(question: str) -> str:
         "list",
         "show all",
         "which",
+        "how many",
+        "how much",
+        "count",
+        "number of",
+        "total",
+        "are there",
+        "available",
         "what products",
         "有哪些",
         "哪些",
@@ -91,6 +106,47 @@ def classify_intent(question: str) -> str:
     if any(token in text for token in list_tokens):
         return "list_search"
     return "recommendation"
+
+
+def answer_identification_help(
+    question: str,
+    knowledge: dict[str, Any],
+    missing: list[str],
+    completeness: str,
+) -> dict[str, Any]:
+    zh = is_chinese(question)
+    if zh:
+        direct = "我现在不能仅凭这句话可靠判断具体光源类型。"
+        strategy = (
+            "请补充外形、发光方向、安装位置、被检测物体和想凸显的缺陷；"
+            "如果上传了图片，当前版本会接收图片，但不会假装已经完成视觉识别。"
+        )
+        followups = ["描述光源外形和发光方向。", "告诉我检测对象和缺陷。", "上传图片并说明你想判断什么。"]
+    else:
+        direct = "I cannot reliably identify the lighting type from that sentence alone."
+        strategy = (
+            "Share the light shape, emitting direction, mounting position, inspected object, "
+            "and the defect you want to reveal. If an image is uploaded, this MVP receives it "
+            "but does not pretend to perform visual identification."
+        )
+        followups = ["Describe the light shape and emitting direction.", "Tell me the inspected object and defect.", "Upload an image and describe what to identify."]
+    return base_result(
+        question,
+        intent="identification_help",
+        answer=f"{direct}\n\n{strategy}",
+        direct=direct,
+        strategy=strategy,
+        products=[],
+        product_results=[],
+        total=0,
+        knowledge=knowledge,
+        missing=missing,
+        completeness=completeness,
+        confidence="medium",
+        warnings=[],
+        test_plan=[],
+        followups=followups,
+    )
 
 
 def answer_model_lookup(
@@ -383,6 +439,84 @@ def retrieve_public_knowledge(question: str, limit: int = 5) -> dict[str, Any]:
     return {"sources": filtered, "basis": basis}
 
 
+def needs_practical_guidance(question: str) -> bool:
+    text = (question or "").lower()
+    guidance_terms = [
+        "detect",
+        "inspect",
+        "inspection",
+        "defect",
+        "scratch",
+        "edge",
+        "pcb",
+        "line scan",
+        "transparent",
+        "reflective",
+        "recommend",
+        "suitable",
+        "selection",
+        "choose",
+        "improve contrast",
+        "application",
+        "test setup",
+        "lighting setup",
+        "检测",
+        "检验",
+        "缺陷",
+        "划痕",
+        "边缘",
+        "透明",
+        "反光",
+        "金属",
+        "适合",
+        "推荐",
+        "选型",
+        "方案",
+        "打光",
+        "如何",
+        "怎么",
+    ]
+    return any(term in text for term in guidance_terms)
+
+
+def should_retrieve_knowledge(question: str, intent: str) -> bool:
+    if intent in {"model_lookup", "comparison", "identification_help", "list_search"}:
+        return False
+    text = (question or "").lower()
+    knowledge_terms = [
+        "why",
+        "how",
+        "what is",
+        "difference",
+        "principle",
+        "selection",
+        "strategy",
+        "lighting type",
+        "detect",
+        "inspect",
+        "defect",
+        "scratch",
+        "edge",
+        "transparent",
+        "reflective",
+        "pcb",
+        "line scan",
+        "为什么",
+        "如何",
+        "怎么",
+        "区别",
+        "原理",
+        "选型",
+        "策略",
+        "检测",
+        "缺陷",
+        "划痕",
+        "边缘",
+        "透明",
+    ]
+    return any(term in text for term in knowledge_terms)
+
+
 def interpret_question(question: str, intent: str) -> dict[str, Any]:
     return {
         "language": "zh" if is_chinese(question) else "en",
@@ -395,6 +529,8 @@ def interpret_question(question: str, intent: str) -> dict[str, Any]:
 
 
 def missing_information(question: str) -> list[str]:
+    if not needs_practical_guidance(question):
+        return []
     lower = (question or "").lower()
     missing = []
     for label, needles in MISSING_INFO_FIELDS:
@@ -404,6 +540,8 @@ def missing_information(question: str) -> list[str]:
 
 
 def solution_profile_completeness(question: str) -> str:
+    if not needs_practical_guidance(question):
+        return "Basic"
     provided = len(MISSING_INFO_FIELDS) - len(missing_information(question))
     if provided >= 5:
         return "High"
@@ -463,6 +601,8 @@ def lighting_strategy(question: str, knowledge: dict[str, Any]) -> str:
 
 
 def practical_test_plan(question: str) -> list[str]:
+    if not needs_practical_guidance(question):
+        return []
     if is_chinese(question):
         return [
             "先固定相机、镜头、曝光和工作距离，只改变光源角度。",
