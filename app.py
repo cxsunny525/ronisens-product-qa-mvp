@@ -7,6 +7,7 @@ import json
 import os
 import urllib.parse
 import uuid
+import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -28,6 +29,8 @@ LOG_DIR = Path("logs")
 CONVERSATION_LOG = LOG_DIR / "conversation_log.csv"
 POINTS_LOG = LOG_DIR / "conversation_points.csv"
 FEEDBACK_LOG = LOG_DIR / "feedback.csv"
+CATALOG_CSV_PATH = Path("data/downloads/ioo_public_product_catalog_real_images.csv")
+CATALOG_ZIP_PATH = Path("data/downloads/ioo_public_product_catalog_real_images.zip")
 
 EXAMPLE_PROMPTS = [
     ("Detect scratches on reflective metal", "Detect scratches on reflective metal."),
@@ -83,6 +86,9 @@ UI_TEXT = {
         "try_preset": "Try a preset or type your own question and press Enter.",
         "new_conversation": "New conversation",
         "download_history": "Download history",
+        "download_catalog_zip": "Download catalog + images",
+        "download_catalog_csv": "Download catalog CSV",
+        "catalog_caption": "IOO public catalog package. Real product photos appear in the ZIP after the image downloader has run.",
         "resume": "Resume",
         "no_history": "No saved session conversation yet",
         "active": "Active",
@@ -132,6 +138,9 @@ UI_TEXT = {
         "try_preset": "可以点击示例，也可以直接输入问题并按 Enter。",
         "new_conversation": "新建对话",
         "download_history": "导出历史",
+        "download_catalog_zip": "下载产品目录 + 图片",
+        "download_catalog_csv": "下载产品 CSV",
+        "catalog_caption": "IOO 公开产品目录包。真实产品图片下载完成后会包含在 ZIP 中。",
         "resume": "继续",
         "no_history": "当前浏览器会话还没有历史对话",
         "active": "当前",
@@ -974,6 +983,51 @@ def render_topbar(openai_enabled: bool) -> None:
     )
 
 
+def ensure_catalog_exports() -> None:
+    if CATALOG_CSV_PATH.exists() and CATALOG_ZIP_PATH.exists():
+        return
+    try:
+        import build_ioo_real_image_catalog
+
+        build_ioo_real_image_catalog.build_catalog(download=False)
+    except Exception:
+        return
+
+
+def render_catalog_downloads() -> None:
+    ensure_catalog_exports()
+    if not CATALOG_ZIP_PATH.exists() and not CATALOG_CSV_PATH.exists():
+        return
+    st.caption(ui_text("catalog_caption"))
+    zip_image_count = 0
+    if CATALOG_ZIP_PATH.exists():
+        try:
+            with zipfile.ZipFile(CATALOG_ZIP_PATH) as zf:
+                zip_image_count = sum(1 for name in zf.namelist() if name.startswith("images/"))
+        except Exception:
+            zip_image_count = 0
+    if zip_image_count == 0:
+        st.caption("Real product image download is pending." if current_language() != "zh" else "真实产品图片尚未下载完成。")
+    if CATALOG_ZIP_PATH.exists():
+        st.download_button(
+            ui_text("download_catalog_zip"),
+            data=CATALOG_ZIP_PATH.read_bytes(),
+            file_name="ioo_public_product_catalog_with_images.zip",
+            mime="application/zip",
+            use_container_width=True,
+            key="download_product_catalog_zip",
+        )
+    if CATALOG_CSV_PATH.exists():
+        st.download_button(
+            ui_text("download_catalog_csv"),
+            data=CATALOG_CSV_PATH.read_bytes(),
+            file_name="ioo_public_product_catalog.csv",
+            mime="text/csv",
+            use_container_width=True,
+            key="download_product_catalog_csv",
+        )
+
+
 def render_hero() -> None:
     st.markdown(
         """
@@ -1219,6 +1273,8 @@ def render_left_rail() -> None:
     if st.button(ui_text("new_conversation"), key="left_new_conversation", use_container_width=True):
         start_new_thread()
         st.rerun()
+
+    render_catalog_downloads()
 
     if threads:
         active_id = st.session_state.get("active_thread_id")

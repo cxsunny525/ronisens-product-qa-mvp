@@ -309,3 +309,32 @@ Date: 2026-05-27
   - Python compile check for `app.py`, `answer_engine.py`, and `product_search.py`: passed.
   - `test_public_brand_safety.py`: passed, 2/2.
   - `test_qa_engine.py`: passed, 23/23.
+
+## IOO Product Catalog Download Export
+
+- Generated a public IOO product catalog export from `data/ioo_products.db`.
+- Exported product rows: 654.
+- Generated one public SVG product image per IOO public model: 654 images.
+- Created downloadable files:
+  - `data/downloads/ioo_public_product_catalog.csv`
+  - `data/downloads/ioo_public_product_catalog_with_images.zip`
+- The ZIP contains the CSV plus an `images/` folder with one SVG per `public_model`.
+- Added Streamlit download buttons for the CSV and ZIP in the left rail.
+- Public safety check: the generated CSV does not include private supplier fields, internal model fields, or legacy source brand names.
+- Verification on 2026-05-29:
+  - Python compile check for `app.py`, `export_ioo_product_catalog.py`, `answer_engine.py`, and `product_search.py`: passed.
+  - `test_public_brand_safety.py`: passed, 2/2.
+  - `test_ioo_product_mapping.py`: passed, 6/6.
+
+## Real Product Image Mapping Update
+
+- Replaced the earlier SVG placeholder-image approach with a real-image mapping workflow.
+- Extracted real source image URLs from saved original product-page HTML.
+- Products mapped: 654.
+- Real image URLs discovered: 654.
+- Private manifest: `data/internal/ioo_tms_real_image_manifest_private.csv`.
+- Public CSV: `data/downloads/ioo_public_product_catalog_real_images.csv`.
+- Public ZIP path: `data/downloads/ioo_public_product_catalog_real_images.zip`.
+- Current runtime network test: image binary download is blocked by local socket permissions, so real image files must be downloaded by running:
+  - `python build_ioo_real_image_catalog.py --download --delay 1.5`
+- The website now points to the real-image catalog paths instead of the old placeholder SVG package.

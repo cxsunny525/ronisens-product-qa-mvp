@@ -106,3 +106,43 @@ Files to upload for this hotfix:
 - `NEW_CONVERSATION_FIX_REPORT.md`
 
 After uploading, reboot the Streamlit app and click `New conversation` after an answered question. It should open a fresh thread without clearing the browser-session history and without raising a Streamlit state error.
+
+## 2026-05-29 Product Catalog Download
+
+The IOO public product catalog export is now prepared for website download.
+
+Upload these additional files/folders:
+
+- `export_ioo_product_catalog.py`
+- `data/downloads/ioo_public_product_catalog.csv`
+- `data/downloads/ioo_public_product_catalog_with_images.zip`
+- `data/product_images/`
+- `IOO_PRODUCT_CATALOG_EXPORT_REPORT.md`
+
+The Streamlit left rail now provides:
+
+- `Download catalog + images`
+- `Download catalog CSV`
+
+The earlier placeholder SVG export has been superseded by the real-image workflow.
+
+Current real-image files:
+
+- `build_ioo_real_image_catalog.py`
+- `data/internal/ioo_tms_real_image_manifest_private.csv`
+- `data/downloads/ioo_public_product_catalog_real_images.csv`
+- `data/downloads/ioo_public_product_catalog_real_images.zip`
+- `REAL_PRODUCT_IMAGE_DOWNLOAD_INSTRUCTIONS.md`
+- `IOO_REAL_PRODUCT_IMAGE_CATALOG_REPORT.md`
+
+The current Codex runtime cannot download the real image binaries because outbound sockets are blocked. To fill the ZIP with real product images, run this once in a network-enabled local terminal before uploading/rebooting:
+
+```powershell
+python build_ioo_real_image_catalog.py --download --delay 1.5
+```
+
+After it completes, upload:
+
+- `data/product_images_real/`
+- regenerated `data/downloads/ioo_public_product_catalog_real_images.csv`
+- regenerated `data/downloads/ioo_public_product_catalog_real_images.zip`

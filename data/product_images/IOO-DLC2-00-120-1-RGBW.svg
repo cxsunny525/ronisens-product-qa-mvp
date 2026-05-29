@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420" role="img" aria-label="IOO-DLC2-00-120-1-RGBW dark-field light">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#E8F7F4"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="420" rx="34" fill="url(#bg)"/>
+  <rect x="34" y="34" width="572" height="352" rx="28" fill="#FFFFFF" opacity="0.86" stroke="#D5E7E4"/>
+  <g transform="translate(160 36)">
+    
+        <path d="M80 150 L160 58 L240 150" fill="none" stroke="#2CA9A6" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="86" y1="158" x2="234" y2="158" stroke="#D58A23" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="160" cy="58" r="10" fill="#2CA9A6"/>
+        
+  </g>
+  <text x="52" y="296" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#22323A">IOO-DLC2-00-120-1-RGBW</text>
+  <text x="52" y="334" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#536B74">IOO dark-field light</text>
+  <text x="52" y="366" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#6E828A">RGBW Illumination - DLC2</text>
+</svg>
