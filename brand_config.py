@@ -12,7 +12,7 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "name": "IOO",
         "product_name": "IOO Lighting AI",
         "domain": "ioo.pro",
-        "tagline": "AI-powered machine vision lighting selection for industrial inspection.",
+        "tagline": "IOO - Industrial Options Online",
         "origin_statement": "Designed in California. Manufactured in Malaysia.",
         "show_origin_statement": True,
         "public_brand_only": True,
@@ -33,6 +33,28 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "followup_points": 3,
     },
 }
+
+
+def _patch_streamlit_display_text() -> None:
+    try:
+        import streamlit as st  # type: ignore
+    except Exception:
+        return
+    if getattr(st, "_ioo_options_text_patch", False):
+        return
+
+    original_markdown = st.markdown
+
+    def patched_markdown(body: Any, *args: Any, **kwargs: Any) -> Any:
+        if isinstance(body, str):
+            body = body.replace("Industrial Optics Online", "Industrial Options Online")
+        return original_markdown(body, *args, **kwargs)
+
+    st.markdown = patched_markdown
+    st._ioo_options_text_patch = True
+
+
+_patch_streamlit_display_text()
 
 
 def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
